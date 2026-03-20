@@ -1,263 +1,145 @@
+import { type DatabaseStructure } from "./preprocess.ts";
 
-export function sqlDatabaseFromYaml(yaml: any): string
+export function sqlFileFrom(structure: DatabaseStructure): string
 {
-    const tables = yaml.tables;
+    const tables = structure.tables;
 
-    let sql = `--- This file was auto-generated based on ./Build/database/database_structure.yaml
+    let sql = "";
 
-START TRANSACTION;
-
-`;
-
-    for (const name in tables)
+    for (const [name, table] of tables)
     {
-        const table = tables[name];
-        const columns = table.columns;
-
-        sql += `CREATE TABLE `;
-        sql += name;
-        sql += ` (
-`;
-
-        let first = true;
-        for (const column of columns)
+        if (table.columns.size !== 0)
         {
-            if (first)
-                first = false;
-            else
-                sql += `,
+            sql += `
+CREATE TABLE `;
+            sql += name;
+            sql += ` (
 `;
-            sql += `    `;
-            sql += column["name"];
-            sql += ` `;
-            sql += column["type"];
 
-            if (column["size"] != null)
+            let firstColumn = true;
+            for (const [name, column] of table.columns)
             {
-                sql += `(`;
-                sql += column["size"];
-                sql += `)`;
+                if (firstColumn)
+                    firstColumn = false;
+                else
+                    sql += `,
+`;
+
+                sql += `    `;
+                sql += name;
+                sql += ` `;
+                sql += column.type;
+
+                if (column.size !== undefined)
+                {
+                    sql += `(`;
+                    sql += column.size;
+                    sql += `)`;
+                }
+
+                sql += column.nullable ? ` NULL` : ` NOT NULL`;
             }
 
-            if ("signed" in column)
-                sql += column["signed"] ? " SIGNED" : " UNSIGNED";
-
-            sql += column["nullable"] ? " NULL" : " NOT NULL";
-        }
-
-        sql += `);
-
+            sql += `);
 `;
+        }
     }
 
-    for (const name in tables)
+    for (const [name, table] of tables)
     {
-        const table = tables[name];
-        const constraints = table.constraints;
-
-        sql += `ALTER TABLE `;
-        sql += name;
-        sql += `
-`;
-
-        let first = true;
-        for (const constraint of constraints)
+        for (const constraint of table.constraints)
         {
-            if ("primary" in constraint)
+            switch (constraint.type)
             {
-                if (first)
-                    first = false;
-                else
-                    sql += `,
+                case "primary":
+                {
+                    sql += `
+ALTER TABLE `;
+
+                    sql += name;
+                    sql += `
+    ADD CONSTRAINT unique_`;
+
+                    sql += constraint.columns.join("_and_");
+                    sql += ` PRIMARY KEY (
+        `;
+
+                    sql += constraint.columns.join(`,
+        `);
+
+                    sql += `);
 `;
 
-                sql += `    ADD PRIMARY KEY (`;
-
-                let firstColumn = true;
-                for (const column of constraint["primary"])
-                {
-                    if (firstColumn)
-                        firstColumn = false;
-                    else
-                        sql += `, `;
-
-                    sql += column;
+                    break;
                 }
-
-                sql += `)`;
-            }
-            else if ("unique" in constraint)
-            {
-                if (first)
-                    first = false;
-                else
-                    sql += `,
-    `;
-
-                sql += `    ADD UNIQUE KEY `;
-
-                let firstColumn = true;
-                for (const column of constraint["unique"])
+                case "unique":
                 {
-                    if (firstColumn)
-                        firstColumn = false;
-                    else
-                        sql += `_and_`;
+                    sql += `
+ALTER TABLE `;
 
-                    sql += column;
-                }
+                    sql += name;
+                    sql += `
+    ADD CONSTRAINT unique_`;
 
-                sql += ` (`;
+                    sql += constraint.columns.join("_and_");
+                    sql += ` UNIQUE (
+        `;
 
-                firstColumn = true;
-                for (const column of constraint["unique"])
-                {
-                    if (firstColumn)
-                        firstColumn = false;
-                    else
-                        sql += `, `;
+                    sql += constraint.columns.join(`,
+        `);
 
-                    sql += column;
-                }
-
-                sql += `)`;
-            }
-            else if ("foreign" in constraint)
-            {
-                const foreign = constraint["foreign"];
-
-                if (first)
-                    first = false;
-                else
-                    sql += `,
+                    sql += `);
 `;
 
-                sql += `    ADD KEY `;
-
-                let firstColumn = true;
-                for (const column of foreign.from)
-                {
-                    if (firstColumn)
-                        firstColumn = false;
-                    else
-                        sql += `_and_`;
-
-                    sql += column;
+                    break;
                 }
-
-                sql += ` (`;
-
-                firstColumn = true;
-                for (const column of foreign.from)
-                {
-                    if (firstColumn)
-                        firstColumn = false;
-                    else
-                        sql += `, `;
-
-                    sql += column;
-                }
-
-                sql += `)`;
             }
         }
-
-        sql += `;
-
-`;
     }
 
-    for (const name in tables)
+    for (const [name, table] of tables)
     {
-        const table = tables[name];
-        const constraints = table.constraints;
-
-        sql += `ALTER TABLE `;
-        sql += name;
-        sql += `
-`;
-
-        let first = true;
-        for (const constraint of constraints)
+        for (const constraint of table.constraints)
         {
-            if ("foreign" in constraint)
+            switch (constraint.type)
             {
-                const foreign = constraint["foreign"];
+                case "foreign":
+                {
+                    sql += `
+ALTER TABLE `;
 
-                if (first)
-                    first = false;
-                else
-                    sql += `,
+                    sql += name;
+                    sql += `
+    ADD CONSTRAINT `;
+
+                    sql += constraint.otherColumns.join("_and_");
+                    sql += `_in_`;
+                    sql += constraint.other;
+                    sql += `
+        FOREIGN KEY (
+            `;
+
+                    sql += constraint.columns.join(`,
+            `);
+
+                    sql += `)
+        REFERENCES `;
+
+                    sql += constraint.other;
+                    sql += ` (
+            `;
+
+                    sql += constraint.otherColumns.join(`,
+            `);
+
+                    sql += `);
 `;
 
-                sql += `    ADD CONSTRAINT `;
-
-                let firstColumn = true;
-                for (const column of foreign.from)
-                {
-                    if (firstColumn)
-                        firstColumn = false;
-                    else
-                        sql += `_and_`;
-
-                    sql += column;
+                    break;
                 }
-
-                sql += `_to_`;
-
-                firstColumn = true;
-                for (const column of foreign.to)
-                {
-                    if (firstColumn)
-                        firstColumn = false;
-                    else
-                        sql += `_and_`;
-
-                    sql += column;
-                }
-
-                sql += `_in_`;
-                sql += foreign.toTable;
-                sql += ` FOREIGN KEY (`;
-
-                firstColumn = true;
-                for (const column of foreign.from)
-                {
-                    if (firstColumn)
-                        firstColumn = false;
-                    else
-                        sql += `, `;
-
-                    sql += column;
-                }
-
-                sql += `) REFERENCES `;
-                sql += foreign.toTable;
-                sql += ` (`;
-
-                firstColumn = true;
-                for (const column of foreign.to)
-                {
-                    if (firstColumn)
-                        firstColumn = false;
-                    else
-                        sql += `, `;
-
-                    sql += column;
-                }
-
-                sql += `)`;
             }
         }
-
-        sql += `;
-
-`;
     }
-
-    sql += `COMMIT;`;
-
-    sql = sql.replaceAll(/\n\nALTER TABLE \w+\n;/g, "");
 
     return sql;
 }

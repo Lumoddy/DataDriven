@@ -1,116 +1,162 @@
+
 replacements:
+
+  column:
   - - { type: ID }
-    - { type: INT, signed: false }
+    - { type: INT }
   - - { type: ENUM }
-    - { type: TINYINT, signed: false }
+    - { type: TINYINT }
+  - - { type: NAME }
+    - { type: VARCHAR, size: 255 }
+  - - { type: HASH }
+    - { type: VARCHAR, size: 255 }
+  - - { type: TITLE }
+    - { type: VARCHAR, size: 1024 }
+  - - { type: DESCRIPTION }
+    - { type: VARCHAR, size: 65534 }
+
 tables:
+
   surveys:
-    C# Plural: Surveys
-    C# Single: Survey
     columns:
-    - { name: survey_id, type: ID }
-    - { name: name, type: VARCHAR, size: 255 }
-    - { name: description, type: VARCHAR, size: 4095 }
+      survey_id: { type: ID }
+      name: { type: NAME }
+      description: { type: DESCRIPTION }
     constraints:
-    - primary: [survey_id]
+    - primary:
+      - survey_id
+
   survey_pages:
-    C# Plural: SurveyPages
-    C# Single: SurveyPage
     columns:
-    - { name: survey_id, type: ID }
-    - { name: survey_page_index, type: INT, signed: false }
-    - { name: name, type: VARCHAR, size: 1023 }
-    - { name: description, type: VARCHAR, size: 4095 }
+      survey_id: { type: ID }
+      survey_page_index: { type: INT }
+      name: { type: TITLE }
+      description: { type: DESCRIPTION }
     constraints:
-    - unique: [survey_id, survey_page_index]
+    - unique:
+      - survey_id
+      - survey_page_index
     - foreign:
-        from: [survey_id]
-        surveys: [survey_id]
+      - - survey_id
+      - surveys:
+        - survey_id
+
   survey_questions:
-    C# Plural: SurveyQuestions
-    C# Single: SurveyQuestion
     columns:
-    - { name: survey_id, type: ID }
-    - { name: survey_page_index, type: INT, signed: false }
-    - { name: survey_question_index, type: INT, signed: false }
-    - { name: question_text, type: VARCHAR, size: 4095 }
-    - { name: answer_type, type: ENUM }
+      survey_id: { type: ID }
+      survey_page_index: { type: INT }
+      survey_question_index: { type: INT }
+      prompt: { type: TITLE }
+      answer_type: { type: ENUM }
     constraints:
     - unique:
       - survey_id
       - survey_page_index
       - survey_question_index
-    - foreign: 
-        from:
+    - foreign:
+      - - survey_id
+        - survey_page_index
+      - survey_pages:
         - survey_id
         - survey_page_index
-        survey_pages:
-        - survey_id
-        - survey_page_index
-  survey_answer_types:
-    C# Plural: SurveyAnswerTypes
-    C# Single: SurveyAnswerType
-    columns:
-    - { name: index, type: ENUM }
-    - { name: name, type: VARCHAR, size: 255 }
-    constraints:
-    - primary: [index]
+
   survey_question_conditions:
-    C# Plural: SurveyQuestionConditions
-    C# Single: SurveyQuestionCondition
     columns:
-    - { name: survey_id, type: ID }
-    - { name: survey_page_index, type: INT, signed: false }
-    - { name: survey_question_index, type: INT, signed: false }
-    - { name: other_survey_page_index, type: INT, signed: false }
-    - { name: other_survey_question_index, type: INT, signed: false }
-    - { name: condition, type: VARCHAR, size: 1023 }
+      survey_id: { type: ID }
+      survey_page_index: { type: INT }
+      survey_question_index: { type: INT }
+      other_survey_page_index: { type: INT }
+      other_survey_question_index: { type: INT }
+      condition: { type: VARCHAR, size: 255 }
     constraints:
-    - unique: [survey_id, survey_page_index, survey_question_index]
-    - foreign: 
-        from:
+    - unique:
+      - survey_id
+      - survey_page_index
+      - survey_question_index
+      - other_survey_page_index
+      - other_survey_question_index
+    - foreign:
+      - - survey_id
+        - survey_page_index
+        - survey_question_index
+      - survey_questions:
         - survey_id
         - survey_page_index
         - survey_question_index
+    - foreign:
+      - - survey_id
         - other_survey_page_index
         - other_survey_question_index
-        survey_questions:
+      - survey_questions:
         - survey_id
         - survey_page_index
         - survey_question_index
-        - survey_page_index
-        - survey_question_index
-  registered_members:
-    C# Plural: RegisteredMembers
-    C# Single: RegisteredMember
-    columns:
-    - { name: registered_member_id, type: ID }
-    - { name: password_hash, type: VARCHAR, size: 255 }
-    - { name: birth_date, type: DATE }
-    - { name: first_name, type: VARCHAR, size: 255 }
-    - { name: last_name, type: VARCHAR, size: 255 }
-    constraints:
-    - primary: [registered_member_id]
+
   survey_answers:
-    C# Plural: SurveyAnswers
-    C# Single: SurveyAnswer
     columns:
-    - { name: survey_id, type: ID }
-    - { name: survey_page_index, type: INT, signed: false }
-    - { name: survey_question_index, type: INT, signed: false }
-    - { name: submission_index, type: INT, signed: false }
-    - { name: condition, type: VARCHAR, size: 1023 }
+      survey_id: { type: ID }
+      survey_page_index: { type: INT }
+      survey_question_index: { type: INT }
+      submission_index: { type: INT }
+      value: { type: VARCHAR, size: 4096 }
     constraints:
-    - unique: [survey_id, survey_page_index, survey_question_index]
-    - foreign: 
-        from:
+    - unique:
+      - survey_id
+      - survey_page_index
+      - survey_question_index
+      - submission_index
+    - foreign:
+      - - survey_id
+        - survey_page_index
+        - survey_question_index
+      - survey_questions:
         - survey_id
         - survey_page_index
         - survey_question_index
-        survey_questions:
+    - foreign:
+      - - survey_id
+        - submission_index
+      - submissions:
         - survey_id
-        - survey_page_index
-        - survey_question_index
-    - foreign: 
-        from: [submission_index]
-        survey_questions: [submission_index]
+        - submission_index
+
+  answer_types:
+    columns:
+      answer_type: { type: ENUM }
+      name: { type: NAME }
+    constraints:
+    - primary:
+      - answer_type
+
+  registered_members:
+    columns:
+      registered_member_id: { type: ID }
+      phone_number: { type: VARCHAR, size: 12 }
+      password_hash: { type: HASH }
+      birth_date: { type: DATE }
+      first_name: { type: NAME }
+      last_name: { type: NAME }
+    constraints:
+    - unique:
+      - registered_member_id
+
+  survey_submissions:
+    columns:
+      survey_id: { type: ID }
+      submission_index: { type: INT }
+      registered_member_id: { type: INT }
+    constraints:
+    - unique:
+      - survey_id
+      - submission_index
+      - registered_member_id
+    - foreign:
+      - - survey_id
+        - submission_index
+      - survey_submissions:
+        - survey_id
+        - submission_index
+    - foreign:
+      - - registered_member_id
+      - registered_members:
+        - registered_member_id

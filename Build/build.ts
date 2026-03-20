@@ -1,9 +1,18 @@
 import * as fs from "node:fs/promises";
 import { log } from "./logging.ts";
 import * as YAML from "yaml";
-import { sqlDatabaseFromYaml } from "./database/database_sql.ts";
+import { sqlFileFrom } from "./database/database_sql.ts";
+import { preprocessObject } from "./database/preprocess.ts";
+import { exec } from "node:child_process";
+import { csFileFrom } from "./database/database_cs.ts";
 
-log("success", "Initialized.");
+// ASP.NET has custom build options that are capable of running this but it
+// shows its own errors that I don't want to deal with.
+// 
+// Run this command instead:
+// node ./Build/build.ts
+
+log("success", "Build Started.");
 
 (async () =>
 {
@@ -15,57 +24,40 @@ log("success", "Initialized.");
         return;
     }
 
-    const replacements = file.replacements;
-    const tables = file.tables;
-
-    for (const name in tables)
-    {
-        const table = tables[name];
-
-        const columns = table.columns;
-        for (let i = 0; i < columns.length; i += 1)
-        {
-            toNext: for (const [from, to] of replacements)
-            {
-                const column = columns[i];
-
-                for (const key in from)
-                {
-                    if (String.prototype.toUpperCase.call(column[key]) !==
-                        String.prototype.toUpperCase.call(from[key]))
-                        continue toNext;
-                }
-
-                columns[i] = { ...column, ...to };
-            }
-        }
-
-        const constraints = table.constraints;
-        for (const constraint of constraints)
-        {
-            if ("foreign" in constraint)
-            {
-                let from, to, toTable;
-                const foreign = constraint["foreign"];
-                for (const part in foreign)
-                {
-                    if (part === "from")
-                        from = foreign["from"];
-                    else
-                        to = foreign[toTable = part];
-                }
-
-                constraint["foreign"] = { from, to, toTable };
-            }
-        }
-    }
-
     try
     {
         await Promise.all(
         [
-            fs.writeFile("./Build/database/database_structure.sql", sqlDatabaseFromYaml(file), "utf-8"),
+            fs.writeFile(
+                "./Build/database/database_structure.sql",
+                `--- This file was auto-generated based on ./Build/database/database_structure.yaml
+` + sqlFileFrom(preprocessObject(file)),
+                "utf-8")
+                .then(() => log("success", "Converted database structure to SQL file.")),
+
+            fs.writeFile(
+                "./Models/DatabaseStructure.cs",
+                `// This file was auto-generated based on ./Build/database/database_structure.yaml
+` + csFileFrom(preprocessObject(file)),
+                "utf-8")
+                .then(() => log("success", "Converted database structure to C# accessors.")),
+
+            new Promise<void>((resolve, reject) => exec("npx tsc", {}, (error) =>
+            {
+                if (error !== null)
+                {
+                    log("error", error.message);
+                    reject(error);
+                }
+                else
+                {
+                    log("success", "Transpiled TypeScript.");
+                    resolve();
+                }
+            })),
         ]);
+
+        log("success", "Build Completed.");
     }
     catch (e)
     {

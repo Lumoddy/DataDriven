@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace data_driven.Models;
+namespace DataDriven.Models;
 
 public class ErrorViewModel
 {
