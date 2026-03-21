@@ -7,19 +7,19 @@ replacements:
   - - { type: ENUM }
     - { type: TINYINT }
   - - { type: NAME }
-    - { type: VARCHAR, size: 255 }
+    - { type: VARCHAR, size: (2**8)-1 }
   - - { type: HASH }
-    - { type: VARCHAR, size: 255 }
+    - { type: VARCHAR, size: (2**8)-1 }
   - - { type: TITLE }
-    - { type: VARCHAR, size: 1024 }
+    - { type: VARCHAR, size: (2**10)-1 }
   - - { type: DESCRIPTION }
-    - { type: VARCHAR, size: 65534 }
+    - { type: VARCHAR, size: MAX }
 
 tables:
 
   surveys:
     columns:
-      survey_id: { type: ID }
+      survey_id: { C# Short Single: Id, type: ID }
       name: { type: NAME }
       description: { type: DESCRIPTION }
     constraints:
@@ -29,7 +29,7 @@ tables:
   survey_pages:
     columns:
       survey_id: { type: ID }
-      survey_page_index: { type: INT }
+      survey_page_index: { C# Short Single: PageIndex, type: INT }
       name: { type: TITLE }
       description: { type: DESCRIPTION }
     constraints:
@@ -44,8 +44,8 @@ tables:
   survey_questions:
     columns:
       survey_id: { type: ID }
-      survey_page_index: { type: INT }
-      survey_question_index: { type: INT }
+      survey_page_index: { C# Short Single: PageIndex, type: INT }
+      survey_question_index: { C# Short Single: QuestionIndex, type: INT }
       prompt: { type: TITLE }
       answer_type: { type: ENUM }
     constraints:
@@ -63,11 +63,11 @@ tables:
   survey_question_conditions:
     columns:
       survey_id: { type: ID }
-      survey_page_index: { type: INT }
-      survey_question_index: { type: INT }
-      other_survey_page_index: { type: INT }
-      other_survey_question_index: { type: INT }
-      condition: { type: VARCHAR, size: 255 }
+      survey_page_index: { C# Short Single: PageIndex, type: INT }
+      survey_question_index: { C# Short Single: QuestionIndex, type: INT }
+      other_survey_page_index: { C# Short Single: OtherPageIndex, type: INT }
+      other_survey_question_index: { C# Short Single: OtherQuestionIndex, type: INT }
+      condition: { type: VARCHAR, size: (2**8)-1 }
     constraints:
     - unique:
       - survey_id
@@ -95,16 +95,16 @@ tables:
   survey_answers:
     columns:
       survey_id: { type: ID }
-      survey_page_index: { type: INT }
-      survey_question_index: { type: INT }
-      submission_index: { type: INT }
-      value: { type: VARCHAR, size: 4096 }
+      survey_page_index: { C# Short Single: PageIndex, type: INT }
+      survey_question_index: { C# Short Single: QuestionIndex, type: INT }
+      survey_submission_index: { type: INT }
+      answer_value: { type: VARCHAR, size: (2**12)-1 }
     constraints:
     - unique:
       - survey_id
       - survey_page_index
       - survey_question_index
-      - submission_index
+      - survey_submission_index
     - foreign:
       - - survey_id
         - survey_page_index
@@ -115,25 +115,25 @@ tables:
         - survey_question_index
     - foreign:
       - - survey_id
-        - submission_index
-      - submissions:
+        - survey_submission_index
+      - survey_submissions:
         - survey_id
-        - submission_index
+        - survey_submission_index
 
   answer_types:
     columns:
-      answer_type: { type: ENUM }
+      answer_type_id: { C# Short Single: Id, type: ENUM }
       name: { type: NAME }
     constraints:
     - primary:
-      - answer_type
+      - answer_type_id
 
   registered_members:
     columns:
-      registered_member_id: { type: ID }
+      registered_member_id: { C# Short Single: Id, type: ID }
       phone_number: { type: VARCHAR, size: 12 }
       password_hash: { type: HASH }
-      birth_date: { type: DATE }
+      birth_date: { type: DATETIME }
       first_name: { type: NAME }
       last_name: { type: NAME }
     constraints:
@@ -143,19 +143,18 @@ tables:
   survey_submissions:
     columns:
       survey_id: { type: ID }
-      submission_index: { type: INT }
-      registered_member_id: { type: INT }
+      survey_submission_index: { C# Short Single: Index, type: INT }
+      registered_member_id: { type: INT, nullable: true }
     constraints:
     - unique:
       - survey_id
-      - submission_index
-      - registered_member_id
+      - survey_submission_index
     - foreign:
       - - survey_id
-        - submission_index
+        - survey_submission_index
       - survey_submissions:
         - survey_id
-        - submission_index
+        - survey_submission_index
     - foreign:
       - - registered_member_id
       - registered_members:

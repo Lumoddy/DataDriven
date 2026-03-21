@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "dependencies": {
     "typescript": "^5.9.3",
     "yaml": "^2.8.2"

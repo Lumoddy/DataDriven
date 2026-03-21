@@ -1,4 +1,4 @@
-import { type DatabaseStructure } from "./preprocess.ts";
+import type { DatabaseStructure } from "./preprocess.ts";
 
 export function sqlFileFrom(structure: DatabaseStructure): string
 {
@@ -6,18 +6,18 @@ export function sqlFileFrom(structure: DatabaseStructure): string
 
     let sql = "";
 
-    for (const [name, table] of tables)
+    for (const [tableName, table] of tables)
     {
         if (table.columns.size !== 0)
         {
             sql += `
-CREATE TABLE `;
-            sql += name;
-            sql += ` (
+CREATE TABLE [`;
+            sql += tableName;
+            sql += `] (
 `;
 
             let firstColumn = true;
-            for (const [name, column] of table.columns)
+            for (const [columnName, column] of table.columns)
             {
                 if (firstColumn)
                     firstColumn = false;
@@ -25,9 +25,9 @@ CREATE TABLE `;
                     sql += `,
 `;
 
-                sql += `    `;
-                sql += name;
-                sql += ` `;
+                sql += `    [`;
+                sql += columnName;
+                sql += `] `;
                 sql += column.type;
 
                 if (column.size !== undefined)
@@ -45,8 +45,10 @@ CREATE TABLE `;
         }
     }
 
-    for (const [name, table] of tables)
+    for (const [tableName, table] of tables)
     {
+        let constraintCounter = 0;
+
         for (const constraint of table.constraints)
         {
             switch (constraint.type)
@@ -54,18 +56,33 @@ CREATE TABLE `;
                 case "primary":
                 {
                     sql += `
-ALTER TABLE `;
+ALTER TABLE [`;
 
-                    sql += name;
-                    sql += `
-    ADD CONSTRAINT unique_`;
+                    sql += tableName;
+                    sql += `]
+    ADD CONSTRAINT [unique_`;
 
-                    sql += constraint.columns.join("_and_");
-                    sql += ` PRIMARY KEY (
-        `;
+                    sql += tableName;
+                    sql += `_`;
 
-                    sql += constraint.columns.join(`,
-        `);
+                    constraintCounter += 1;
+                    sql += constraintCounter;
+                    sql += `] PRIMARY KEY (
+`;
+
+                    let columnFirst = true;
+                    for (const columnName of constraint.columns)
+                    {
+                        if (columnFirst)
+                            columnFirst = false;
+                        else
+                            sql += `,
+`;
+
+                        sql += `        [`;
+                        sql += columnName;
+                        sql += `]`;
+                    }
 
                     sql += `);
 `;
@@ -75,18 +92,33 @@ ALTER TABLE `;
                 case "unique":
                 {
                     sql += `
-ALTER TABLE `;
+ALTER TABLE [`;
 
-                    sql += name;
-                    sql += `
-    ADD CONSTRAINT unique_`;
+                    sql += tableName;
+                    sql += `]
+    ADD CONSTRAINT [unique_`;
 
-                    sql += constraint.columns.join("_and_");
-                    sql += ` UNIQUE (
-        `;
+                    sql += tableName;
+                    sql += `_`;
 
-                    sql += constraint.columns.join(`,
-        `);
+                    constraintCounter += 1;
+                    sql += constraintCounter;
+                    sql += `] UNIQUE (
+`;
+
+                    let columnFirst = true;
+                    for (const columnName of constraint.columns)
+                    {
+                        if (columnFirst)
+                            columnFirst = false;
+                        else
+                            sql += `,
+`;
+
+                        sql += `        [`;
+                        sql += columnName;
+                        sql += `]`;
+                    }
 
                     sql += `);
 `;
@@ -97,8 +129,10 @@ ALTER TABLE `;
         }
     }
 
-    for (const [name, table] of tables)
+    for (const [tableName, table] of tables)
     {
+        let constraintCounter = 0;
+
         for (const constraint of table.constraints)
         {
             switch (constraint.type)
@@ -106,31 +140,57 @@ ALTER TABLE `;
                 case "foreign":
                 {
                     sql += `
-ALTER TABLE `;
+ALTER TABLE [`;
 
-                    sql += name;
-                    sql += `
-    ADD CONSTRAINT `;
+                    sql += tableName;
+                    sql += `]
+    ADD CONSTRAINT [fk_`;
 
-                    sql += constraint.otherColumns.join("_and_");
-                    sql += `_in_`;
+                    sql += tableName;
+                    sql += `_to_`;
                     sql += constraint.other;
-                    sql += `
-        FOREIGN KEY (
-            `;
+                    sql += `_`;
 
-                    sql += constraint.columns.join(`,
-            `);
+                    constraintCounter += 1;
+                    sql += constraintCounter;
+                    sql += `]
+        FOREIGN KEY (
+`;
+
+                    let columnFirst = true;
+                    for (const columnName of constraint.columns)
+                    {
+                        if (columnFirst)
+                            columnFirst = false;
+                        else
+                            sql += `,
+`;
+
+                        sql += `            [`;
+                        sql += columnName;
+                        sql += `]`;
+                    }
 
                     sql += `)
-        REFERENCES `;
+        REFERENCES [`;
 
                     sql += constraint.other;
-                    sql += ` (
-            `;
+                    sql += `] (
+`;
 
-                    sql += constraint.otherColumns.join(`,
-            `);
+                    columnFirst = true;
+                    for (const columnName of constraint.otherColumns)
+                    {
+                        if (columnFirst)
+                            columnFirst = false;
+                        else
+                            sql += `,
+`;
+
+                        sql += `            [`;
+                        sql += columnName;
+                        sql += `]`;
+                    }
 
                     sql += `);
 `;
