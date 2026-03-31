@@ -53,7 +53,7 @@ public record Sql`;
 `;
 
         firstColumn = true;
-        for (const [columnName, column] of table.columns)
+        for (const [, column] of table.columns)
         {
             if (firstColumn)
                 firstColumn = false;
@@ -69,13 +69,36 @@ public record Sql`;
 
         cs += `)
 {
+    public const string TABLE = "[`;
+            cs += tableName;
+            cs += `]";
+`;
+
+        for (const [columnName, column] of table.columns)
+        {
+            cs += `
+    public const string `;
+            cs += column.blockShortenedSingle;
+            cs += ` = "[`;
+            cs += columnName;
+            cs += `]";
+
+    public const string TABLE_`;
+            cs += column.blockShortenedSingle;
+            cs += ` = $"{TABLE}.{`;
+            cs += column.blockShortenedSingle;
+            cs += `}";
+`;
+        }
+
+        cs += `
     public `;
         cs += table.pascalSingle;
         cs += ` Value => new(
 `;
 
         firstColumn = true;
-        for (const [columnName, column] of table.columns)
+        for (const [, column] of table.columns)
         {
             if (firstColumn)
                 firstColumn = false;
@@ -99,7 +122,7 @@ public record Sql`;
 `;
 
         firstColumn = true;
-        for (const [columnName, column] of table.columns)
+        for (const [, column] of table.columns)
         {
             if (firstColumn)
                 firstColumn = false;
@@ -174,10 +197,8 @@ public class SqlDataDrivenDataAccess(
 `;
 
             let firstColumn = true;
-            for (const columnName of constraint.columns)
+            for (const [, column] of constraint.columns)
             {
-                const column = table.columns.get(columnName) as DatabaseColumn;
-
                 if (firstColumn)
                     firstColumn = false;
                 else
@@ -196,7 +217,7 @@ public class SqlDataDrivenDataAccess(
             "SELECT `;
 
             firstColumn = true;
-            for (const [columnName, column] of table.columns)
+            for (const [columnName, ] of table.columns)
             {
                 if (firstColumn)
                     firstColumn = false;
@@ -231,10 +252,8 @@ public class SqlDataDrivenDataAccess(
 
 `;
 
-            for (const columnName of constraint.columns)
+            for (const [columnName, column] of constraint.columns)
             {
-                const column = table.columns.get(columnName) as DatabaseColumn;
-
                 cs += `        command.Parameters.Add("`;
                 cs += columnName;
                 cs += `", SqlDbType.`;
@@ -257,10 +276,8 @@ public class SqlDataDrivenDataAccess(
             cs += `(
 `;
             firstColumn = true;
-            for (const columnName of constraint.columns)
+            for (const [, column] of constraint.columns)
             {
-                const column = table.columns.get(columnName) as DatabaseColumn;
-
                 if (firstColumn)
                     firstColumn = false;
                 else
@@ -280,10 +297,8 @@ public class SqlDataDrivenDataAccess(
             cs += `Command(
 `;
             firstColumn = true;
-            for (const columnName of constraint.columns)
+            for (const [, column] of constraint.columns)
             {
-                const column = table.columns.get(columnName) as DatabaseColumn;
-
                 if (firstColumn)
                     firstColumn = false;
                 else
@@ -304,7 +319,7 @@ public class SqlDataDrivenDataAccess(
 `;
 
             let i = 0;
-            for (const [columnName, column] of table.columns)
+            for (const [, column] of table.columns)
             {
                 if (i !== 0)
                     cs += `,
@@ -332,10 +347,8 @@ public class SqlDataDrivenDataAccess(
             cs += `Async(
 `;
             firstColumn = true;
-            for (const columnName of constraint.columns)
+            for (const [, column] of constraint.columns)
             {
-                const column = table.columns.get(columnName) as DatabaseColumn;
-
                 if (firstColumn)
                     firstColumn = false;
                 else
@@ -354,10 +367,8 @@ public class SqlDataDrivenDataAccess(
             cs += table.pascalSingle;
             cs += `Async(
 `;
-            for (const columnName of constraint.columns)
+            for (const [, column] of constraint.columns)
             {
-                const column = table.columns.get(columnName) as DatabaseColumn;
-
                 cs += `            `;
                 cs += column.camelSingle;
                 cs += `,
@@ -374,10 +385,8 @@ public class SqlDataDrivenDataAccess(
             cs += table.pascalShortenedSingle;
             cs += `Async(
 `;
-            for (const columnName of constraint.columns)
+            for (const [, column] of constraint.columns)
             {
-                const column = table.columns.get(columnName) as DatabaseColumn;
-
                 cs += `        `;
                 cs += column.csSqlType;
                 cs += ` `;
@@ -393,10 +402,8 @@ public class SqlDataDrivenDataAccess(
             cs += `Command(
 `;
             firstColumn = true;
-            for (const columnName of constraint.columns)
+            for (const [, column] of constraint.columns)
             {
-                const column = table.columns.get(columnName) as DatabaseColumn;
-
                 if (firstColumn)
                     firstColumn = false;
                 else
@@ -417,7 +424,7 @@ public class SqlDataDrivenDataAccess(
 `;
 
             i = 0;
-            for (const [columnName, column] of table.columns)
+            for (const [, column] of table.columns)
             {
                 if (i !== 0)
                     cs += `,
@@ -442,7 +449,7 @@ public class SqlDataDrivenDataAccess(
             cs += `Command(
 `;
             firstColumn = true;
-            for (const [columnName, column] of table.columns)
+            for (const [, column] of table.columns)
             {
                 if (firstColumn)
                     firstColumn = false;
@@ -464,7 +471,7 @@ public class SqlDataDrivenDataAccess(
             cs += `] (`;
 
             firstColumn = true;
-            for (const [columnName, column] of table.columns)
+            for (const [columnName, ] of table.columns)
             {
                 if (firstColumn)
                     firstColumn = false;
@@ -479,7 +486,7 @@ public class SqlDataDrivenDataAccess(
             cs += `) VALUES (`;
 
             firstColumn = true;
-            for (const [columnName, column] of table.columns)
+            for (const [columnName, ] of table.columns)
             {
                 if (firstColumn)
                     firstColumn = false;
@@ -536,7 +543,7 @@ public class SqlDataDrivenDataAccess(
             cs += `Command(
 `;
             firstColumn = true;
-            for (const [columnName, column] of table.columns)
+            for (const [, column] of table.columns)
             {
                 if (firstColumn)
                     firstColumn = false;
@@ -583,7 +590,7 @@ public class SqlDataDrivenDataAccess(
             cs += `Command(
 `;
             firstColumn = true;
-            for (const [columnName, column] of table.columns)
+            for (const [, column] of table.columns)
             {
                 if (firstColumn)
                     firstColumn = false;
@@ -616,7 +623,7 @@ public class SqlDataDrivenDataAccess(
 }
 `;
 
-    for (const [tableName, table] of tables)
+    for (const [, table] of tables)
     {
         cs += `
 public class Sql`;
@@ -626,7 +633,7 @@ public class Sql`;
     SqlDataReader source,
 `;
 
-        for (const [columnName, column] of table.columns)
+        for (const [, column] of table.columns)
         {
             cs += `    int `;
             cs += column.camelSingle;
@@ -654,25 +661,25 @@ public class Sql`;
         get => new(
 `;
 
-            let firstColumn = true;
-            for (const [columnName, column] of table.columns)
-            {
-                if (firstColumn)
-                    firstColumn = false;
-                else
-                    cs += `,
+        let firstColumn = true;
+        for (const [, column] of table.columns)
+        {
+            if (firstColumn)
+                firstColumn = false;
+            else
+                cs += `,
 `;
 
-                cs += `            `;
-                cs += column.pascalSingle;
-                cs += `: source.Get`;
-                cs += column.csSqlType;
-                cs += `(`;
-                cs += column.camelSingle;
-                cs += `ColumnIndex)`;
-            }
+            cs += `            `;
+            cs += column.pascalSingle;
+            cs += `: source.Get`;
+            cs += column.csSqlType;
+            cs += `(`;
+            cs += column.camelSingle;
+            cs += `ColumnIndex)`;
+        }
 
-            cs += `);
+        cs += `);
     }
 
     object IEnumerator.Current => Current;
@@ -703,175 +710,3 @@ public class Sql`;
 
     return cs;
 }
-
-// public class SqlDataDrivenDataAccess(
-//     SqlConnection source,
-//     bool sourceConsumed = true): IAsyncDisposable, IDisposable
-// {
-//     public SqlConnection Source { get => source; }
-
-//     /// <summary>
-//     /// The call to `Dispose()` will be relayed to the source if this is `true`.
-//     /// </summary>
-//     public bool SourceConsumed { get => sourceConsumed; set => sourceConsumed = value; }
-
-//     private SqlCommand SelectSqlSurveyWithSurveyIdCommand(
-//         SqlInt32 surveyId)
-//     {
-//         var command = new SqlCommand(
-//             "SELECT [survey_id], [name], [description] FROM [surveys] WHERE [survey_id] = @survey_id",
-//             source);
-
-//         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-
-//         return command;
-//     }
-
-//     public SqlSurveyReader SelectSqlSurveyWithSurveyId(
-//         SqlInt32 surveyId)
-//     {
-//         var command = SelectSqlSurveyWithSurveyIdCommand(
-//             surveyId);
-            
-//         return new(command.ExecuteReader(), 0, 1, 2);
-//     }
-
-//     public Task<SqlSurveyReader> SelectSqlSurveyWithSurveyIdAsync(
-//         SqlInt32 surveyId)
-//     {
-//         return SelectSqlSurveyWithSurveyIdAsync(
-//             surveyId,
-//             CancellationToken.None);
-//     }
-
-//     public async Task<SqlSurveyReader> SelectSqlSurveyWithSurveyIdAsync(
-//         SqlInt32 surveyId,
-//         CancellationToken cancellationToken)
-//     {
-//         var command = SelectSqlSurveyWithSurveyIdCommand(
-//             surveyId);
-
-//         return new(await command.ExecuteReaderAsync(cancellationToken), 0, 1, 2);
-//     }
-
-//     private SqlCommand InsertSqlSurveyCommand(
-//         SqlInt32 surveyId,
-//         SqlString name,
-//         SqlString description)
-//     {
-//         var command = new SqlCommand(
-//             "INSERT INTO [surveys] ([survey_id], [name], [description]) VALUES (@survey_id, @name, @description)",
-//             source);
-
-//         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-//         command.Parameters.Add("name", SqlDbType.VarChar, 255).SqlValue = name;
-//         command.Parameters.Add("description", SqlDbType.VarChar, 4095).SqlValue = description;
-
-//         return command;
-//     }
-
-//     public SqlSurveyReader InsertSqlSurvey(SqlSurvey survey)
-//     {
-//         var command = InsertSqlSurveyCommand(
-//             survey.SurveyId,
-//             survey.Name,
-//             survey.Description);
-
-//         return new(command.ExecuteReader(), 0, 1, 2);
-//     }
-
-//     public Task<SqlSurveyReader> InsertSqlSurveyAsync(SqlSurvey survey)
-//     {
-//         return InsertSqlSurveyAsync(
-//             survey,
-//             CancellationToken.None);
-//     }
-
-//     public async Task<SqlSurveyReader> InsertSqlSurveyAsync(
-//         SqlSurvey survey,
-//         CancellationToken cancellationToken)
-//     {
-//         var command = InsertSqlSurveyCommand(
-//             survey.SurveyId,
-//             survey.Name,
-//             survey.Description);
-
-//         return new(await command.ExecuteReaderAsync(cancellationToken), 0, 1, 2);
-//     }
-
-//     public ValueTask DisposeAsync() => sourceConsumed ? source.DisposeAsync() : ValueTask.CompletedTask;
-
-//     public void Dispose()
-//     {
-//         if (sourceConsumed)
-//             source.Dispose();
-//     }
-// }
-
-// public class SqlSurveyReader(
-//     SqlDataReader source,
-//     int surveyIdColumnIndex,
-//     int nameColumnIndex,
-//     int descriptionColumnIndex,
-//     bool sourceConsumed = true) : IAsyncEnumerator<SqlSurvey>, IEnumerator<SqlSurvey>
-// {
-//     public SqlDataReader Source { get => source; }
-
-//     /// <summary>
-//     /// The call to `Dispose()` will be relayed to the source if this is `true`.
-//     /// </summary>
-//     public bool SourceConsumed { get => sourceConsumed; set => sourceConsumed = value; }
-
-//     public SqlSurvey Current
-//     {
-//         get => new SqlSurvey(
-//             SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
-//             Name: source.GetSqlString(nameColumnIndex),
-//             Description: source.GetSqlString(descriptionColumnIndex));
-//     }
-
-//     object IEnumerator.Current => Current;
-
-//     SqlSurvey IAsyncEnumerator<SqlSurvey>.Current => Current;
-
-//     public async ValueTask<bool> MoveNextAsync() => await source.ReadAsync();
-
-//     public ValueTask DisposeAsync() => sourceConsumed ? source.DisposeAsync() : ValueTask.CompletedTask;
-
-//     public bool MoveNext() => source.Read();
-
-//     [EditorBrowsable(EditorBrowsableState.Never)]
-//     public void Reset() => throw new InvalidOperationException();
-
-//     public void Dispose()
-//     {
-//         if (sourceConsumed)
-//             source.Dispose();
-//     }
-// }
-
-// public partial record Survey(
-//     int SurveyId,
-//     string Name,
-//     string Description);
-
-// public record SqlSurvey(
-//     SqlInt32 SurveyId,
-//     SqlString Name,
-//     SqlString Description)
-// {
-//     public Survey Value => new(
-//         SurveyId.Value,
-//         Name.Value,
-//         Description.Value);
-
-//     public SqlSurvey(Survey data) : this(
-//         data.SurveyId,
-//         data.Name,
-//         data.Description) { }
-
-//     public static explicit operator Survey(SqlSurvey value) => value.Value;
-//     public static explicit operator SqlSurvey(Survey value) => new(value);
-// }
-
-// public record SurveyPage(int SurveyId, int SurveyPageIndex, string Name, string Description);

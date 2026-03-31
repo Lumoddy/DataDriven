@@ -4,7 +4,9 @@ export function sqlFileFrom(structure: DatabaseStructure): string
 {
     const tables = structure.tables;
 
-    let sql = "";
+    let sql = `
+BEGIN TRANSACTION;
+`;
 
     for (const [tableName, table] of tables)
     {
@@ -34,6 +36,13 @@ CREATE TABLE [`;
                 {
                     sql += `(`;
                     sql += column.size;
+
+                    if (column.precision !== undefined)
+                    {
+                        sql += `, `;
+                        sql += column.precision;
+                    }
+
                     sql += `)`;
                 }
 
@@ -71,7 +80,7 @@ ALTER TABLE [`;
 `;
 
                     let columnFirst = true;
-                    for (const columnName of constraint.columns)
+                    for (const [columnName, ] of constraint.columns)
                     {
                         if (columnFirst)
                             columnFirst = false;
@@ -107,7 +116,7 @@ ALTER TABLE [`;
 `;
 
                     let columnFirst = true;
-                    for (const columnName of constraint.columns)
+                    for (const [columnName, ] of constraint.columns)
                     {
                         if (columnFirst)
                             columnFirst = false;
@@ -158,7 +167,7 @@ ALTER TABLE [`;
 `;
 
                     let columnFirst = true;
-                    for (const columnName of constraint.columns)
+                    for (const [columnName, ] of constraint.columns)
                     {
                         if (columnFirst)
                             columnFirst = false;
@@ -179,7 +188,7 @@ ALTER TABLE [`;
 `;
 
                     columnFirst = true;
-                    for (const columnName of constraint.otherColumns)
+                    for (const [columnName, ] of constraint.otherColumns)
                     {
                         if (columnFirst)
                             columnFirst = false;
@@ -200,6 +209,10 @@ ALTER TABLE [`;
             }
         }
     }
+
+    sql += `
+COMMIT TRANSACTION;
+`;
 
     return sql;
 }

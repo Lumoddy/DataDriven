@@ -1,0 +1,1 @@
+node ./Build/build.ts

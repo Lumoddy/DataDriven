@@ -10,22 +10,44 @@ namespace DataDriven.Data;
 
 public partial record Survey(
     int Id,
-    string Name,
+    string Title,
+    string Author,
     string Description);
 
 public record SqlSurvey(
     SqlInt32 SurveyId,
-    SqlString Name,
-    SqlString Description)
+    SqlString SurveyTitle,
+    SqlString SurveyAuthor,
+    SqlString SurveyDescription)
 {
+    public const string TABLE = "[surveys]";
+
+    public const string ID = "[survey_id]";
+
+    public const string TABLE_ID = $"{TABLE}.{ID}";
+
+    public const string TITLE = "[survey_title]";
+
+    public const string TABLE_TITLE = $"{TABLE}.{TITLE}";
+
+    public const string AUTHOR = "[survey_author]";
+
+    public const string TABLE_AUTHOR = $"{TABLE}.{AUTHOR}";
+
+    public const string DESCRIPTION = "[survey_description]";
+
+    public const string TABLE_DESCRIPTION = $"{TABLE}.{DESCRIPTION}";
+
     public Survey Value => new(
         SurveyId.Value,
-        Name.Value,
-        Description.Value);
+        SurveyTitle.Value,
+        SurveyAuthor.Value,
+        SurveyDescription.Value);
 
     public SqlSurvey(Survey data) : this(
         data.Id,
-        data.Name,
+        data.Title,
+        data.Author,
         data.Description) { }
 
     public static explicit operator Survey(SqlSurvey value) => value.Value;
@@ -34,130 +56,48 @@ public record SqlSurvey(
 
 public partial record SurveyPage(
     int SurveyId,
-    int PageIndex,
-    string Name,
+    int Index,
+    string Title,
     string Description);
 
 public record SqlSurveyPage(
     SqlInt32 SurveyId,
     SqlInt32 SurveyPageIndex,
-    SqlString Name,
-    SqlString Description)
+    SqlString SurveyPageTitle,
+    SqlString SurveyPageDescription)
 {
+    public const string TABLE = "[survey_pages]";
+
+    public const string SURVEY_ID = "[survey_id]";
+
+    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+
+    public const string INDEX = "[survey_page_index]";
+
+    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+
+    public const string TITLE = "[survey_page_title]";
+
+    public const string TABLE_TITLE = $"{TABLE}.{TITLE}";
+
+    public const string DESCRIPTION = "[survey_page_description]";
+
+    public const string TABLE_DESCRIPTION = $"{TABLE}.{DESCRIPTION}";
+
     public SurveyPage Value => new(
         SurveyId.Value,
         SurveyPageIndex.Value,
-        Name.Value,
-        Description.Value);
+        SurveyPageTitle.Value,
+        SurveyPageDescription.Value);
 
     public SqlSurveyPage(SurveyPage data) : this(
         data.SurveyId,
-        data.PageIndex,
-        data.Name,
+        data.Index,
+        data.Title,
         data.Description) { }
 
     public static explicit operator SurveyPage(SqlSurveyPage value) => value.Value;
     public static implicit operator SqlSurveyPage(SurveyPage value) => new(value);
-}
-
-public partial record SurveyQuestion(
-    int SurveyId,
-    int PageIndex,
-    int QuestionIndex,
-    string Prompt,
-    byte AnswerType);
-
-public record SqlSurveyQuestion(
-    SqlInt32 SurveyId,
-    SqlInt32 SurveyPageIndex,
-    SqlInt32 SurveyQuestionIndex,
-    SqlString Prompt,
-    SqlByte AnswerType)
-{
-    public SurveyQuestion Value => new(
-        SurveyId.Value,
-        SurveyPageIndex.Value,
-        SurveyQuestionIndex.Value,
-        Prompt.Value,
-        AnswerType.Value);
-
-    public SqlSurveyQuestion(SurveyQuestion data) : this(
-        data.SurveyId,
-        data.PageIndex,
-        data.QuestionIndex,
-        data.Prompt,
-        data.AnswerType) { }
-
-    public static explicit operator SurveyQuestion(SqlSurveyQuestion value) => value.Value;
-    public static implicit operator SqlSurveyQuestion(SurveyQuestion value) => new(value);
-}
-
-public partial record SurveyQuestionCondition(
-    int SurveyId,
-    int PageIndex,
-    int QuestionIndex,
-    int OtherPageIndex,
-    int OtherQuestionIndex,
-    string Condition);
-
-public record SqlSurveyQuestionCondition(
-    SqlInt32 SurveyId,
-    SqlInt32 SurveyPageIndex,
-    SqlInt32 SurveyQuestionIndex,
-    SqlInt32 OtherSurveyPageIndex,
-    SqlInt32 OtherSurveyQuestionIndex,
-    SqlString Condition)
-{
-    public SurveyQuestionCondition Value => new(
-        SurveyId.Value,
-        SurveyPageIndex.Value,
-        SurveyQuestionIndex.Value,
-        OtherSurveyPageIndex.Value,
-        OtherSurveyQuestionIndex.Value,
-        Condition.Value);
-
-    public SqlSurveyQuestionCondition(SurveyQuestionCondition data) : this(
-        data.SurveyId,
-        data.PageIndex,
-        data.QuestionIndex,
-        data.OtherPageIndex,
-        data.OtherQuestionIndex,
-        data.Condition) { }
-
-    public static explicit operator SurveyQuestionCondition(SqlSurveyQuestionCondition value) => value.Value;
-    public static implicit operator SqlSurveyQuestionCondition(SurveyQuestionCondition value) => new(value);
-}
-
-public partial record SurveyAnswer(
-    int SurveyId,
-    int PageIndex,
-    int QuestionIndex,
-    int SurveySubmissionIndex,
-    string AnswerValue);
-
-public record SqlSurveyAnswer(
-    SqlInt32 SurveyId,
-    SqlInt32 SurveyPageIndex,
-    SqlInt32 SurveyQuestionIndex,
-    SqlInt32 SurveySubmissionIndex,
-    SqlString AnswerValue)
-{
-    public SurveyAnswer Value => new(
-        SurveyId.Value,
-        SurveyPageIndex.Value,
-        SurveyQuestionIndex.Value,
-        SurveySubmissionIndex.Value,
-        AnswerValue.Value);
-
-    public SqlSurveyAnswer(SurveyAnswer data) : this(
-        data.SurveyId,
-        data.PageIndex,
-        data.QuestionIndex,
-        data.SurveySubmissionIndex,
-        data.AnswerValue) { }
-
-    public static explicit operator SurveyAnswer(SqlSurveyAnswer value) => value.Value;
-    public static implicit operator SqlSurveyAnswer(SurveyAnswer value) => new(value);
 }
 
 public partial record AnswerType(
@@ -166,11 +106,21 @@ public partial record AnswerType(
 
 public record SqlAnswerType(
     SqlByte AnswerTypeId,
-    SqlString Name)
+    SqlString AnswerTypeName)
 {
+    public const string TABLE = "[answer_types]";
+
+    public const string ID = "[answer_type_id]";
+
+    public const string TABLE_ID = $"{TABLE}.{ID}";
+
+    public const string NAME = "[answer_type_name]";
+
+    public const string TABLE_NAME = $"{TABLE}.{NAME}";
+
     public AnswerType Value => new(
         AnswerTypeId.Value,
-        Name.Value);
+        AnswerTypeName.Value);
 
     public SqlAnswerType(AnswerType data) : this(
         data.Id,
@@ -180,34 +130,114 @@ public record SqlAnswerType(
     public static implicit operator SqlAnswerType(AnswerType value) => new(value);
 }
 
+public partial record SurveyQuestion(
+    int SurveyId,
+    int PageIndex,
+    int Index,
+    string Title,
+    byte Description);
+
+public record SqlSurveyQuestion(
+    SqlInt32 SurveyId,
+    SqlInt32 SurveyPageIndex,
+    SqlInt32 SurveyQuestionIndex,
+    SqlString SurveyQuestionPrompt,
+    SqlByte SurveyQuestionAnswerType)
+{
+    public const string TABLE = "[survey_questions]";
+
+    public const string SURVEY_ID = "[survey_id]";
+
+    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+
+    public const string PAGE_INDEX = "[survey_page_index]";
+
+    public const string TABLE_PAGE_INDEX = $"{TABLE}.{PAGE_INDEX}";
+
+    public const string INDEX = "[survey_question_index]";
+
+    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+
+    public const string TITLE = "[survey_question_prompt]";
+
+    public const string TABLE_TITLE = $"{TABLE}.{TITLE}";
+
+    public const string DESCRIPTION = "[survey_question_answer_type]";
+
+    public const string TABLE_DESCRIPTION = $"{TABLE}.{DESCRIPTION}";
+
+    public SurveyQuestion Value => new(
+        SurveyId.Value,
+        SurveyPageIndex.Value,
+        SurveyQuestionIndex.Value,
+        SurveyQuestionPrompt.Value,
+        SurveyQuestionAnswerType.Value);
+
+    public SqlSurveyQuestion(SurveyQuestion data) : this(
+        data.SurveyId,
+        data.PageIndex,
+        data.Index,
+        data.Title,
+        data.Description) { }
+
+    public static explicit operator SurveyQuestion(SqlSurveyQuestion value) => value.Value;
+    public static implicit operator SqlSurveyQuestion(SurveyQuestion value) => new(value);
+}
+
 public partial record RegisteredMember(
     int Id,
-    string PhoneNumber,
     string PasswordHash,
+    string PhoneNumber,
     DateTime BirthDate,
     string FirstName,
     string LastName);
 
 public record SqlRegisteredMember(
     SqlInt32 RegisteredMemberId,
-    SqlString PhoneNumber,
-    SqlString PasswordHash,
-    SqlDateTime BirthDate,
-    SqlString FirstName,
-    SqlString LastName)
+    SqlString RegisteredMemberPasswordHash,
+    SqlString RegisteredMemberPhoneNumber,
+    SqlDateTime RegisteredMemberBirthDate,
+    SqlString RegisteredMemberFirstName,
+    SqlString RegisteredMemberLastName)
 {
+    public const string TABLE = "[registered_members]";
+
+    public const string ID = "[registered_member_id]";
+
+    public const string TABLE_ID = $"{TABLE}.{ID}";
+
+    public const string PASSWORD_HASH = "[registered_member_password_hash]";
+
+    public const string TABLE_PASSWORD_HASH = $"{TABLE}.{PASSWORD_HASH}";
+
+    public const string PHONE_NUMBER = "[registered_member_phone_number]";
+
+    public const string TABLE_PHONE_NUMBER = $"{TABLE}.{PHONE_NUMBER}";
+
+    public const string BIRTH_DATE = "[registered_member_birth_date]";
+
+    public const string TABLE_BIRTH_DATE = $"{TABLE}.{BIRTH_DATE}";
+
+    public const string FIRST_NAME = "[registered_member_first_name]";
+
+    public const string TABLE_FIRST_NAME = $"{TABLE}.{FIRST_NAME}";
+
+    public const string LAST_NAME = "[registered_member_last_name]";
+
+    public const string TABLE_LAST_NAME = $"{TABLE}.{LAST_NAME}";
+
     public RegisteredMember Value => new(
         RegisteredMemberId.Value,
-        PhoneNumber.Value,
-        PasswordHash.Value,
-        BirthDate.Value,
-        FirstName.Value,
-        LastName.Value);
+        RegisteredMemberPasswordHash.Value,
+        RegisteredMemberPhoneNumber.Value,
+        RegisteredMemberBirthDate.Value,
+        RegisteredMemberFirstName.Value,
+        RegisteredMemberLastName.Value);
 
     public SqlRegisteredMember(RegisteredMember data) : this(
         data.Id,
-        data.PhoneNumber,
         data.PasswordHash,
+        data.PhoneNumber,
         data.BirthDate,
         data.FirstName,
         data.LastName) { }
@@ -216,28 +246,854 @@ public record SqlRegisteredMember(
     public static implicit operator SqlRegisteredMember(RegisteredMember value) => new(value);
 }
 
-public partial record SurveySubmission(
+public partial record Submission(
     int SurveyId,
     int Index,
     int? RegisteredMemberId);
 
-public record SqlSurveySubmission(
+public record SqlSubmission(
     SqlInt32 SurveyId,
-    SqlInt32 SurveySubmissionIndex,
+    SqlInt32 SubmissionIndex,
     SqlInt32 RegisteredMemberId)
 {
-    public SurveySubmission Value => new(
+    public const string TABLE = "[submissions]";
+
+    public const string SURVEY_ID = "[survey_id]";
+
+    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+
+    public const string INDEX = "[submission_index]";
+
+    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+
+    public const string REGISTERED_MEMBER_ID = "[registered_member_id]";
+
+    public const string TABLE_REGISTERED_MEMBER_ID = $"{TABLE}.{REGISTERED_MEMBER_ID}";
+
+    public Submission Value => new(
         SurveyId.Value,
-        SurveySubmissionIndex.Value,
+        SubmissionIndex.Value,
         RegisteredMemberId.Value);
 
-    public SqlSurveySubmission(SurveySubmission data) : this(
+    public SqlSubmission(Submission data) : this(
         data.SurveyId,
         data.Index,
         data.RegisteredMemberId ?? SqlInt32.Null) { }
 
-    public static explicit operator SurveySubmission(SqlSurveySubmission value) => value.Value;
-    public static implicit operator SqlSurveySubmission(SurveySubmission value) => new(value);
+    public static explicit operator Submission(SqlSubmission value) => value.Value;
+    public static implicit operator SqlSubmission(Submission value) => new(value);
+}
+
+public partial record SubmissionTextAnswer(
+    int SurveyId,
+    int PageIndex,
+    int QuestionIndex,
+    int SubmissionIndex,
+    int AnswerIndex,
+    string Value);
+
+public record SqlSubmissionTextAnswer(
+    SqlInt32 SurveyId,
+    SqlInt32 SurveyPageIndex,
+    SqlInt32 SurveyQuestionIndex,
+    SqlInt32 SubmissionIndex,
+    SqlInt32 SubmissionAnswerIndex,
+    SqlString SubmissionAnswerText)
+{
+    public const string TABLE = "[submission_text_answers]";
+
+    public const string SURVEY_ID = "[survey_id]";
+
+    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+
+    public const string PAGE_INDEX = "[survey_page_index]";
+
+    public const string TABLE_PAGE_INDEX = $"{TABLE}.{PAGE_INDEX}";
+
+    public const string QUESTION_INDEX = "[survey_question_index]";
+
+    public const string TABLE_QUESTION_INDEX = $"{TABLE}.{QUESTION_INDEX}";
+
+    public const string SUBMISSION_INDEX = "[submission_index]";
+
+    public const string TABLE_SUBMISSION_INDEX = $"{TABLE}.{SUBMISSION_INDEX}";
+
+    public const string ANSWER_INDEX = "[submission_answer_index]";
+
+    public const string TABLE_ANSWER_INDEX = $"{TABLE}.{ANSWER_INDEX}";
+
+    public const string VALUE = "[submission_answer_text]";
+
+    public const string TABLE_VALUE = $"{TABLE}.{VALUE}";
+
+    public SubmissionTextAnswer Value => new(
+        SurveyId.Value,
+        SurveyPageIndex.Value,
+        SurveyQuestionIndex.Value,
+        SubmissionIndex.Value,
+        SubmissionAnswerIndex.Value,
+        SubmissionAnswerText.Value);
+
+    public SqlSubmissionTextAnswer(SubmissionTextAnswer data) : this(
+        data.SurveyId,
+        data.PageIndex,
+        data.QuestionIndex,
+        data.SubmissionIndex,
+        data.AnswerIndex,
+        data.Value) { }
+
+    public static explicit operator SubmissionTextAnswer(SqlSubmissionTextAnswer value) => value.Value;
+    public static implicit operator SqlSubmissionTextAnswer(SubmissionTextAnswer value) => new(value);
+}
+
+public partial record SubmissionIntegerAnswer(
+    int SurveyId,
+    int PageIndex,
+    int QuestionIndex,
+    int SubmissionIndex,
+    int AnswerIndex,
+    int Value);
+
+public record SqlSubmissionIntegerAnswer(
+    SqlInt32 SurveyId,
+    SqlInt32 SurveyPageIndex,
+    SqlInt32 SurveyQuestionIndex,
+    SqlInt32 SubmissionIndex,
+    SqlInt32 SubmissionAnswerIndex,
+    SqlInt32 SubmissionAnswerInteger)
+{
+    public const string TABLE = "[submission_integer_answers]";
+
+    public const string SURVEY_ID = "[survey_id]";
+
+    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+
+    public const string PAGE_INDEX = "[survey_page_index]";
+
+    public const string TABLE_PAGE_INDEX = $"{TABLE}.{PAGE_INDEX}";
+
+    public const string QUESTION_INDEX = "[survey_question_index]";
+
+    public const string TABLE_QUESTION_INDEX = $"{TABLE}.{QUESTION_INDEX}";
+
+    public const string SUBMISSION_INDEX = "[submission_index]";
+
+    public const string TABLE_SUBMISSION_INDEX = $"{TABLE}.{SUBMISSION_INDEX}";
+
+    public const string ANSWER_INDEX = "[submission_answer_index]";
+
+    public const string TABLE_ANSWER_INDEX = $"{TABLE}.{ANSWER_INDEX}";
+
+    public const string VALUE = "[submission_answer_integer]";
+
+    public const string TABLE_VALUE = $"{TABLE}.{VALUE}";
+
+    public SubmissionIntegerAnswer Value => new(
+        SurveyId.Value,
+        SurveyPageIndex.Value,
+        SurveyQuestionIndex.Value,
+        SubmissionIndex.Value,
+        SubmissionAnswerIndex.Value,
+        SubmissionAnswerInteger.Value);
+
+    public SqlSubmissionIntegerAnswer(SubmissionIntegerAnswer data) : this(
+        data.SurveyId,
+        data.PageIndex,
+        data.QuestionIndex,
+        data.SubmissionIndex,
+        data.AnswerIndex,
+        data.Value) { }
+
+    public static explicit operator SubmissionIntegerAnswer(SqlSubmissionIntegerAnswer value) => value.Value;
+    public static implicit operator SqlSubmissionIntegerAnswer(SubmissionIntegerAnswer value) => new(value);
+}
+
+public partial record SubmissionBoolAnswer(
+    int SurveyId,
+    int PageIndex,
+    int QuestionIndex,
+    int SubmissionIndex,
+    int Index,
+    bool Value);
+
+public record SqlSubmissionBoolAnswer(
+    SqlInt32 SurveyId,
+    SqlInt32 SurveyPageIndex,
+    SqlInt32 SurveyQuestionIndex,
+    SqlInt32 SubmissionIndex,
+    SqlInt32 SubmissionAnswerIndex,
+    SqlBoolean SubmissionAnswerBool)
+{
+    public const string TABLE = "[submission_bool_answers]";
+
+    public const string SURVEY_ID = "[survey_id]";
+
+    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+
+    public const string PAGE_INDEX = "[survey_page_index]";
+
+    public const string TABLE_PAGE_INDEX = $"{TABLE}.{PAGE_INDEX}";
+
+    public const string QUESTION_INDEX = "[survey_question_index]";
+
+    public const string TABLE_QUESTION_INDEX = $"{TABLE}.{QUESTION_INDEX}";
+
+    public const string SUBMISSION_INDEX = "[submission_index]";
+
+    public const string TABLE_SUBMISSION_INDEX = $"{TABLE}.{SUBMISSION_INDEX}";
+
+    public const string INDEX = "[submission_answer_index]";
+
+    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+
+    public const string VALUE = "[submission_answer_bool]";
+
+    public const string TABLE_VALUE = $"{TABLE}.{VALUE}";
+
+    public SubmissionBoolAnswer Value => new(
+        SurveyId.Value,
+        SurveyPageIndex.Value,
+        SurveyQuestionIndex.Value,
+        SubmissionIndex.Value,
+        SubmissionAnswerIndex.Value,
+        SubmissionAnswerBool.Value);
+
+    public SqlSubmissionBoolAnswer(SubmissionBoolAnswer data) : this(
+        data.SurveyId,
+        data.PageIndex,
+        data.QuestionIndex,
+        data.SubmissionIndex,
+        data.Index,
+        data.Value) { }
+
+    public static explicit operator SubmissionBoolAnswer(SqlSubmissionBoolAnswer value) => value.Value;
+    public static implicit operator SqlSubmissionBoolAnswer(SubmissionBoolAnswer value) => new(value);
+}
+
+public partial record SurveyQuestionAnswerOption(
+    int SurveyId,
+    int PageIndex,
+    int QuestionIndex,
+    int Index,
+    string Text);
+
+public record SqlSurveyQuestionAnswerOption(
+    SqlInt32 SurveyId,
+    SqlInt32 SurveyPageIndex,
+    SqlInt32 SurveyQuestionIndex,
+    SqlInt32 SurveyAnswerOptionIndex,
+    SqlString SurveyAnswerOptionText)
+{
+    public const string TABLE = "[survey_question_answer_options]";
+
+    public const string SURVEY_ID = "[survey_id]";
+
+    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+
+    public const string PAGE_INDEX = "[survey_page_index]";
+
+    public const string TABLE_PAGE_INDEX = $"{TABLE}.{PAGE_INDEX}";
+
+    public const string QUESTION_INDEX = "[survey_question_index]";
+
+    public const string TABLE_QUESTION_INDEX = $"{TABLE}.{QUESTION_INDEX}";
+
+    public const string INDEX = "[survey_answer_option_index]";
+
+    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+
+    public const string TEXT = "[survey_answer_option_text]";
+
+    public const string TABLE_TEXT = $"{TABLE}.{TEXT}";
+
+    public SurveyQuestionAnswerOption Value => new(
+        SurveyId.Value,
+        SurveyPageIndex.Value,
+        SurveyQuestionIndex.Value,
+        SurveyAnswerOptionIndex.Value,
+        SurveyAnswerOptionText.Value);
+
+    public SqlSurveyQuestionAnswerOption(SurveyQuestionAnswerOption data) : this(
+        data.SurveyId,
+        data.PageIndex,
+        data.QuestionIndex,
+        data.Index,
+        data.Text) { }
+
+    public static explicit operator SurveyQuestionAnswerOption(SqlSurveyQuestionAnswerOption value) => value.Value;
+    public static implicit operator SqlSurveyQuestionAnswerOption(SurveyQuestionAnswerOption value) => new(value);
+}
+
+public partial record SurveyQuestionShowConditionType(
+    byte Id,
+    string Name);
+
+public record SqlSurveyQuestionShowConditionType(
+    SqlByte SurveyQuestionShowConditionTypeId,
+    SqlString SurveyQuestionShowConditionTypeName)
+{
+    public const string TABLE = "[survey_question_show_condition_types]";
+
+    public const string ID = "[survey_question_show_condition_type_id]";
+
+    public const string TABLE_ID = $"{TABLE}.{ID}";
+
+    public const string NAME = "[survey_question_show_condition_type_name]";
+
+    public const string TABLE_NAME = $"{TABLE}.{NAME}";
+
+    public SurveyQuestionShowConditionType Value => new(
+        SurveyQuestionShowConditionTypeId.Value,
+        SurveyQuestionShowConditionTypeName.Value);
+
+    public SqlSurveyQuestionShowConditionType(SurveyQuestionShowConditionType data) : this(
+        data.Id,
+        data.Name) { }
+
+    public static explicit operator SurveyQuestionShowConditionType(SqlSurveyQuestionShowConditionType value) => value.Value;
+    public static implicit operator SqlSurveyQuestionShowConditionType(SurveyQuestionShowConditionType value) => new(value);
+}
+
+public partial record SurveyQuestionShowCondition(
+    int SurveyId,
+    int AffectedPageIndex,
+    int AffectedQuestionIndex,
+    int Index,
+    byte Type,
+    bool IsOrOperator);
+
+public record SqlSurveyQuestionShowCondition(
+    SqlInt32 SurveyId,
+    SqlInt32 AffectedSurveyPageIndex,
+    SqlInt32 AffectedSurveyQuestionIndex,
+    SqlInt32 SurveyQuestionShowConditionIndex,
+    SqlByte SurveyQuestionShowConditionType,
+    SqlBoolean SurveyQuestionShowConditionOperator)
+{
+    public const string TABLE = "[survey_question_show_conditions]";
+
+    public const string SURVEY_ID = "[survey_id]";
+
+    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+
+    public const string AFFECTED_PAGE_INDEX = "[affected_survey_page_index]";
+
+    public const string TABLE_AFFECTED_PAGE_INDEX = $"{TABLE}.{AFFECTED_PAGE_INDEX}";
+
+    public const string AFFECTED_QUESTION_INDEX = "[affected_survey_question_index]";
+
+    public const string TABLE_AFFECTED_QUESTION_INDEX = $"{TABLE}.{AFFECTED_QUESTION_INDEX}";
+
+    public const string INDEX = "[survey_question_show_condition_index]";
+
+    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+
+    public const string TYPE = "[survey_question_show_condition_type]";
+
+    public const string TABLE_TYPE = $"{TABLE}.{TYPE}";
+
+    public const string IS_OR_OPERATOR = "[survey_question_show_condition_operator]";
+
+    public const string TABLE_IS_OR_OPERATOR = $"{TABLE}.{IS_OR_OPERATOR}";
+
+    public SurveyQuestionShowCondition Value => new(
+        SurveyId.Value,
+        AffectedSurveyPageIndex.Value,
+        AffectedSurveyQuestionIndex.Value,
+        SurveyQuestionShowConditionIndex.Value,
+        SurveyQuestionShowConditionType.Value,
+        SurveyQuestionShowConditionOperator.Value);
+
+    public SqlSurveyQuestionShowCondition(SurveyQuestionShowCondition data) : this(
+        data.SurveyId,
+        data.AffectedPageIndex,
+        data.AffectedQuestionIndex,
+        data.Index,
+        data.Type,
+        data.IsOrOperator) { }
+
+    public static explicit operator SurveyQuestionShowCondition(SqlSurveyQuestionShowCondition value) => value.Value;
+    public static implicit operator SqlSurveyQuestionShowCondition(SurveyQuestionShowCondition value) => new(value);
+}
+
+public partial record SurveyQuestionShowConditionsRefArg(
+    int SurveyId,
+    int AffectedPageIndex,
+    int AffectedQuestionIndex,
+    int Index,
+    int ArgIndex,
+    int ReferencedPageIndex,
+    int ReferencedQuestionIndex);
+
+public record SqlSurveyQuestionShowConditionsRefArg(
+    SqlInt32 SurveyId,
+    SqlInt32 AffectedSurveyPageIndex,
+    SqlInt32 AffectedSurveyQuestionIndex,
+    SqlInt32 SurveyQuestionShowConditionIndex,
+    SqlInt32 SurveyQuestionShowConditionArgIndex,
+    SqlInt32 ReferencedSurveyPageIndex,
+    SqlInt32 ReferencedSurveyQuestionIndex)
+{
+    public const string TABLE = "[survey_question_show_conditions_ref_args]";
+
+    public const string SURVEY_ID = "[survey_id]";
+
+    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+
+    public const string AFFECTED_PAGE_INDEX = "[affected_survey_page_index]";
+
+    public const string TABLE_AFFECTED_PAGE_INDEX = $"{TABLE}.{AFFECTED_PAGE_INDEX}";
+
+    public const string AFFECTED_QUESTION_INDEX = "[affected_survey_question_index]";
+
+    public const string TABLE_AFFECTED_QUESTION_INDEX = $"{TABLE}.{AFFECTED_QUESTION_INDEX}";
+
+    public const string INDEX = "[survey_question_show_condition_index]";
+
+    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+
+    public const string ARG_INDEX = "[survey_question_show_condition_arg_index]";
+
+    public const string TABLE_ARG_INDEX = $"{TABLE}.{ARG_INDEX}";
+
+    public const string REFERENCED_PAGE_INDEX = "[referenced_survey_page_index]";
+
+    public const string TABLE_REFERENCED_PAGE_INDEX = $"{TABLE}.{REFERENCED_PAGE_INDEX}";
+
+    public const string REFERENCED_QUESTION_INDEX = "[referenced_survey_question_index]";
+
+    public const string TABLE_REFERENCED_QUESTION_INDEX = $"{TABLE}.{REFERENCED_QUESTION_INDEX}";
+
+    public SurveyQuestionShowConditionsRefArg Value => new(
+        SurveyId.Value,
+        AffectedSurveyPageIndex.Value,
+        AffectedSurveyQuestionIndex.Value,
+        SurveyQuestionShowConditionIndex.Value,
+        SurveyQuestionShowConditionArgIndex.Value,
+        ReferencedSurveyPageIndex.Value,
+        ReferencedSurveyQuestionIndex.Value);
+
+    public SqlSurveyQuestionShowConditionsRefArg(SurveyQuestionShowConditionsRefArg data) : this(
+        data.SurveyId,
+        data.AffectedPageIndex,
+        data.AffectedQuestionIndex,
+        data.Index,
+        data.ArgIndex,
+        data.ReferencedPageIndex,
+        data.ReferencedQuestionIndex) { }
+
+    public static explicit operator SurveyQuestionShowConditionsRefArg(SqlSurveyQuestionShowConditionsRefArg value) => value.Value;
+    public static implicit operator SqlSurveyQuestionShowConditionsRefArg(SurveyQuestionShowConditionsRefArg value) => new(value);
+}
+
+public partial record SurveyQuestionShowConditionsIntegerArg(
+    int SurveyId,
+    int AffectedPageIndex,
+    int AffectedQuestionIndex,
+    int Index,
+    int ArgIndex,
+    int ArgValue);
+
+public record SqlSurveyQuestionShowConditionsIntegerArg(
+    SqlInt32 SurveyId,
+    SqlInt32 AffectedSurveyPageIndex,
+    SqlInt32 AffectedSurveyQuestionIndex,
+    SqlInt32 SurveyQuestionShowConditionIndex,
+    SqlInt32 SurveyQuestionShowConditionArgIndex,
+    SqlInt32 SurveyQuestionShowConditionArgInteger)
+{
+    public const string TABLE = "[survey_question_show_conditions_integer_args]";
+
+    public const string SURVEY_ID = "[survey_id]";
+
+    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+
+    public const string AFFECTED_PAGE_INDEX = "[affected_survey_page_index]";
+
+    public const string TABLE_AFFECTED_PAGE_INDEX = $"{TABLE}.{AFFECTED_PAGE_INDEX}";
+
+    public const string AFFECTED_QUESTION_INDEX = "[affected_survey_question_index]";
+
+    public const string TABLE_AFFECTED_QUESTION_INDEX = $"{TABLE}.{AFFECTED_QUESTION_INDEX}";
+
+    public const string INDEX = "[survey_question_show_condition_index]";
+
+    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+
+    public const string ARG_INDEX = "[survey_question_show_condition_arg_index]";
+
+    public const string TABLE_ARG_INDEX = $"{TABLE}.{ARG_INDEX}";
+
+    public const string ARG_VALUE = "[survey_question_show_condition_arg_integer]";
+
+    public const string TABLE_ARG_VALUE = $"{TABLE}.{ARG_VALUE}";
+
+    public SurveyQuestionShowConditionsIntegerArg Value => new(
+        SurveyId.Value,
+        AffectedSurveyPageIndex.Value,
+        AffectedSurveyQuestionIndex.Value,
+        SurveyQuestionShowConditionIndex.Value,
+        SurveyQuestionShowConditionArgIndex.Value,
+        SurveyQuestionShowConditionArgInteger.Value);
+
+    public SqlSurveyQuestionShowConditionsIntegerArg(SurveyQuestionShowConditionsIntegerArg data) : this(
+        data.SurveyId,
+        data.AffectedPageIndex,
+        data.AffectedQuestionIndex,
+        data.Index,
+        data.ArgIndex,
+        data.ArgValue) { }
+
+    public static explicit operator SurveyQuestionShowConditionsIntegerArg(SqlSurveyQuestionShowConditionsIntegerArg value) => value.Value;
+    public static implicit operator SqlSurveyQuestionShowConditionsIntegerArg(SurveyQuestionShowConditionsIntegerArg value) => new(value);
+}
+
+public partial record SurveyQuestionShowConditionsTextArg(
+    int SurveyId,
+    int AffectedPageIndex,
+    int AffectedQuestionIndex,
+    int Index,
+    int ArgIndex,
+    string ArgValue);
+
+public record SqlSurveyQuestionShowConditionsTextArg(
+    SqlInt32 SurveyId,
+    SqlInt32 AffectedSurveyPageIndex,
+    SqlInt32 AffectedSurveyQuestionIndex,
+    SqlInt32 SurveyQuestionShowConditionIndex,
+    SqlInt32 SurveyQuestionShowConditionArgIndex,
+    SqlString SurveyQuestionShowConditionArgText)
+{
+    public const string TABLE = "[survey_question_show_conditions_text_args]";
+
+    public const string SURVEY_ID = "[survey_id]";
+
+    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+
+    public const string AFFECTED_PAGE_INDEX = "[affected_survey_page_index]";
+
+    public const string TABLE_AFFECTED_PAGE_INDEX = $"{TABLE}.{AFFECTED_PAGE_INDEX}";
+
+    public const string AFFECTED_QUESTION_INDEX = "[affected_survey_question_index]";
+
+    public const string TABLE_AFFECTED_QUESTION_INDEX = $"{TABLE}.{AFFECTED_QUESTION_INDEX}";
+
+    public const string INDEX = "[survey_question_show_condition_index]";
+
+    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+
+    public const string ARG_INDEX = "[survey_question_show_condition_arg_index]";
+
+    public const string TABLE_ARG_INDEX = $"{TABLE}.{ARG_INDEX}";
+
+    public const string ARG_VALUE = "[survey_question_show_condition_arg_text]";
+
+    public const string TABLE_ARG_VALUE = $"{TABLE}.{ARG_VALUE}";
+
+    public SurveyQuestionShowConditionsTextArg Value => new(
+        SurveyId.Value,
+        AffectedSurveyPageIndex.Value,
+        AffectedSurveyQuestionIndex.Value,
+        SurveyQuestionShowConditionIndex.Value,
+        SurveyQuestionShowConditionArgIndex.Value,
+        SurveyQuestionShowConditionArgText.Value);
+
+    public SqlSurveyQuestionShowConditionsTextArg(SurveyQuestionShowConditionsTextArg data) : this(
+        data.SurveyId,
+        data.AffectedPageIndex,
+        data.AffectedQuestionIndex,
+        data.Index,
+        data.ArgIndex,
+        data.ArgValue) { }
+
+    public static explicit operator SurveyQuestionShowConditionsTextArg(SqlSurveyQuestionShowConditionsTextArg value) => value.Value;
+    public static implicit operator SqlSurveyQuestionShowConditionsTextArg(SurveyQuestionShowConditionsTextArg value) => new(value);
+}
+
+public partial record SurveyQuestionValidationConditionType(
+    byte Id,
+    string Name);
+
+public record SqlSurveyQuestionValidationConditionType(
+    SqlByte SurveyQuestionValidationConditionTypeId,
+    SqlString SurveyQuestionValidationConditionTypeName)
+{
+    public const string TABLE = "[survey_question_validation_condition_types]";
+
+    public const string ID = "[survey_question_validation_condition_type_id]";
+
+    public const string TABLE_ID = $"{TABLE}.{ID}";
+
+    public const string NAME = "[survey_question_validation_condition_type_name]";
+
+    public const string TABLE_NAME = $"{TABLE}.{NAME}";
+
+    public SurveyQuestionValidationConditionType Value => new(
+        SurveyQuestionValidationConditionTypeId.Value,
+        SurveyQuestionValidationConditionTypeName.Value);
+
+    public SqlSurveyQuestionValidationConditionType(SurveyQuestionValidationConditionType data) : this(
+        data.Id,
+        data.Name) { }
+
+    public static explicit operator SurveyQuestionValidationConditionType(SqlSurveyQuestionValidationConditionType value) => value.Value;
+    public static implicit operator SqlSurveyQuestionValidationConditionType(SurveyQuestionValidationConditionType value) => new(value);
+}
+
+public partial record SurveyQuestionValidationCondition(
+    int SurveyId,
+    int AffectedPageIndex,
+    int AffectedQuestionIndex,
+    int Index,
+    byte Type,
+    bool IsOrOperator);
+
+public record SqlSurveyQuestionValidationCondition(
+    SqlInt32 SurveyId,
+    SqlInt32 AffectedSurveyPageIndex,
+    SqlInt32 AffectedSurveyQuestionIndex,
+    SqlInt32 SurveyQuestionValidationConditionIndex,
+    SqlByte SurveyQuestionValidationConditionType,
+    SqlBoolean SurveyQuestionValidationConditionOperator)
+{
+    public const string TABLE = "[survey_question_validation_conditions]";
+
+    public const string SURVEY_ID = "[survey_id]";
+
+    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+
+    public const string AFFECTED_PAGE_INDEX = "[affected_survey_page_index]";
+
+    public const string TABLE_AFFECTED_PAGE_INDEX = $"{TABLE}.{AFFECTED_PAGE_INDEX}";
+
+    public const string AFFECTED_QUESTION_INDEX = "[affected_survey_question_index]";
+
+    public const string TABLE_AFFECTED_QUESTION_INDEX = $"{TABLE}.{AFFECTED_QUESTION_INDEX}";
+
+    public const string INDEX = "[survey_question_validation_condition_index]";
+
+    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+
+    public const string TYPE = "[survey_question_validation_condition_type]";
+
+    public const string TABLE_TYPE = $"{TABLE}.{TYPE}";
+
+    public const string IS_OR_OPERATOR = "[survey_question_validation_condition_operator]";
+
+    public const string TABLE_IS_OR_OPERATOR = $"{TABLE}.{IS_OR_OPERATOR}";
+
+    public SurveyQuestionValidationCondition Value => new(
+        SurveyId.Value,
+        AffectedSurveyPageIndex.Value,
+        AffectedSurveyQuestionIndex.Value,
+        SurveyQuestionValidationConditionIndex.Value,
+        SurveyQuestionValidationConditionType.Value,
+        SurveyQuestionValidationConditionOperator.Value);
+
+    public SqlSurveyQuestionValidationCondition(SurveyQuestionValidationCondition data) : this(
+        data.SurveyId,
+        data.AffectedPageIndex,
+        data.AffectedQuestionIndex,
+        data.Index,
+        data.Type,
+        data.IsOrOperator) { }
+
+    public static explicit operator SurveyQuestionValidationCondition(SqlSurveyQuestionValidationCondition value) => value.Value;
+    public static implicit operator SqlSurveyQuestionValidationCondition(SurveyQuestionValidationCondition value) => new(value);
+}
+
+public partial record SurveyQuestionValidationConditionsRefArg(
+    int SurveyId,
+    int AffectedPageIndex,
+    int AffectedQuestionIndex,
+    int Index,
+    int ArgIndex,
+    int ReferencedPageIndex,
+    int ReferencedQuestionIndex);
+
+public record SqlSurveyQuestionValidationConditionsRefArg(
+    SqlInt32 SurveyId,
+    SqlInt32 AffectedSurveyPageIndex,
+    SqlInt32 AffectedSurveyQuestionIndex,
+    SqlInt32 SurveyQuestionValidationConditionIndex,
+    SqlInt32 SurveyQuestionValidationConditionArgIndex,
+    SqlInt32 ReferencedSurveyPageIndex,
+    SqlInt32 ReferencedSurveyQuestionIndex)
+{
+    public const string TABLE = "[survey_question_validation_conditions_ref_args]";
+
+    public const string SURVEY_ID = "[survey_id]";
+
+    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+
+    public const string AFFECTED_PAGE_INDEX = "[affected_survey_page_index]";
+
+    public const string TABLE_AFFECTED_PAGE_INDEX = $"{TABLE}.{AFFECTED_PAGE_INDEX}";
+
+    public const string AFFECTED_QUESTION_INDEX = "[affected_survey_question_index]";
+
+    public const string TABLE_AFFECTED_QUESTION_INDEX = $"{TABLE}.{AFFECTED_QUESTION_INDEX}";
+
+    public const string INDEX = "[survey_question_validation_condition_index]";
+
+    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+
+    public const string ARG_INDEX = "[survey_question_validation_condition_arg_index]";
+
+    public const string TABLE_ARG_INDEX = $"{TABLE}.{ARG_INDEX}";
+
+    public const string REFERENCED_PAGE_INDEX = "[referenced_survey_page_index]";
+
+    public const string TABLE_REFERENCED_PAGE_INDEX = $"{TABLE}.{REFERENCED_PAGE_INDEX}";
+
+    public const string REFERENCED_QUESTION_INDEX = "[referenced_survey_question_index]";
+
+    public const string TABLE_REFERENCED_QUESTION_INDEX = $"{TABLE}.{REFERENCED_QUESTION_INDEX}";
+
+    public SurveyQuestionValidationConditionsRefArg Value => new(
+        SurveyId.Value,
+        AffectedSurveyPageIndex.Value,
+        AffectedSurveyQuestionIndex.Value,
+        SurveyQuestionValidationConditionIndex.Value,
+        SurveyQuestionValidationConditionArgIndex.Value,
+        ReferencedSurveyPageIndex.Value,
+        ReferencedSurveyQuestionIndex.Value);
+
+    public SqlSurveyQuestionValidationConditionsRefArg(SurveyQuestionValidationConditionsRefArg data) : this(
+        data.SurveyId,
+        data.AffectedPageIndex,
+        data.AffectedQuestionIndex,
+        data.Index,
+        data.ArgIndex,
+        data.ReferencedPageIndex,
+        data.ReferencedQuestionIndex) { }
+
+    public static explicit operator SurveyQuestionValidationConditionsRefArg(SqlSurveyQuestionValidationConditionsRefArg value) => value.Value;
+    public static implicit operator SqlSurveyQuestionValidationConditionsRefArg(SurveyQuestionValidationConditionsRefArg value) => new(value);
+}
+
+public partial record SurveyQuestionValidationConditionsIntegerArg(
+    int SurveyId,
+    int AffectedPageIndex,
+    int AffectedQuestionIndex,
+    int Index,
+    int ArgIndex,
+    int ArgValue);
+
+public record SqlSurveyQuestionValidationConditionsIntegerArg(
+    SqlInt32 SurveyId,
+    SqlInt32 AffectedSurveyPageIndex,
+    SqlInt32 AffectedSurveyQuestionIndex,
+    SqlInt32 SurveyQuestionValidationConditionIndex,
+    SqlInt32 SurveyQuestionValidationConditionArgIndex,
+    SqlInt32 SurveyQuestionValidationConditionArgInteger)
+{
+    public const string TABLE = "[survey_question_validation_conditions_integer_args]";
+
+    public const string SURVEY_ID = "[survey_id]";
+
+    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+
+    public const string AFFECTED_PAGE_INDEX = "[affected_survey_page_index]";
+
+    public const string TABLE_AFFECTED_PAGE_INDEX = $"{TABLE}.{AFFECTED_PAGE_INDEX}";
+
+    public const string AFFECTED_QUESTION_INDEX = "[affected_survey_question_index]";
+
+    public const string TABLE_AFFECTED_QUESTION_INDEX = $"{TABLE}.{AFFECTED_QUESTION_INDEX}";
+
+    public const string INDEX = "[survey_question_validation_condition_index]";
+
+    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+
+    public const string ARG_INDEX = "[survey_question_validation_condition_arg_index]";
+
+    public const string TABLE_ARG_INDEX = $"{TABLE}.{ARG_INDEX}";
+
+    public const string ARG_VALUE = "[survey_question_validation_condition_arg_integer]";
+
+    public const string TABLE_ARG_VALUE = $"{TABLE}.{ARG_VALUE}";
+
+    public SurveyQuestionValidationConditionsIntegerArg Value => new(
+        SurveyId.Value,
+        AffectedSurveyPageIndex.Value,
+        AffectedSurveyQuestionIndex.Value,
+        SurveyQuestionValidationConditionIndex.Value,
+        SurveyQuestionValidationConditionArgIndex.Value,
+        SurveyQuestionValidationConditionArgInteger.Value);
+
+    public SqlSurveyQuestionValidationConditionsIntegerArg(SurveyQuestionValidationConditionsIntegerArg data) : this(
+        data.SurveyId,
+        data.AffectedPageIndex,
+        data.AffectedQuestionIndex,
+        data.Index,
+        data.ArgIndex,
+        data.ArgValue) { }
+
+    public static explicit operator SurveyQuestionValidationConditionsIntegerArg(SqlSurveyQuestionValidationConditionsIntegerArg value) => value.Value;
+    public static implicit operator SqlSurveyQuestionValidationConditionsIntegerArg(SurveyQuestionValidationConditionsIntegerArg value) => new(value);
+}
+
+public partial record SurveyQuestionValidationConditionsTextArg(
+    int SurveyId,
+    int AffectedPageIndex,
+    int AffectedQuestionIndex,
+    int Index,
+    int ArgIndex,
+    string ArgValue);
+
+public record SqlSurveyQuestionValidationConditionsTextArg(
+    SqlInt32 SurveyId,
+    SqlInt32 AffectedSurveyPageIndex,
+    SqlInt32 AffectedSurveyQuestionIndex,
+    SqlInt32 SurveyQuestionValidationConditionIndex,
+    SqlInt32 SurveyQuestionValidationConditionArgIndex,
+    SqlString SurveyQuestionValidationConditionArgText)
+{
+    public const string TABLE = "[survey_question_validation_conditions_text_args]";
+
+    public const string SURVEY_ID = "[survey_id]";
+
+    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+
+    public const string AFFECTED_PAGE_INDEX = "[affected_survey_page_index]";
+
+    public const string TABLE_AFFECTED_PAGE_INDEX = $"{TABLE}.{AFFECTED_PAGE_INDEX}";
+
+    public const string AFFECTED_QUESTION_INDEX = "[affected_survey_question_index]";
+
+    public const string TABLE_AFFECTED_QUESTION_INDEX = $"{TABLE}.{AFFECTED_QUESTION_INDEX}";
+
+    public const string INDEX = "[survey_question_validation_condition_index]";
+
+    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+
+    public const string ARG_INDEX = "[survey_question_validation_condition_arg_index]";
+
+    public const string TABLE_ARG_INDEX = $"{TABLE}.{ARG_INDEX}";
+
+    public const string ARG_VALUE = "[survey_question_validation_condition_arg_text]";
+
+    public const string TABLE_ARG_VALUE = $"{TABLE}.{ARG_VALUE}";
+
+    public SurveyQuestionValidationConditionsTextArg Value => new(
+        SurveyId.Value,
+        AffectedSurveyPageIndex.Value,
+        AffectedSurveyQuestionIndex.Value,
+        SurveyQuestionValidationConditionIndex.Value,
+        SurveyQuestionValidationConditionArgIndex.Value,
+        SurveyQuestionValidationConditionArgText.Value);
+
+    public SqlSurveyQuestionValidationConditionsTextArg(SurveyQuestionValidationConditionsTextArg data) : this(
+        data.SurveyId,
+        data.AffectedPageIndex,
+        data.AffectedQuestionIndex,
+        data.Index,
+        data.ArgIndex,
+        data.ArgValue) { }
+
+    public static explicit operator SurveyQuestionValidationConditionsTextArg(SqlSurveyQuestionValidationConditionsTextArg value) => value.Value;
+    public static implicit operator SqlSurveyQuestionValidationConditionsTextArg(SurveyQuestionValidationConditionsTextArg value) => new(value);
 }
 
 public class SqlDataDrivenDataAccess(
@@ -257,7 +1113,7 @@ public class SqlDataDrivenDataAccess(
         SqlInt32 surveyId)
     {
         var command = new SqlCommand(
-            "SELECT [survey_id], [name], [description] FROM [surveys] WHERE [survey_id] = @survey_id",
+            "SELECT [survey_id], [survey_title], [survey_author], [survey_description] FROM [surveys] WHERE [survey_id,[object Object]] = @survey_id,[object Object]",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
@@ -277,8 +1133,9 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             SurveyId: reader.GetSqlInt32(0),
-            Name: reader.GetSqlString(1),
-            Description: reader.GetSqlString(2));
+            SurveyTitle: reader.GetSqlString(1),
+            SurveyAuthor: reader.GetSqlString(2),
+            SurveyDescription: reader.GetSqlString(3));
     }
 
     public Task<SqlSurvey?> SelectUniqueSqlSurveyAsync(
@@ -302,22 +1159,25 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             SurveyId: reader.GetSqlInt32(0),
-            Name: reader.GetSqlString(1),
-            Description: reader.GetSqlString(2));
+            SurveyTitle: reader.GetSqlString(1),
+            SurveyAuthor: reader.GetSqlString(2),
+            SurveyDescription: reader.GetSqlString(3));
     }
 
     private SqlCommand InsertSqlSurveyCommand(
         SqlInt32 surveyId,
-        SqlString name,
-        SqlString description)
+        SqlString surveyTitle,
+        SqlString surveyAuthor,
+        SqlString surveyDescription)
     {
         var command = new SqlCommand(
-            "INSERT INTO [surveys] ([survey_id], [name], [description]) VALUES (@survey_id, @name, @description)",
+            "INSERT INTO [surveys] ([survey_id], [survey_title], [survey_author], [survey_description]) VALUES (@survey_id, @survey_title, @survey_author, @survey_description)",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("name", SqlDbType.VarChar, 255).SqlValue = name;
-        command.Parameters.Add("description", SqlDbType.VarChar, VARCHAR_MAX_LENGTH).SqlValue = description;
+        command.Parameters.Add("survey_title", SqlDbType.VarChar, 255).SqlValue = surveyTitle;
+        command.Parameters.Add("survey_author", SqlDbType.VarChar, 255).SqlValue = surveyAuthor;
+        command.Parameters.Add("survey_description", SqlDbType.VarChar, VARCHAR_MAX_LENGTH).SqlValue = surveyDescription;
 
         return command;
     }
@@ -326,8 +1186,9 @@ public class SqlDataDrivenDataAccess(
     {
         var command = InsertSqlSurveyCommand(
             survey.SurveyId,
-            survey.Name,
-            survey.Description);
+            survey.SurveyTitle,
+            survey.SurveyAuthor,
+            survey.SurveyDescription);
 
         command.ExecuteNonQuery();
     }
@@ -341,8 +1202,9 @@ public class SqlDataDrivenDataAccess(
     {
         var command = InsertSqlSurveyCommand(
             survey.SurveyId,
-            survey.Name,
-            survey.Description);
+            survey.SurveyTitle,
+            survey.SurveyAuthor,
+            survey.SurveyDescription);
 
         return command.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -352,7 +1214,7 @@ public class SqlDataDrivenDataAccess(
         SqlInt32 surveyPageIndex)
     {
         var command = new SqlCommand(
-            "SELECT [survey_id], [survey_page_index], [name], [description] FROM [survey_pages] WHERE [survey_id] = @survey_id AND [survey_page_index] = @survey_page_index",
+            "SELECT [survey_id], [survey_page_index], [survey_page_title], [survey_page_description] FROM [survey_pages] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [survey_page_index,[object Object]] = @survey_page_index,[object Object]",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
@@ -376,8 +1238,8 @@ public class SqlDataDrivenDataAccess(
         return new(
             SurveyId: reader.GetSqlInt32(0),
             SurveyPageIndex: reader.GetSqlInt32(1),
-            Name: reader.GetSqlString(2),
-            Description: reader.GetSqlString(3));
+            SurveyPageTitle: reader.GetSqlString(2),
+            SurveyPageDescription: reader.GetSqlString(3));
     }
 
     public Task<SqlSurveyPage?> SelectUniqueSqlSurveyPageAsync(
@@ -406,24 +1268,24 @@ public class SqlDataDrivenDataAccess(
         return new(
             SurveyId: reader.GetSqlInt32(0),
             SurveyPageIndex: reader.GetSqlInt32(1),
-            Name: reader.GetSqlString(2),
-            Description: reader.GetSqlString(3));
+            SurveyPageTitle: reader.GetSqlString(2),
+            SurveyPageDescription: reader.GetSqlString(3));
     }
 
     private SqlCommand InsertSqlSurveyPageCommand(
         SqlInt32 surveyId,
         SqlInt32 surveyPageIndex,
-        SqlString name,
-        SqlString description)
+        SqlString surveyPageTitle,
+        SqlString surveyPageDescription)
     {
         var command = new SqlCommand(
-            "INSERT INTO [survey_pages] ([survey_id], [survey_page_index], [name], [description]) VALUES (@survey_id, @survey_page_index, @name, @description)",
+            "INSERT INTO [survey_pages] ([survey_id], [survey_page_index], [survey_page_title], [survey_page_description]) VALUES (@survey_id, @survey_page_index, @survey_page_title, @survey_page_description)",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
         command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
-        command.Parameters.Add("name", SqlDbType.VarChar, 1023).SqlValue = name;
-        command.Parameters.Add("description", SqlDbType.VarChar, VARCHAR_MAX_LENGTH).SqlValue = description;
+        command.Parameters.Add("survey_page_title", SqlDbType.VarChar, 1023).SqlValue = surveyPageTitle;
+        command.Parameters.Add("survey_page_description", SqlDbType.VarChar, VARCHAR_MAX_LENGTH).SqlValue = surveyPageDescription;
 
         return command;
     }
@@ -433,8 +1295,8 @@ public class SqlDataDrivenDataAccess(
         var command = InsertSqlSurveyPageCommand(
             surveyPage.SurveyId,
             surveyPage.SurveyPageIndex,
-            surveyPage.Name,
-            surveyPage.Description);
+            surveyPage.SurveyPageTitle,
+            surveyPage.SurveyPageDescription);
 
         command.ExecuteNonQuery();
     }
@@ -449,8 +1311,96 @@ public class SqlDataDrivenDataAccess(
         var command = InsertSqlSurveyPageCommand(
             surveyPage.SurveyId,
             surveyPage.SurveyPageIndex,
-            surveyPage.Name,
-            surveyPage.Description);
+            surveyPage.SurveyPageTitle,
+            surveyPage.SurveyPageDescription);
+
+        return command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    private SqlCommand SelectUniqueSqlAnswerTypeCommand(
+        SqlByte answerTypeId)
+    {
+        var command = new SqlCommand(
+            "SELECT [answer_type_id], [answer_type_name] FROM [answer_types] WHERE [answer_type_id,[object Object]] = @answer_type_id,[object Object]",
+            source);
+
+        command.Parameters.Add("answer_type_id", SqlDbType.TinyInt).SqlValue = answerTypeId;
+
+        return command;
+    }
+
+    public SqlAnswerType? SelectUniqueSqlAnswerType(
+        SqlByte answerTypeId)
+    {
+        var command = SelectUniqueSqlAnswerTypeCommand(
+            answerTypeId);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!reader.Read())
+            return null;
+
+        return new(
+            AnswerTypeId: reader.GetSqlByte(0),
+            AnswerTypeName: reader.GetSqlString(1));
+    }
+
+    public Task<SqlAnswerType?> SelectUniqueSqlAnswerTypeAsync(
+        SqlByte answerTypeId)
+    {
+        return SelectUniqueSqlAnswerTypeAsync(
+            answerTypeId,
+            CancellationToken.None);
+    }
+
+    public async Task<SqlAnswerType?> SelectUniqueSqlAnswerTypeAsync(
+        SqlByte answerTypeId,
+        CancellationToken cancellationToken)
+    {
+        var command = SelectUniqueSqlAnswerTypeCommand(
+            answerTypeId);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!await reader.ReadAsync(cancellationToken))
+            return null;
+
+        return new(
+            AnswerTypeId: reader.GetSqlByte(0),
+            AnswerTypeName: reader.GetSqlString(1));
+    }
+
+    private SqlCommand InsertSqlAnswerTypeCommand(
+        SqlByte answerTypeId,
+        SqlString answerTypeName)
+    {
+        var command = new SqlCommand(
+            "INSERT INTO [answer_types] ([answer_type_id], [answer_type_name]) VALUES (@answer_type_id, @answer_type_name)",
+            source);
+
+        command.Parameters.Add("answer_type_id", SqlDbType.TinyInt).SqlValue = answerTypeId;
+        command.Parameters.Add("answer_type_name", SqlDbType.VarChar, 255).SqlValue = answerTypeName;
+
+        return command;
+    }
+
+    public void InsertSqlAnswerType(SqlAnswerType answerType)
+    {
+        var command = InsertSqlAnswerTypeCommand(
+            answerType.AnswerTypeId,
+            answerType.AnswerTypeName);
+
+        command.ExecuteNonQuery();
+    }
+
+    public Task InsertSqlAnswerTypeAsync(SqlAnswerType answerType)
+        => InsertSqlAnswerTypeAsync(answerType, CancellationToken.None);
+
+    public Task InsertSqlAnswerTypeAsync(
+        SqlAnswerType answerType,
+        CancellationToken cancellationToken)
+    {
+        var command = InsertSqlAnswerTypeCommand(
+            answerType.AnswerTypeId,
+            answerType.AnswerTypeName);
 
         return command.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -461,7 +1411,7 @@ public class SqlDataDrivenDataAccess(
         SqlInt32 surveyQuestionIndex)
     {
         var command = new SqlCommand(
-            "SELECT [survey_id], [survey_page_index], [survey_question_index], [prompt], [answer_type] FROM [survey_questions] WHERE [survey_id] = @survey_id AND [survey_page_index] = @survey_page_index AND [survey_question_index] = @survey_question_index",
+            "SELECT [survey_id], [survey_page_index], [survey_question_index], [survey_question_prompt], [survey_question_answer_type] FROM [survey_questions] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [survey_page_index,[object Object]] = @survey_page_index,[object Object] AND [survey_question_index,[object Object]] = @survey_question_index,[object Object]",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
@@ -489,8 +1439,8 @@ public class SqlDataDrivenDataAccess(
             SurveyId: reader.GetSqlInt32(0),
             SurveyPageIndex: reader.GetSqlInt32(1),
             SurveyQuestionIndex: reader.GetSqlInt32(2),
-            Prompt: reader.GetSqlString(3),
-            AnswerType: reader.GetSqlByte(4));
+            SurveyQuestionPrompt: reader.GetSqlString(3),
+            SurveyQuestionAnswerType: reader.GetSqlByte(4));
     }
 
     public Task<SqlSurveyQuestion?> SelectUniqueSqlSurveyQuestionAsync(
@@ -524,26 +1474,26 @@ public class SqlDataDrivenDataAccess(
             SurveyId: reader.GetSqlInt32(0),
             SurveyPageIndex: reader.GetSqlInt32(1),
             SurveyQuestionIndex: reader.GetSqlInt32(2),
-            Prompt: reader.GetSqlString(3),
-            AnswerType: reader.GetSqlByte(4));
+            SurveyQuestionPrompt: reader.GetSqlString(3),
+            SurveyQuestionAnswerType: reader.GetSqlByte(4));
     }
 
     private SqlCommand InsertSqlSurveyQuestionCommand(
         SqlInt32 surveyId,
         SqlInt32 surveyPageIndex,
         SqlInt32 surveyQuestionIndex,
-        SqlString prompt,
-        SqlByte answerType)
+        SqlString surveyQuestionPrompt,
+        SqlByte surveyQuestionAnswerType)
     {
         var command = new SqlCommand(
-            "INSERT INTO [survey_questions] ([survey_id], [survey_page_index], [survey_question_index], [prompt], [answer_type]) VALUES (@survey_id, @survey_page_index, @survey_question_index, @prompt, @answer_type)",
+            "INSERT INTO [survey_questions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_prompt], [survey_question_answer_type]) VALUES (@survey_id, @survey_page_index, @survey_question_index, @survey_question_prompt, @survey_question_answer_type)",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
         command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
         command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
-        command.Parameters.Add("prompt", SqlDbType.VarChar, 1023).SqlValue = prompt;
-        command.Parameters.Add("answer_type", SqlDbType.TinyInt).SqlValue = answerType;
+        command.Parameters.Add("survey_question_prompt", SqlDbType.VarChar, 1023).SqlValue = surveyQuestionPrompt;
+        command.Parameters.Add("survey_question_answer_type", SqlDbType.TinyInt).SqlValue = surveyQuestionAnswerType;
 
         return command;
     }
@@ -554,8 +1504,8 @@ public class SqlDataDrivenDataAccess(
             surveyQuestion.SurveyId,
             surveyQuestion.SurveyPageIndex,
             surveyQuestion.SurveyQuestionIndex,
-            surveyQuestion.Prompt,
-            surveyQuestion.AnswerType);
+            surveyQuestion.SurveyQuestionPrompt,
+            surveyQuestion.SurveyQuestionAnswerType);
 
         command.ExecuteNonQuery();
     }
@@ -571,370 +1521,8 @@ public class SqlDataDrivenDataAccess(
             surveyQuestion.SurveyId,
             surveyQuestion.SurveyPageIndex,
             surveyQuestion.SurveyQuestionIndex,
-            surveyQuestion.Prompt,
-            surveyQuestion.AnswerType);
-
-        return command.ExecuteNonQueryAsync(cancellationToken);
-    }
-
-    private SqlCommand SelectUniqueSqlSurveyQuestionConditionCommand(
-        SqlInt32 surveyId,
-        SqlInt32 surveyPageIndex,
-        SqlInt32 surveyQuestionIndex,
-        SqlInt32 otherSurveyPageIndex,
-        SqlInt32 otherSurveyQuestionIndex)
-    {
-        var command = new SqlCommand(
-            "SELECT [survey_id], [survey_page_index], [survey_question_index], [other_survey_page_index], [other_survey_question_index], [condition] FROM [survey_question_conditions] WHERE [survey_id] = @survey_id AND [survey_page_index] = @survey_page_index AND [survey_question_index] = @survey_question_index AND [other_survey_page_index] = @other_survey_page_index AND [other_survey_question_index] = @other_survey_question_index",
-            source);
-
-        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
-        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
-        command.Parameters.Add("other_survey_page_index", SqlDbType.Int).SqlValue = otherSurveyPageIndex;
-        command.Parameters.Add("other_survey_question_index", SqlDbType.Int).SqlValue = otherSurveyQuestionIndex;
-
-        return command;
-    }
-
-    public SqlSurveyQuestionCondition? SelectUniqueSqlSurveyQuestionCondition(
-        SqlInt32 surveyId,
-        SqlInt32 surveyPageIndex,
-        SqlInt32 surveyQuestionIndex,
-        SqlInt32 otherSurveyPageIndex,
-        SqlInt32 otherSurveyQuestionIndex)
-    {
-        var command = SelectUniqueSqlSurveyQuestionConditionCommand(
-            surveyId,
-            surveyPageIndex,
-            surveyQuestionIndex,
-            otherSurveyPageIndex,
-            otherSurveyQuestionIndex);
-
-        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
-        if (!reader.Read())
-            return null;
-
-        return new(
-            SurveyId: reader.GetSqlInt32(0),
-            SurveyPageIndex: reader.GetSqlInt32(1),
-            SurveyQuestionIndex: reader.GetSqlInt32(2),
-            OtherSurveyPageIndex: reader.GetSqlInt32(3),
-            OtherSurveyQuestionIndex: reader.GetSqlInt32(4),
-            Condition: reader.GetSqlString(5));
-    }
-
-    public Task<SqlSurveyQuestionCondition?> SelectUniqueSqlSurveyQuestionConditionAsync(
-        SqlInt32 surveyId,
-        SqlInt32 surveyPageIndex,
-        SqlInt32 surveyQuestionIndex,
-        SqlInt32 otherSurveyPageIndex,
-        SqlInt32 otherSurveyQuestionIndex)
-    {
-        return SelectUniqueSqlSurveyQuestionConditionAsync(
-            surveyId,
-            surveyPageIndex,
-            surveyQuestionIndex,
-            otherSurveyPageIndex,
-            otherSurveyQuestionIndex,
-            CancellationToken.None);
-    }
-
-    public async Task<SqlSurveyQuestionCondition?> SelectUniqueSqlSurveyQuestionConditionAsync(
-        SqlInt32 surveyId,
-        SqlInt32 surveyPageIndex,
-        SqlInt32 surveyQuestionIndex,
-        SqlInt32 otherSurveyPageIndex,
-        SqlInt32 otherSurveyQuestionIndex,
-        CancellationToken cancellationToken)
-    {
-        var command = SelectUniqueSqlSurveyQuestionConditionCommand(
-            surveyId,
-            surveyPageIndex,
-            surveyQuestionIndex,
-            otherSurveyPageIndex,
-            otherSurveyQuestionIndex);
-
-        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
-        if (!await reader.ReadAsync(cancellationToken))
-            return null;
-
-        return new(
-            SurveyId: reader.GetSqlInt32(0),
-            SurveyPageIndex: reader.GetSqlInt32(1),
-            SurveyQuestionIndex: reader.GetSqlInt32(2),
-            OtherSurveyPageIndex: reader.GetSqlInt32(3),
-            OtherSurveyQuestionIndex: reader.GetSqlInt32(4),
-            Condition: reader.GetSqlString(5));
-    }
-
-    private SqlCommand InsertSqlSurveyQuestionConditionCommand(
-        SqlInt32 surveyId,
-        SqlInt32 surveyPageIndex,
-        SqlInt32 surveyQuestionIndex,
-        SqlInt32 otherSurveyPageIndex,
-        SqlInt32 otherSurveyQuestionIndex,
-        SqlString condition)
-    {
-        var command = new SqlCommand(
-            "INSERT INTO [survey_question_conditions] ([survey_id], [survey_page_index], [survey_question_index], [other_survey_page_index], [other_survey_question_index], [condition]) VALUES (@survey_id, @survey_page_index, @survey_question_index, @other_survey_page_index, @other_survey_question_index, @condition)",
-            source);
-
-        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
-        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
-        command.Parameters.Add("other_survey_page_index", SqlDbType.Int).SqlValue = otherSurveyPageIndex;
-        command.Parameters.Add("other_survey_question_index", SqlDbType.Int).SqlValue = otherSurveyQuestionIndex;
-        command.Parameters.Add("condition", SqlDbType.VarChar, 255).SqlValue = condition;
-
-        return command;
-    }
-
-    public void InsertSqlSurveyQuestionCondition(SqlSurveyQuestionCondition surveyQuestionCondition)
-    {
-        var command = InsertSqlSurveyQuestionConditionCommand(
-            surveyQuestionCondition.SurveyId,
-            surveyQuestionCondition.SurveyPageIndex,
-            surveyQuestionCondition.SurveyQuestionIndex,
-            surveyQuestionCondition.OtherSurveyPageIndex,
-            surveyQuestionCondition.OtherSurveyQuestionIndex,
-            surveyQuestionCondition.Condition);
-
-        command.ExecuteNonQuery();
-    }
-
-    public Task InsertSqlSurveyQuestionConditionAsync(SqlSurveyQuestionCondition surveyQuestionCondition)
-        => InsertSqlSurveyQuestionConditionAsync(surveyQuestionCondition, CancellationToken.None);
-
-    public Task InsertSqlSurveyQuestionConditionAsync(
-        SqlSurveyQuestionCondition surveyQuestionCondition,
-        CancellationToken cancellationToken)
-    {
-        var command = InsertSqlSurveyQuestionConditionCommand(
-            surveyQuestionCondition.SurveyId,
-            surveyQuestionCondition.SurveyPageIndex,
-            surveyQuestionCondition.SurveyQuestionIndex,
-            surveyQuestionCondition.OtherSurveyPageIndex,
-            surveyQuestionCondition.OtherSurveyQuestionIndex,
-            surveyQuestionCondition.Condition);
-
-        return command.ExecuteNonQueryAsync(cancellationToken);
-    }
-
-    private SqlCommand SelectUniqueSqlSurveyAnswerCommand(
-        SqlInt32 surveyId,
-        SqlInt32 surveyPageIndex,
-        SqlInt32 surveyQuestionIndex,
-        SqlInt32 surveySubmissionIndex)
-    {
-        var command = new SqlCommand(
-            "SELECT [survey_id], [survey_page_index], [survey_question_index], [survey_submission_index], [answer_value] FROM [survey_answers] WHERE [survey_id] = @survey_id AND [survey_page_index] = @survey_page_index AND [survey_question_index] = @survey_question_index AND [survey_submission_index] = @survey_submission_index",
-            source);
-
-        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
-        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
-        command.Parameters.Add("survey_submission_index", SqlDbType.Int).SqlValue = surveySubmissionIndex;
-
-        return command;
-    }
-
-    public SqlSurveyAnswer? SelectUniqueSqlSurveyAnswer(
-        SqlInt32 surveyId,
-        SqlInt32 surveyPageIndex,
-        SqlInt32 surveyQuestionIndex,
-        SqlInt32 surveySubmissionIndex)
-    {
-        var command = SelectUniqueSqlSurveyAnswerCommand(
-            surveyId,
-            surveyPageIndex,
-            surveyQuestionIndex,
-            surveySubmissionIndex);
-
-        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
-        if (!reader.Read())
-            return null;
-
-        return new(
-            SurveyId: reader.GetSqlInt32(0),
-            SurveyPageIndex: reader.GetSqlInt32(1),
-            SurveyQuestionIndex: reader.GetSqlInt32(2),
-            SurveySubmissionIndex: reader.GetSqlInt32(3),
-            AnswerValue: reader.GetSqlString(4));
-    }
-
-    public Task<SqlSurveyAnswer?> SelectUniqueSqlSurveyAnswerAsync(
-        SqlInt32 surveyId,
-        SqlInt32 surveyPageIndex,
-        SqlInt32 surveyQuestionIndex,
-        SqlInt32 surveySubmissionIndex)
-    {
-        return SelectUniqueSqlSurveyAnswerAsync(
-            surveyId,
-            surveyPageIndex,
-            surveyQuestionIndex,
-            surveySubmissionIndex,
-            CancellationToken.None);
-    }
-
-    public async Task<SqlSurveyAnswer?> SelectUniqueSqlSurveyAnswerAsync(
-        SqlInt32 surveyId,
-        SqlInt32 surveyPageIndex,
-        SqlInt32 surveyQuestionIndex,
-        SqlInt32 surveySubmissionIndex,
-        CancellationToken cancellationToken)
-    {
-        var command = SelectUniqueSqlSurveyAnswerCommand(
-            surveyId,
-            surveyPageIndex,
-            surveyQuestionIndex,
-            surveySubmissionIndex);
-
-        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
-        if (!await reader.ReadAsync(cancellationToken))
-            return null;
-
-        return new(
-            SurveyId: reader.GetSqlInt32(0),
-            SurveyPageIndex: reader.GetSqlInt32(1),
-            SurveyQuestionIndex: reader.GetSqlInt32(2),
-            SurveySubmissionIndex: reader.GetSqlInt32(3),
-            AnswerValue: reader.GetSqlString(4));
-    }
-
-    private SqlCommand InsertSqlSurveyAnswerCommand(
-        SqlInt32 surveyId,
-        SqlInt32 surveyPageIndex,
-        SqlInt32 surveyQuestionIndex,
-        SqlInt32 surveySubmissionIndex,
-        SqlString answerValue)
-    {
-        var command = new SqlCommand(
-            "INSERT INTO [survey_answers] ([survey_id], [survey_page_index], [survey_question_index], [survey_submission_index], [answer_value]) VALUES (@survey_id, @survey_page_index, @survey_question_index, @survey_submission_index, @answer_value)",
-            source);
-
-        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
-        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
-        command.Parameters.Add("survey_submission_index", SqlDbType.Int).SqlValue = surveySubmissionIndex;
-        command.Parameters.Add("answer_value", SqlDbType.VarChar, 4095).SqlValue = answerValue;
-
-        return command;
-    }
-
-    public void InsertSqlSurveyAnswer(SqlSurveyAnswer surveyAnswer)
-    {
-        var command = InsertSqlSurveyAnswerCommand(
-            surveyAnswer.SurveyId,
-            surveyAnswer.SurveyPageIndex,
-            surveyAnswer.SurveyQuestionIndex,
-            surveyAnswer.SurveySubmissionIndex,
-            surveyAnswer.AnswerValue);
-
-        command.ExecuteNonQuery();
-    }
-
-    public Task InsertSqlSurveyAnswerAsync(SqlSurveyAnswer surveyAnswer)
-        => InsertSqlSurveyAnswerAsync(surveyAnswer, CancellationToken.None);
-
-    public Task InsertSqlSurveyAnswerAsync(
-        SqlSurveyAnswer surveyAnswer,
-        CancellationToken cancellationToken)
-    {
-        var command = InsertSqlSurveyAnswerCommand(
-            surveyAnswer.SurveyId,
-            surveyAnswer.SurveyPageIndex,
-            surveyAnswer.SurveyQuestionIndex,
-            surveyAnswer.SurveySubmissionIndex,
-            surveyAnswer.AnswerValue);
-
-        return command.ExecuteNonQueryAsync(cancellationToken);
-    }
-
-    private SqlCommand SelectUniqueSqlAnswerTypeCommand(
-        SqlByte answerTypeId)
-    {
-        var command = new SqlCommand(
-            "SELECT [answer_type_id], [name] FROM [answer_types] WHERE [answer_type_id] = @answer_type_id",
-            source);
-
-        command.Parameters.Add("answer_type_id", SqlDbType.TinyInt).SqlValue = answerTypeId;
-
-        return command;
-    }
-
-    public SqlAnswerType? SelectUniqueSqlAnswerType(
-        SqlByte answerTypeId)
-    {
-        var command = SelectUniqueSqlAnswerTypeCommand(
-            answerTypeId);
-
-        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
-        if (!reader.Read())
-            return null;
-
-        return new(
-            AnswerTypeId: reader.GetSqlByte(0),
-            Name: reader.GetSqlString(1));
-    }
-
-    public Task<SqlAnswerType?> SelectUniqueSqlAnswerTypeAsync(
-        SqlByte answerTypeId)
-    {
-        return SelectUniqueSqlAnswerTypeAsync(
-            answerTypeId,
-            CancellationToken.None);
-    }
-
-    public async Task<SqlAnswerType?> SelectUniqueSqlAnswerTypeAsync(
-        SqlByte answerTypeId,
-        CancellationToken cancellationToken)
-    {
-        var command = SelectUniqueSqlAnswerTypeCommand(
-            answerTypeId);
-
-        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
-        if (!await reader.ReadAsync(cancellationToken))
-            return null;
-
-        return new(
-            AnswerTypeId: reader.GetSqlByte(0),
-            Name: reader.GetSqlString(1));
-    }
-
-    private SqlCommand InsertSqlAnswerTypeCommand(
-        SqlByte answerTypeId,
-        SqlString name)
-    {
-        var command = new SqlCommand(
-            "INSERT INTO [answer_types] ([answer_type_id], [name]) VALUES (@answer_type_id, @name)",
-            source);
-
-        command.Parameters.Add("answer_type_id", SqlDbType.TinyInt).SqlValue = answerTypeId;
-        command.Parameters.Add("name", SqlDbType.VarChar, 255).SqlValue = name;
-
-        return command;
-    }
-
-    public void InsertSqlAnswerType(SqlAnswerType answerType)
-    {
-        var command = InsertSqlAnswerTypeCommand(
-            answerType.AnswerTypeId,
-            answerType.Name);
-
-        command.ExecuteNonQuery();
-    }
-
-    public Task InsertSqlAnswerTypeAsync(SqlAnswerType answerType)
-        => InsertSqlAnswerTypeAsync(answerType, CancellationToken.None);
-
-    public Task InsertSqlAnswerTypeAsync(
-        SqlAnswerType answerType,
-        CancellationToken cancellationToken)
-    {
-        var command = InsertSqlAnswerTypeCommand(
-            answerType.AnswerTypeId,
-            answerType.Name);
+            surveyQuestion.SurveyQuestionPrompt,
+            surveyQuestion.SurveyQuestionAnswerType);
 
         return command.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -943,7 +1531,7 @@ public class SqlDataDrivenDataAccess(
         SqlInt32 registeredMemberId)
     {
         var command = new SqlCommand(
-            "SELECT [registered_member_id], [phone_number], [password_hash], [birth_date], [first_name], [last_name] FROM [registered_members] WHERE [registered_member_id] = @registered_member_id",
+            "SELECT [registered_member_id], [registered_member_password_hash], [registered_member_phone_number], [registered_member_birth_date], [registered_member_first_name], [registered_member_last_name] FROM [registered_members] WHERE [registered_member_id,[object Object]] = @registered_member_id,[object Object]",
             source);
 
         command.Parameters.Add("registered_member_id", SqlDbType.Int).SqlValue = registeredMemberId;
@@ -963,11 +1551,11 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             RegisteredMemberId: reader.GetSqlInt32(0),
-            PhoneNumber: reader.GetSqlString(1),
-            PasswordHash: reader.GetSqlString(2),
-            BirthDate: reader.GetSqlDateTime(3),
-            FirstName: reader.GetSqlString(4),
-            LastName: reader.GetSqlString(5));
+            RegisteredMemberPasswordHash: reader.GetSqlString(1),
+            RegisteredMemberPhoneNumber: reader.GetSqlString(2),
+            RegisteredMemberBirthDate: reader.GetSqlDateTime(3),
+            RegisteredMemberFirstName: reader.GetSqlString(4),
+            RegisteredMemberLastName: reader.GetSqlString(5));
     }
 
     public Task<SqlRegisteredMember?> SelectUniqueSqlRegisteredMemberAsync(
@@ -991,31 +1579,31 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             RegisteredMemberId: reader.GetSqlInt32(0),
-            PhoneNumber: reader.GetSqlString(1),
-            PasswordHash: reader.GetSqlString(2),
-            BirthDate: reader.GetSqlDateTime(3),
-            FirstName: reader.GetSqlString(4),
-            LastName: reader.GetSqlString(5));
+            RegisteredMemberPasswordHash: reader.GetSqlString(1),
+            RegisteredMemberPhoneNumber: reader.GetSqlString(2),
+            RegisteredMemberBirthDate: reader.GetSqlDateTime(3),
+            RegisteredMemberFirstName: reader.GetSqlString(4),
+            RegisteredMemberLastName: reader.GetSqlString(5));
     }
 
     private SqlCommand InsertSqlRegisteredMemberCommand(
         SqlInt32 registeredMemberId,
-        SqlString phoneNumber,
-        SqlString passwordHash,
-        SqlDateTime birthDate,
-        SqlString firstName,
-        SqlString lastName)
+        SqlString registeredMemberPasswordHash,
+        SqlString registeredMemberPhoneNumber,
+        SqlDateTime registeredMemberBirthDate,
+        SqlString registeredMemberFirstName,
+        SqlString registeredMemberLastName)
     {
         var command = new SqlCommand(
-            "INSERT INTO [registered_members] ([registered_member_id], [phone_number], [password_hash], [birth_date], [first_name], [last_name]) VALUES (@registered_member_id, @phone_number, @password_hash, @birth_date, @first_name, @last_name)",
+            "INSERT INTO [registered_members] ([registered_member_id], [registered_member_password_hash], [registered_member_phone_number], [registered_member_birth_date], [registered_member_first_name], [registered_member_last_name]) VALUES (@registered_member_id, @registered_member_password_hash, @registered_member_phone_number, @registered_member_birth_date, @registered_member_first_name, @registered_member_last_name)",
             source);
 
         command.Parameters.Add("registered_member_id", SqlDbType.Int).SqlValue = registeredMemberId;
-        command.Parameters.Add("phone_number", SqlDbType.VarChar).SqlValue = phoneNumber;
-        command.Parameters.Add("password_hash", SqlDbType.VarChar, 255).SqlValue = passwordHash;
-        command.Parameters.Add("birth_date", SqlDbType.DateTime).SqlValue = birthDate;
-        command.Parameters.Add("first_name", SqlDbType.VarChar, 255).SqlValue = firstName;
-        command.Parameters.Add("last_name", SqlDbType.VarChar, 255).SqlValue = lastName;
+        command.Parameters.Add("registered_member_password_hash", SqlDbType.VarChar, 255).SqlValue = registeredMemberPasswordHash;
+        command.Parameters.Add("registered_member_phone_number", SqlDbType.VarChar, 13).SqlValue = registeredMemberPhoneNumber;
+        command.Parameters.Add("registered_member_birth_date", SqlDbType.DateTime).SqlValue = registeredMemberBirthDate;
+        command.Parameters.Add("registered_member_first_name", SqlDbType.VarChar, 255).SqlValue = registeredMemberFirstName;
+        command.Parameters.Add("registered_member_last_name", SqlDbType.VarChar, 255).SqlValue = registeredMemberLastName;
 
         return command;
     }
@@ -1024,11 +1612,11 @@ public class SqlDataDrivenDataAccess(
     {
         var command = InsertSqlRegisteredMemberCommand(
             registeredMember.RegisteredMemberId,
-            registeredMember.PhoneNumber,
-            registeredMember.PasswordHash,
-            registeredMember.BirthDate,
-            registeredMember.FirstName,
-            registeredMember.LastName);
+            registeredMember.RegisteredMemberPasswordHash,
+            registeredMember.RegisteredMemberPhoneNumber,
+            registeredMember.RegisteredMemberBirthDate,
+            registeredMember.RegisteredMemberFirstName,
+            registeredMember.RegisteredMemberLastName);
 
         command.ExecuteNonQuery();
     }
@@ -1042,36 +1630,36 @@ public class SqlDataDrivenDataAccess(
     {
         var command = InsertSqlRegisteredMemberCommand(
             registeredMember.RegisteredMemberId,
-            registeredMember.PhoneNumber,
-            registeredMember.PasswordHash,
-            registeredMember.BirthDate,
-            registeredMember.FirstName,
-            registeredMember.LastName);
+            registeredMember.RegisteredMemberPasswordHash,
+            registeredMember.RegisteredMemberPhoneNumber,
+            registeredMember.RegisteredMemberBirthDate,
+            registeredMember.RegisteredMemberFirstName,
+            registeredMember.RegisteredMemberLastName);
 
         return command.ExecuteNonQueryAsync(cancellationToken);
     }
 
-    private SqlCommand SelectUniqueSqlSurveySubmissionCommand(
+    private SqlCommand SelectUniqueSqlSubmissionCommand(
         SqlInt32 surveyId,
-        SqlInt32 surveySubmissionIndex)
+        SqlInt32 submissionIndex)
     {
         var command = new SqlCommand(
-            "SELECT [survey_id], [survey_submission_index], [registered_member_id] FROM [survey_submissions] WHERE [survey_id] = @survey_id AND [survey_submission_index] = @survey_submission_index",
+            "SELECT [survey_id], [submission_index], [registered_member_id] FROM [submissions] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [submission_index,[object Object]] = @submission_index,[object Object]",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("survey_submission_index", SqlDbType.Int).SqlValue = surveySubmissionIndex;
+        command.Parameters.Add("submission_index", SqlDbType.Int).SqlValue = submissionIndex;
 
         return command;
     }
 
-    public SqlSurveySubmission? SelectUniqueSqlSurveySubmission(
+    public SqlSubmission? SelectUniqueSqlSubmission(
         SqlInt32 surveyId,
-        SqlInt32 surveySubmissionIndex)
+        SqlInt32 submissionIndex)
     {
-        var command = SelectUniqueSqlSurveySubmissionCommand(
+        var command = SelectUniqueSqlSubmissionCommand(
             surveyId,
-            surveySubmissionIndex);
+            submissionIndex);
 
         var reader = command.ExecuteReader(CommandBehavior.SingleRow);
         if (!reader.Read())
@@ -1079,28 +1667,28 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             SurveyId: reader.GetSqlInt32(0),
-            SurveySubmissionIndex: reader.GetSqlInt32(1),
+            SubmissionIndex: reader.GetSqlInt32(1),
             RegisteredMemberId: reader.GetSqlInt32(2));
     }
 
-    public Task<SqlSurveySubmission?> SelectUniqueSqlSurveySubmissionAsync(
+    public Task<SqlSubmission?> SelectUniqueSqlSubmissionAsync(
         SqlInt32 surveyId,
-        SqlInt32 surveySubmissionIndex)
+        SqlInt32 submissionIndex)
     {
-        return SelectUniqueSqlSurveySubmissionAsync(
+        return SelectUniqueSqlSubmissionAsync(
             surveyId,
-            surveySubmissionIndex,
+            submissionIndex,
             CancellationToken.None);
     }
 
-    public async Task<SqlSurveySubmission?> SelectUniqueSqlSurveySubmissionAsync(
+    public async Task<SqlSubmission?> SelectUniqueSqlSubmissionAsync(
         SqlInt32 surveyId,
-        SqlInt32 surveySubmissionIndex,
+        SqlInt32 submissionIndex,
         CancellationToken cancellationToken)
     {
-        var command = SelectUniqueSqlSurveySubmissionCommand(
+        var command = SelectUniqueSqlSubmissionCommand(
             surveyId,
-            surveySubmissionIndex);
+            submissionIndex);
 
         var reader = command.ExecuteReader(CommandBehavior.SingleRow);
         if (!await reader.ReadAsync(cancellationToken))
@@ -1108,47 +1696,1933 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             SurveyId: reader.GetSqlInt32(0),
-            SurveySubmissionIndex: reader.GetSqlInt32(1),
+            SubmissionIndex: reader.GetSqlInt32(1),
             RegisteredMemberId: reader.GetSqlInt32(2));
     }
 
-    private SqlCommand InsertSqlSurveySubmissionCommand(
+    private SqlCommand InsertSqlSubmissionCommand(
         SqlInt32 surveyId,
-        SqlInt32 surveySubmissionIndex,
+        SqlInt32 submissionIndex,
         SqlInt32 registeredMemberId)
     {
         var command = new SqlCommand(
-            "INSERT INTO [survey_submissions] ([survey_id], [survey_submission_index], [registered_member_id]) VALUES (@survey_id, @survey_submission_index, @registered_member_id)",
+            "INSERT INTO [submissions] ([survey_id], [submission_index], [registered_member_id]) VALUES (@survey_id, @submission_index, @registered_member_id)",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("survey_submission_index", SqlDbType.Int).SqlValue = surveySubmissionIndex;
+        command.Parameters.Add("submission_index", SqlDbType.Int).SqlValue = submissionIndex;
         command.Parameters.Add("registered_member_id", SqlDbType.Int).SqlValue = registeredMemberId;
 
         return command;
     }
 
-    public void InsertSqlSurveySubmission(SqlSurveySubmission surveySubmission)
+    public void InsertSqlSubmission(SqlSubmission submission)
     {
-        var command = InsertSqlSurveySubmissionCommand(
-            surveySubmission.SurveyId,
-            surveySubmission.SurveySubmissionIndex,
-            surveySubmission.RegisteredMemberId);
+        var command = InsertSqlSubmissionCommand(
+            submission.SurveyId,
+            submission.SubmissionIndex,
+            submission.RegisteredMemberId);
 
         command.ExecuteNonQuery();
     }
 
-    public Task InsertSqlSurveySubmissionAsync(SqlSurveySubmission surveySubmission)
-        => InsertSqlSurveySubmissionAsync(surveySubmission, CancellationToken.None);
+    public Task InsertSqlSubmissionAsync(SqlSubmission submission)
+        => InsertSqlSubmissionAsync(submission, CancellationToken.None);
 
-    public Task InsertSqlSurveySubmissionAsync(
-        SqlSurveySubmission surveySubmission,
+    public Task InsertSqlSubmissionAsync(
+        SqlSubmission submission,
         CancellationToken cancellationToken)
     {
-        var command = InsertSqlSurveySubmissionCommand(
-            surveySubmission.SurveyId,
-            surveySubmission.SurveySubmissionIndex,
-            surveySubmission.RegisteredMemberId);
+        var command = InsertSqlSubmissionCommand(
+            submission.SurveyId,
+            submission.SubmissionIndex,
+            submission.RegisteredMemberId);
+
+        return command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    private SqlCommand SelectUniqueSqlSubmissionTextAnswerCommand(
+        SqlInt32 surveyId,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
+        SqlInt32 submissionIndex,
+        SqlInt32 submissionAnswerIndex)
+    {
+        var command = new SqlCommand(
+            "SELECT [survey_id], [survey_page_index], [survey_question_index], [submission_index], [submission_answer_index], [submission_answer_text] FROM [submission_text_answers] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [survey_page_index,[object Object]] = @survey_page_index,[object Object] AND [survey_question_index,[object Object]] = @survey_question_index,[object Object] AND [submission_index,[object Object]] = @submission_index,[object Object] AND [submission_answer_index,[object Object]] = @submission_answer_index,[object Object]",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
+        command.Parameters.Add("submission_index", SqlDbType.Int).SqlValue = submissionIndex;
+        command.Parameters.Add("submission_answer_index", SqlDbType.Int).SqlValue = submissionAnswerIndex;
+
+        return command;
+    }
+
+    public SqlSubmissionTextAnswer? SelectUniqueSqlSubmissionTextAnswer(
+        SqlInt32 surveyId,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
+        SqlInt32 submissionIndex,
+        SqlInt32 submissionAnswerIndex)
+    {
+        var command = SelectUniqueSqlSubmissionTextAnswerCommand(
+            surveyId,
+            surveyPageIndex,
+            surveyQuestionIndex,
+            submissionIndex,
+            submissionAnswerIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!reader.Read())
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
+            SubmissionIndex: reader.GetSqlInt32(3),
+            SubmissionAnswerIndex: reader.GetSqlInt32(4),
+            SubmissionAnswerText: reader.GetSqlString(5));
+    }
+
+    public Task<SqlSubmissionTextAnswer?> SelectUniqueSqlSubmissionTextAnswerAsync(
+        SqlInt32 surveyId,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
+        SqlInt32 submissionIndex,
+        SqlInt32 submissionAnswerIndex)
+    {
+        return SelectUniqueSqlSubmissionTextAnswerAsync(
+            surveyId,
+            surveyPageIndex,
+            surveyQuestionIndex,
+            submissionIndex,
+            submissionAnswerIndex,
+            CancellationToken.None);
+    }
+
+    public async Task<SqlSubmissionTextAnswer?> SelectUniqueSqlSubmissionTextAnswerAsync(
+        SqlInt32 surveyId,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
+        SqlInt32 submissionIndex,
+        SqlInt32 submissionAnswerIndex,
+        CancellationToken cancellationToken)
+    {
+        var command = SelectUniqueSqlSubmissionTextAnswerCommand(
+            surveyId,
+            surveyPageIndex,
+            surveyQuestionIndex,
+            submissionIndex,
+            submissionAnswerIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!await reader.ReadAsync(cancellationToken))
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
+            SubmissionIndex: reader.GetSqlInt32(3),
+            SubmissionAnswerIndex: reader.GetSqlInt32(4),
+            SubmissionAnswerText: reader.GetSqlString(5));
+    }
+
+    private SqlCommand InsertSqlSubmissionTextAnswerCommand(
+        SqlInt32 surveyId,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
+        SqlInt32 submissionIndex,
+        SqlInt32 submissionAnswerIndex,
+        SqlString submissionAnswerText)
+    {
+        var command = new SqlCommand(
+            "INSERT INTO [submission_text_answers] ([survey_id], [survey_page_index], [survey_question_index], [submission_index], [submission_answer_index], [submission_answer_text]) VALUES (@survey_id, @survey_page_index, @survey_question_index, @submission_index, @submission_answer_index, @submission_answer_text)",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
+        command.Parameters.Add("submission_index", SqlDbType.Int).SqlValue = submissionIndex;
+        command.Parameters.Add("submission_answer_index", SqlDbType.Int).SqlValue = submissionAnswerIndex;
+        command.Parameters.Add("submission_answer_text", SqlDbType.VarChar, VARCHAR_MAX_LENGTH).SqlValue = submissionAnswerText;
+
+        return command;
+    }
+
+    public void InsertSqlSubmissionTextAnswer(SqlSubmissionTextAnswer submissionTextAnswer)
+    {
+        var command = InsertSqlSubmissionTextAnswerCommand(
+            submissionTextAnswer.SurveyId,
+            submissionTextAnswer.SurveyPageIndex,
+            submissionTextAnswer.SurveyQuestionIndex,
+            submissionTextAnswer.SubmissionIndex,
+            submissionTextAnswer.SubmissionAnswerIndex,
+            submissionTextAnswer.SubmissionAnswerText);
+
+        command.ExecuteNonQuery();
+    }
+
+    public Task InsertSqlSubmissionTextAnswerAsync(SqlSubmissionTextAnswer submissionTextAnswer)
+        => InsertSqlSubmissionTextAnswerAsync(submissionTextAnswer, CancellationToken.None);
+
+    public Task InsertSqlSubmissionTextAnswerAsync(
+        SqlSubmissionTextAnswer submissionTextAnswer,
+        CancellationToken cancellationToken)
+    {
+        var command = InsertSqlSubmissionTextAnswerCommand(
+            submissionTextAnswer.SurveyId,
+            submissionTextAnswer.SurveyPageIndex,
+            submissionTextAnswer.SurveyQuestionIndex,
+            submissionTextAnswer.SubmissionIndex,
+            submissionTextAnswer.SubmissionAnswerIndex,
+            submissionTextAnswer.SubmissionAnswerText);
+
+        return command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    private SqlCommand SelectUniqueSqlSubmissionIntegerAnswerCommand(
+        SqlInt32 surveyId,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
+        SqlInt32 submissionIndex,
+        SqlInt32 submissionAnswerIndex)
+    {
+        var command = new SqlCommand(
+            "SELECT [survey_id], [survey_page_index], [survey_question_index], [submission_index], [submission_answer_index], [submission_answer_integer] FROM [submission_integer_answers] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [survey_page_index,[object Object]] = @survey_page_index,[object Object] AND [survey_question_index,[object Object]] = @survey_question_index,[object Object] AND [submission_index,[object Object]] = @submission_index,[object Object] AND [submission_answer_index,[object Object]] = @submission_answer_index,[object Object]",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
+        command.Parameters.Add("submission_index", SqlDbType.Int).SqlValue = submissionIndex;
+        command.Parameters.Add("submission_answer_index", SqlDbType.Int).SqlValue = submissionAnswerIndex;
+
+        return command;
+    }
+
+    public SqlSubmissionIntegerAnswer? SelectUniqueSqlSubmissionIntegerAnswer(
+        SqlInt32 surveyId,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
+        SqlInt32 submissionIndex,
+        SqlInt32 submissionAnswerIndex)
+    {
+        var command = SelectUniqueSqlSubmissionIntegerAnswerCommand(
+            surveyId,
+            surveyPageIndex,
+            surveyQuestionIndex,
+            submissionIndex,
+            submissionAnswerIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!reader.Read())
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
+            SubmissionIndex: reader.GetSqlInt32(3),
+            SubmissionAnswerIndex: reader.GetSqlInt32(4),
+            SubmissionAnswerInteger: reader.GetSqlInt32(5));
+    }
+
+    public Task<SqlSubmissionIntegerAnswer?> SelectUniqueSqlSubmissionIntegerAnswerAsync(
+        SqlInt32 surveyId,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
+        SqlInt32 submissionIndex,
+        SqlInt32 submissionAnswerIndex)
+    {
+        return SelectUniqueSqlSubmissionIntegerAnswerAsync(
+            surveyId,
+            surveyPageIndex,
+            surveyQuestionIndex,
+            submissionIndex,
+            submissionAnswerIndex,
+            CancellationToken.None);
+    }
+
+    public async Task<SqlSubmissionIntegerAnswer?> SelectUniqueSqlSubmissionIntegerAnswerAsync(
+        SqlInt32 surveyId,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
+        SqlInt32 submissionIndex,
+        SqlInt32 submissionAnswerIndex,
+        CancellationToken cancellationToken)
+    {
+        var command = SelectUniqueSqlSubmissionIntegerAnswerCommand(
+            surveyId,
+            surveyPageIndex,
+            surveyQuestionIndex,
+            submissionIndex,
+            submissionAnswerIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!await reader.ReadAsync(cancellationToken))
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
+            SubmissionIndex: reader.GetSqlInt32(3),
+            SubmissionAnswerIndex: reader.GetSqlInt32(4),
+            SubmissionAnswerInteger: reader.GetSqlInt32(5));
+    }
+
+    private SqlCommand InsertSqlSubmissionIntegerAnswerCommand(
+        SqlInt32 surveyId,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
+        SqlInt32 submissionIndex,
+        SqlInt32 submissionAnswerIndex,
+        SqlInt32 submissionAnswerInteger)
+    {
+        var command = new SqlCommand(
+            "INSERT INTO [submission_integer_answers] ([survey_id], [survey_page_index], [survey_question_index], [submission_index], [submission_answer_index], [submission_answer_integer]) VALUES (@survey_id, @survey_page_index, @survey_question_index, @submission_index, @submission_answer_index, @submission_answer_integer)",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
+        command.Parameters.Add("submission_index", SqlDbType.Int).SqlValue = submissionIndex;
+        command.Parameters.Add("submission_answer_index", SqlDbType.Int).SqlValue = submissionAnswerIndex;
+        command.Parameters.Add("submission_answer_integer", SqlDbType.Int).SqlValue = submissionAnswerInteger;
+
+        return command;
+    }
+
+    public void InsertSqlSubmissionIntegerAnswer(SqlSubmissionIntegerAnswer submissionIntegerAnswer)
+    {
+        var command = InsertSqlSubmissionIntegerAnswerCommand(
+            submissionIntegerAnswer.SurveyId,
+            submissionIntegerAnswer.SurveyPageIndex,
+            submissionIntegerAnswer.SurveyQuestionIndex,
+            submissionIntegerAnswer.SubmissionIndex,
+            submissionIntegerAnswer.SubmissionAnswerIndex,
+            submissionIntegerAnswer.SubmissionAnswerInteger);
+
+        command.ExecuteNonQuery();
+    }
+
+    public Task InsertSqlSubmissionIntegerAnswerAsync(SqlSubmissionIntegerAnswer submissionIntegerAnswer)
+        => InsertSqlSubmissionIntegerAnswerAsync(submissionIntegerAnswer, CancellationToken.None);
+
+    public Task InsertSqlSubmissionIntegerAnswerAsync(
+        SqlSubmissionIntegerAnswer submissionIntegerAnswer,
+        CancellationToken cancellationToken)
+    {
+        var command = InsertSqlSubmissionIntegerAnswerCommand(
+            submissionIntegerAnswer.SurveyId,
+            submissionIntegerAnswer.SurveyPageIndex,
+            submissionIntegerAnswer.SurveyQuestionIndex,
+            submissionIntegerAnswer.SubmissionIndex,
+            submissionIntegerAnswer.SubmissionAnswerIndex,
+            submissionIntegerAnswer.SubmissionAnswerInteger);
+
+        return command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    private SqlCommand SelectUniqueSqlSubmissionBoolAnswerCommand(
+        SqlInt32 surveyId,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
+        SqlInt32 submissionIndex,
+        SqlInt32 submissionAnswerIndex)
+    {
+        var command = new SqlCommand(
+            "SELECT [survey_id], [survey_page_index], [survey_question_index], [submission_index], [submission_answer_index], [submission_answer_bool] FROM [submission_bool_answers] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [survey_page_index,[object Object]] = @survey_page_index,[object Object] AND [survey_question_index,[object Object]] = @survey_question_index,[object Object] AND [submission_index,[object Object]] = @submission_index,[object Object] AND [submission_answer_index,[object Object]] = @submission_answer_index,[object Object]",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
+        command.Parameters.Add("submission_index", SqlDbType.Int).SqlValue = submissionIndex;
+        command.Parameters.Add("submission_answer_index", SqlDbType.Int).SqlValue = submissionAnswerIndex;
+
+        return command;
+    }
+
+    public SqlSubmissionBoolAnswer? SelectUniqueSqlSubmissionBoolAnswer(
+        SqlInt32 surveyId,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
+        SqlInt32 submissionIndex,
+        SqlInt32 submissionAnswerIndex)
+    {
+        var command = SelectUniqueSqlSubmissionBoolAnswerCommand(
+            surveyId,
+            surveyPageIndex,
+            surveyQuestionIndex,
+            submissionIndex,
+            submissionAnswerIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!reader.Read())
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
+            SubmissionIndex: reader.GetSqlInt32(3),
+            SubmissionAnswerIndex: reader.GetSqlInt32(4),
+            SubmissionAnswerBool: reader.GetSqlBoolean(5));
+    }
+
+    public Task<SqlSubmissionBoolAnswer?> SelectUniqueSqlSubmissionBoolAnswerAsync(
+        SqlInt32 surveyId,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
+        SqlInt32 submissionIndex,
+        SqlInt32 submissionAnswerIndex)
+    {
+        return SelectUniqueSqlSubmissionBoolAnswerAsync(
+            surveyId,
+            surveyPageIndex,
+            surveyQuestionIndex,
+            submissionIndex,
+            submissionAnswerIndex,
+            CancellationToken.None);
+    }
+
+    public async Task<SqlSubmissionBoolAnswer?> SelectUniqueSqlSubmissionBoolAnswerAsync(
+        SqlInt32 surveyId,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
+        SqlInt32 submissionIndex,
+        SqlInt32 submissionAnswerIndex,
+        CancellationToken cancellationToken)
+    {
+        var command = SelectUniqueSqlSubmissionBoolAnswerCommand(
+            surveyId,
+            surveyPageIndex,
+            surveyQuestionIndex,
+            submissionIndex,
+            submissionAnswerIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!await reader.ReadAsync(cancellationToken))
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
+            SubmissionIndex: reader.GetSqlInt32(3),
+            SubmissionAnswerIndex: reader.GetSqlInt32(4),
+            SubmissionAnswerBool: reader.GetSqlBoolean(5));
+    }
+
+    private SqlCommand InsertSqlSubmissionBoolAnswerCommand(
+        SqlInt32 surveyId,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
+        SqlInt32 submissionIndex,
+        SqlInt32 submissionAnswerIndex,
+        SqlBoolean submissionAnswerBool)
+    {
+        var command = new SqlCommand(
+            "INSERT INTO [submission_bool_answers] ([survey_id], [survey_page_index], [survey_question_index], [submission_index], [submission_answer_index], [submission_answer_bool]) VALUES (@survey_id, @survey_page_index, @survey_question_index, @submission_index, @submission_answer_index, @submission_answer_bool)",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
+        command.Parameters.Add("submission_index", SqlDbType.Int).SqlValue = submissionIndex;
+        command.Parameters.Add("submission_answer_index", SqlDbType.Int).SqlValue = submissionAnswerIndex;
+        command.Parameters.Add("submission_answer_bool", SqlDbType.Bit).SqlValue = submissionAnswerBool;
+
+        return command;
+    }
+
+    public void InsertSqlSubmissionBoolAnswer(SqlSubmissionBoolAnswer submissionBoolAnswer)
+    {
+        var command = InsertSqlSubmissionBoolAnswerCommand(
+            submissionBoolAnswer.SurveyId,
+            submissionBoolAnswer.SurveyPageIndex,
+            submissionBoolAnswer.SurveyQuestionIndex,
+            submissionBoolAnswer.SubmissionIndex,
+            submissionBoolAnswer.SubmissionAnswerIndex,
+            submissionBoolAnswer.SubmissionAnswerBool);
+
+        command.ExecuteNonQuery();
+    }
+
+    public Task InsertSqlSubmissionBoolAnswerAsync(SqlSubmissionBoolAnswer submissionBoolAnswer)
+        => InsertSqlSubmissionBoolAnswerAsync(submissionBoolAnswer, CancellationToken.None);
+
+    public Task InsertSqlSubmissionBoolAnswerAsync(
+        SqlSubmissionBoolAnswer submissionBoolAnswer,
+        CancellationToken cancellationToken)
+    {
+        var command = InsertSqlSubmissionBoolAnswerCommand(
+            submissionBoolAnswer.SurveyId,
+            submissionBoolAnswer.SurveyPageIndex,
+            submissionBoolAnswer.SurveyQuestionIndex,
+            submissionBoolAnswer.SubmissionIndex,
+            submissionBoolAnswer.SubmissionAnswerIndex,
+            submissionBoolAnswer.SubmissionAnswerBool);
+
+        return command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    private SqlCommand SelectUniqueSqlSurveyQuestionAnswerOptionCommand(
+        SqlInt32 surveyId,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyAnswerOptionIndex,
+        SqlInt32 surveyQuestionIndex)
+    {
+        var command = new SqlCommand(
+            "SELECT [survey_id], [survey_page_index], [survey_question_index], [survey_answer_option_index], [survey_answer_option_text] FROM [survey_question_answer_options] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [survey_page_index,[object Object]] = @survey_page_index,[object Object] AND [survey_answer_option_index,[object Object]] = @survey_answer_option_index,[object Object] AND [survey_question_index,[object Object]] = @survey_question_index,[object Object]",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_answer_option_index", SqlDbType.Int).SqlValue = surveyAnswerOptionIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
+
+        return command;
+    }
+
+    public SqlSurveyQuestionAnswerOption? SelectUniqueSqlSurveyQuestionAnswerOption(
+        SqlInt32 surveyId,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyAnswerOptionIndex,
+        SqlInt32 surveyQuestionIndex)
+    {
+        var command = SelectUniqueSqlSurveyQuestionAnswerOptionCommand(
+            surveyId,
+            surveyPageIndex,
+            surveyAnswerOptionIndex,
+            surveyQuestionIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!reader.Read())
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyAnswerOptionIndex: reader.GetSqlInt32(3),
+            SurveyAnswerOptionText: reader.GetSqlString(4));
+    }
+
+    public Task<SqlSurveyQuestionAnswerOption?> SelectUniqueSqlSurveyQuestionAnswerOptionAsync(
+        SqlInt32 surveyId,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyAnswerOptionIndex,
+        SqlInt32 surveyQuestionIndex)
+    {
+        return SelectUniqueSqlSurveyQuestionAnswerOptionAsync(
+            surveyId,
+            surveyPageIndex,
+            surveyAnswerOptionIndex,
+            surveyQuestionIndex,
+            CancellationToken.None);
+    }
+
+    public async Task<SqlSurveyQuestionAnswerOption?> SelectUniqueSqlSurveyQuestionAnswerOptionAsync(
+        SqlInt32 surveyId,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyAnswerOptionIndex,
+        SqlInt32 surveyQuestionIndex,
+        CancellationToken cancellationToken)
+    {
+        var command = SelectUniqueSqlSurveyQuestionAnswerOptionCommand(
+            surveyId,
+            surveyPageIndex,
+            surveyAnswerOptionIndex,
+            surveyQuestionIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!await reader.ReadAsync(cancellationToken))
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyAnswerOptionIndex: reader.GetSqlInt32(3),
+            SurveyAnswerOptionText: reader.GetSqlString(4));
+    }
+
+    private SqlCommand InsertSqlSurveyQuestionAnswerOptionCommand(
+        SqlInt32 surveyId,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
+        SqlInt32 surveyAnswerOptionIndex,
+        SqlString surveyAnswerOptionText)
+    {
+        var command = new SqlCommand(
+            "INSERT INTO [survey_question_answer_options] ([survey_id], [survey_page_index], [survey_question_index], [survey_answer_option_index], [survey_answer_option_text]) VALUES (@survey_id, @survey_page_index, @survey_question_index, @survey_answer_option_index, @survey_answer_option_text)",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
+        command.Parameters.Add("survey_answer_option_index", SqlDbType.Int).SqlValue = surveyAnswerOptionIndex;
+        command.Parameters.Add("survey_answer_option_text", SqlDbType.VarChar, 1023).SqlValue = surveyAnswerOptionText;
+
+        return command;
+    }
+
+    public void InsertSqlSurveyQuestionAnswerOption(SqlSurveyQuestionAnswerOption surveyQuestionAnswerOption)
+    {
+        var command = InsertSqlSurveyQuestionAnswerOptionCommand(
+            surveyQuestionAnswerOption.SurveyId,
+            surveyQuestionAnswerOption.SurveyPageIndex,
+            surveyQuestionAnswerOption.SurveyQuestionIndex,
+            surveyQuestionAnswerOption.SurveyAnswerOptionIndex,
+            surveyQuestionAnswerOption.SurveyAnswerOptionText);
+
+        command.ExecuteNonQuery();
+    }
+
+    public Task InsertSqlSurveyQuestionAnswerOptionAsync(SqlSurveyQuestionAnswerOption surveyQuestionAnswerOption)
+        => InsertSqlSurveyQuestionAnswerOptionAsync(surveyQuestionAnswerOption, CancellationToken.None);
+
+    public Task InsertSqlSurveyQuestionAnswerOptionAsync(
+        SqlSurveyQuestionAnswerOption surveyQuestionAnswerOption,
+        CancellationToken cancellationToken)
+    {
+        var command = InsertSqlSurveyQuestionAnswerOptionCommand(
+            surveyQuestionAnswerOption.SurveyId,
+            surveyQuestionAnswerOption.SurveyPageIndex,
+            surveyQuestionAnswerOption.SurveyQuestionIndex,
+            surveyQuestionAnswerOption.SurveyAnswerOptionIndex,
+            surveyQuestionAnswerOption.SurveyAnswerOptionText);
+
+        return command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    private SqlCommand SelectUniqueSqlSurveyQuestionShowConditionTypeCommand(
+        SqlByte surveyQuestionShowConditionTypeId)
+    {
+        var command = new SqlCommand(
+            "SELECT [survey_question_show_condition_type_id], [survey_question_show_condition_type_name] FROM [survey_question_show_condition_types] WHERE [survey_question_show_condition_type_id,[object Object]] = @survey_question_show_condition_type_id,[object Object]",
+            source);
+
+        command.Parameters.Add("survey_question_show_condition_type_id", SqlDbType.TinyInt).SqlValue = surveyQuestionShowConditionTypeId;
+
+        return command;
+    }
+
+    public SqlSurveyQuestionShowConditionType? SelectUniqueSqlSurveyQuestionShowConditionType(
+        SqlByte surveyQuestionShowConditionTypeId)
+    {
+        var command = SelectUniqueSqlSurveyQuestionShowConditionTypeCommand(
+            surveyQuestionShowConditionTypeId);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!reader.Read())
+            return null;
+
+        return new(
+            SurveyQuestionShowConditionTypeId: reader.GetSqlByte(0),
+            SurveyQuestionShowConditionTypeName: reader.GetSqlString(1));
+    }
+
+    public Task<SqlSurveyQuestionShowConditionType?> SelectUniqueSqlSurveyQuestionShowConditionTypeAsync(
+        SqlByte surveyQuestionShowConditionTypeId)
+    {
+        return SelectUniqueSqlSurveyQuestionShowConditionTypeAsync(
+            surveyQuestionShowConditionTypeId,
+            CancellationToken.None);
+    }
+
+    public async Task<SqlSurveyQuestionShowConditionType?> SelectUniqueSqlSurveyQuestionShowConditionTypeAsync(
+        SqlByte surveyQuestionShowConditionTypeId,
+        CancellationToken cancellationToken)
+    {
+        var command = SelectUniqueSqlSurveyQuestionShowConditionTypeCommand(
+            surveyQuestionShowConditionTypeId);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!await reader.ReadAsync(cancellationToken))
+            return null;
+
+        return new(
+            SurveyQuestionShowConditionTypeId: reader.GetSqlByte(0),
+            SurveyQuestionShowConditionTypeName: reader.GetSqlString(1));
+    }
+
+    private SqlCommand InsertSqlSurveyQuestionShowConditionTypeCommand(
+        SqlByte surveyQuestionShowConditionTypeId,
+        SqlString surveyQuestionShowConditionTypeName)
+    {
+        var command = new SqlCommand(
+            "INSERT INTO [survey_question_show_condition_types] ([survey_question_show_condition_type_id], [survey_question_show_condition_type_name]) VALUES (@survey_question_show_condition_type_id, @survey_question_show_condition_type_name)",
+            source);
+
+        command.Parameters.Add("survey_question_show_condition_type_id", SqlDbType.TinyInt).SqlValue = surveyQuestionShowConditionTypeId;
+        command.Parameters.Add("survey_question_show_condition_type_name", SqlDbType.VarChar, 255).SqlValue = surveyQuestionShowConditionTypeName;
+
+        return command;
+    }
+
+    public void InsertSqlSurveyQuestionShowConditionType(SqlSurveyQuestionShowConditionType surveyQuestionShowConditionType)
+    {
+        var command = InsertSqlSurveyQuestionShowConditionTypeCommand(
+            surveyQuestionShowConditionType.SurveyQuestionShowConditionTypeId,
+            surveyQuestionShowConditionType.SurveyQuestionShowConditionTypeName);
+
+        command.ExecuteNonQuery();
+    }
+
+    public Task InsertSqlSurveyQuestionShowConditionTypeAsync(SqlSurveyQuestionShowConditionType surveyQuestionShowConditionType)
+        => InsertSqlSurveyQuestionShowConditionTypeAsync(surveyQuestionShowConditionType, CancellationToken.None);
+
+    public Task InsertSqlSurveyQuestionShowConditionTypeAsync(
+        SqlSurveyQuestionShowConditionType surveyQuestionShowConditionType,
+        CancellationToken cancellationToken)
+    {
+        var command = InsertSqlSurveyQuestionShowConditionTypeCommand(
+            surveyQuestionShowConditionType.SurveyQuestionShowConditionTypeId,
+            surveyQuestionShowConditionType.SurveyQuestionShowConditionTypeName);
+
+        return command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    private SqlCommand SelectUniqueSqlSurveyQuestionShowConditionCommand(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionShowConditionIndex)
+    {
+        var command = new SqlCommand(
+            "SELECT [survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_type], [survey_question_show_condition_operator] FROM [survey_question_show_conditions] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [affected_survey_page_index,[object Object]] = @affected_survey_page_index,[object Object] AND [affected_survey_question_index,[object Object]] = @affected_survey_question_index,[object Object] AND [survey_question_show_condition_index,[object Object]] = @survey_question_show_condition_index,[object Object]",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
+        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_question_show_condition_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionIndex;
+
+        return command;
+    }
+
+    public SqlSurveyQuestionShowCondition? SelectUniqueSqlSurveyQuestionShowCondition(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionShowConditionIndex)
+    {
+        var command = SelectUniqueSqlSurveyQuestionShowConditionCommand(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionShowConditionIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!reader.Read())
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
+            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyQuestionShowConditionIndex: reader.GetSqlInt32(3),
+            SurveyQuestionShowConditionType: reader.GetSqlByte(4),
+            SurveyQuestionShowConditionOperator: reader.GetSqlBoolean(5));
+    }
+
+    public Task<SqlSurveyQuestionShowCondition?> SelectUniqueSqlSurveyQuestionShowConditionAsync(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionShowConditionIndex)
+    {
+        return SelectUniqueSqlSurveyQuestionShowConditionAsync(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionShowConditionIndex,
+            CancellationToken.None);
+    }
+
+    public async Task<SqlSurveyQuestionShowCondition?> SelectUniqueSqlSurveyQuestionShowConditionAsync(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionShowConditionIndex,
+        CancellationToken cancellationToken)
+    {
+        var command = SelectUniqueSqlSurveyQuestionShowConditionCommand(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionShowConditionIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!await reader.ReadAsync(cancellationToken))
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
+            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyQuestionShowConditionIndex: reader.GetSqlInt32(3),
+            SurveyQuestionShowConditionType: reader.GetSqlByte(4),
+            SurveyQuestionShowConditionOperator: reader.GetSqlBoolean(5));
+    }
+
+    private SqlCommand InsertSqlSurveyQuestionShowConditionCommand(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionShowConditionIndex,
+        SqlByte surveyQuestionShowConditionType,
+        SqlBoolean surveyQuestionShowConditionOperator)
+    {
+        var command = new SqlCommand(
+            "INSERT INTO [survey_question_show_conditions] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_type], [survey_question_show_condition_operator]) VALUES (@survey_id, @affected_survey_page_index, @affected_survey_question_index, @survey_question_show_condition_index, @survey_question_show_condition_type, @survey_question_show_condition_operator)",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
+        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_question_show_condition_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionIndex;
+        command.Parameters.Add("survey_question_show_condition_type", SqlDbType.TinyInt).SqlValue = surveyQuestionShowConditionType;
+        command.Parameters.Add("survey_question_show_condition_operator", SqlDbType.Bit).SqlValue = surveyQuestionShowConditionOperator;
+
+        return command;
+    }
+
+    public void InsertSqlSurveyQuestionShowCondition(SqlSurveyQuestionShowCondition surveyQuestionShowCondition)
+    {
+        var command = InsertSqlSurveyQuestionShowConditionCommand(
+            surveyQuestionShowCondition.SurveyId,
+            surveyQuestionShowCondition.AffectedSurveyPageIndex,
+            surveyQuestionShowCondition.AffectedSurveyQuestionIndex,
+            surveyQuestionShowCondition.SurveyQuestionShowConditionIndex,
+            surveyQuestionShowCondition.SurveyQuestionShowConditionType,
+            surveyQuestionShowCondition.SurveyQuestionShowConditionOperator);
+
+        command.ExecuteNonQuery();
+    }
+
+    public Task InsertSqlSurveyQuestionShowConditionAsync(SqlSurveyQuestionShowCondition surveyQuestionShowCondition)
+        => InsertSqlSurveyQuestionShowConditionAsync(surveyQuestionShowCondition, CancellationToken.None);
+
+    public Task InsertSqlSurveyQuestionShowConditionAsync(
+        SqlSurveyQuestionShowCondition surveyQuestionShowCondition,
+        CancellationToken cancellationToken)
+    {
+        var command = InsertSqlSurveyQuestionShowConditionCommand(
+            surveyQuestionShowCondition.SurveyId,
+            surveyQuestionShowCondition.AffectedSurveyPageIndex,
+            surveyQuestionShowCondition.AffectedSurveyQuestionIndex,
+            surveyQuestionShowCondition.SurveyQuestionShowConditionIndex,
+            surveyQuestionShowCondition.SurveyQuestionShowConditionType,
+            surveyQuestionShowCondition.SurveyQuestionShowConditionOperator);
+
+        return command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    private SqlCommand SelectUniqueSqlSurveyQuestionShowConditionsRefArgCommand(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionShowConditionIndex,
+        SqlInt32 surveyQuestionShowConditionArgIndex)
+    {
+        var command = new SqlCommand(
+            "SELECT [survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index] FROM [survey_question_show_conditions_ref_args] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [affected_survey_page_index,[object Object]] = @affected_survey_page_index,[object Object] AND [affected_survey_question_index,[object Object]] = @affected_survey_question_index,[object Object] AND [survey_question_show_condition_index,[object Object]] = @survey_question_show_condition_index,[object Object] AND [survey_question_show_condition_arg_index,[object Object]] = @survey_question_show_condition_arg_index,[object Object]",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
+        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_question_show_condition_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionIndex;
+        command.Parameters.Add("survey_question_show_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionArgIndex;
+
+        return command;
+    }
+
+    public SqlSurveyQuestionShowConditionsRefArg? SelectUniqueSqlSurveyQuestionShowConditionsRefArg(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionShowConditionIndex,
+        SqlInt32 surveyQuestionShowConditionArgIndex)
+    {
+        var command = SelectUniqueSqlSurveyQuestionShowConditionsRefArgCommand(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionShowConditionIndex,
+            surveyQuestionShowConditionArgIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!reader.Read())
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
+            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyQuestionShowConditionIndex: reader.GetSqlInt32(3),
+            SurveyQuestionShowConditionArgIndex: reader.GetSqlInt32(4),
+            ReferencedSurveyPageIndex: reader.GetSqlInt32(5),
+            ReferencedSurveyQuestionIndex: reader.GetSqlInt32(6));
+    }
+
+    public Task<SqlSurveyQuestionShowConditionsRefArg?> SelectUniqueSqlSurveyQuestionShowConditionsRefArgAsync(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionShowConditionIndex,
+        SqlInt32 surveyQuestionShowConditionArgIndex)
+    {
+        return SelectUniqueSqlSurveyQuestionShowConditionsRefArgAsync(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionShowConditionIndex,
+            surveyQuestionShowConditionArgIndex,
+            CancellationToken.None);
+    }
+
+    public async Task<SqlSurveyQuestionShowConditionsRefArg?> SelectUniqueSqlSurveyQuestionShowConditionsRefArgAsync(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionShowConditionIndex,
+        SqlInt32 surveyQuestionShowConditionArgIndex,
+        CancellationToken cancellationToken)
+    {
+        var command = SelectUniqueSqlSurveyQuestionShowConditionsRefArgCommand(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionShowConditionIndex,
+            surveyQuestionShowConditionArgIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!await reader.ReadAsync(cancellationToken))
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
+            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyQuestionShowConditionIndex: reader.GetSqlInt32(3),
+            SurveyQuestionShowConditionArgIndex: reader.GetSqlInt32(4),
+            ReferencedSurveyPageIndex: reader.GetSqlInt32(5),
+            ReferencedSurveyQuestionIndex: reader.GetSqlInt32(6));
+    }
+
+    private SqlCommand InsertSqlSurveyQuestionShowConditionsRefArgCommand(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionShowConditionIndex,
+        SqlInt32 surveyQuestionShowConditionArgIndex,
+        SqlInt32 referencedSurveyPageIndex,
+        SqlInt32 referencedSurveyQuestionIndex)
+    {
+        var command = new SqlCommand(
+            "INSERT INTO [survey_question_show_conditions_ref_args] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index]) VALUES (@survey_id, @affected_survey_page_index, @affected_survey_question_index, @survey_question_show_condition_index, @survey_question_show_condition_arg_index, @referenced_survey_page_index, @referenced_survey_question_index)",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
+        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_question_show_condition_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionIndex;
+        command.Parameters.Add("survey_question_show_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionArgIndex;
+        command.Parameters.Add("referenced_survey_page_index", SqlDbType.Int).SqlValue = referencedSurveyPageIndex;
+        command.Parameters.Add("referenced_survey_question_index", SqlDbType.Int).SqlValue = referencedSurveyQuestionIndex;
+
+        return command;
+    }
+
+    public void InsertSqlSurveyQuestionShowConditionsRefArg(SqlSurveyQuestionShowConditionsRefArg surveyQuestionShowConditionsRefArg)
+    {
+        var command = InsertSqlSurveyQuestionShowConditionsRefArgCommand(
+            surveyQuestionShowConditionsRefArg.SurveyId,
+            surveyQuestionShowConditionsRefArg.AffectedSurveyPageIndex,
+            surveyQuestionShowConditionsRefArg.AffectedSurveyQuestionIndex,
+            surveyQuestionShowConditionsRefArg.SurveyQuestionShowConditionIndex,
+            surveyQuestionShowConditionsRefArg.SurveyQuestionShowConditionArgIndex,
+            surveyQuestionShowConditionsRefArg.ReferencedSurveyPageIndex,
+            surveyQuestionShowConditionsRefArg.ReferencedSurveyQuestionIndex);
+
+        command.ExecuteNonQuery();
+    }
+
+    public Task InsertSqlSurveyQuestionShowConditionsRefArgAsync(SqlSurveyQuestionShowConditionsRefArg surveyQuestionShowConditionsRefArg)
+        => InsertSqlSurveyQuestionShowConditionsRefArgAsync(surveyQuestionShowConditionsRefArg, CancellationToken.None);
+
+    public Task InsertSqlSurveyQuestionShowConditionsRefArgAsync(
+        SqlSurveyQuestionShowConditionsRefArg surveyQuestionShowConditionsRefArg,
+        CancellationToken cancellationToken)
+    {
+        var command = InsertSqlSurveyQuestionShowConditionsRefArgCommand(
+            surveyQuestionShowConditionsRefArg.SurveyId,
+            surveyQuestionShowConditionsRefArg.AffectedSurveyPageIndex,
+            surveyQuestionShowConditionsRefArg.AffectedSurveyQuestionIndex,
+            surveyQuestionShowConditionsRefArg.SurveyQuestionShowConditionIndex,
+            surveyQuestionShowConditionsRefArg.SurveyQuestionShowConditionArgIndex,
+            surveyQuestionShowConditionsRefArg.ReferencedSurveyPageIndex,
+            surveyQuestionShowConditionsRefArg.ReferencedSurveyQuestionIndex);
+
+        return command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    private SqlCommand SelectUniqueSqlSurveyQuestionShowConditionsIntegerArgCommand(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionShowConditionIndex,
+        SqlInt32 surveyQuestionShowConditionArgIndex)
+    {
+        var command = new SqlCommand(
+            "SELECT [survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [survey_question_show_condition_arg_integer] FROM [survey_question_show_conditions_integer_args] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [affected_survey_page_index,[object Object]] = @affected_survey_page_index,[object Object] AND [affected_survey_question_index,[object Object]] = @affected_survey_question_index,[object Object] AND [survey_question_show_condition_index,[object Object]] = @survey_question_show_condition_index,[object Object] AND [survey_question_show_condition_arg_index,[object Object]] = @survey_question_show_condition_arg_index,[object Object]",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
+        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_question_show_condition_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionIndex;
+        command.Parameters.Add("survey_question_show_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionArgIndex;
+
+        return command;
+    }
+
+    public SqlSurveyQuestionShowConditionsIntegerArg? SelectUniqueSqlSurveyQuestionShowConditionsIntegerArg(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionShowConditionIndex,
+        SqlInt32 surveyQuestionShowConditionArgIndex)
+    {
+        var command = SelectUniqueSqlSurveyQuestionShowConditionsIntegerArgCommand(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionShowConditionIndex,
+            surveyQuestionShowConditionArgIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!reader.Read())
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
+            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyQuestionShowConditionIndex: reader.GetSqlInt32(3),
+            SurveyQuestionShowConditionArgIndex: reader.GetSqlInt32(4),
+            SurveyQuestionShowConditionArgInteger: reader.GetSqlInt32(5));
+    }
+
+    public Task<SqlSurveyQuestionShowConditionsIntegerArg?> SelectUniqueSqlSurveyQuestionShowConditionsIntegerArgAsync(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionShowConditionIndex,
+        SqlInt32 surveyQuestionShowConditionArgIndex)
+    {
+        return SelectUniqueSqlSurveyQuestionShowConditionsIntegerArgAsync(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionShowConditionIndex,
+            surveyQuestionShowConditionArgIndex,
+            CancellationToken.None);
+    }
+
+    public async Task<SqlSurveyQuestionShowConditionsIntegerArg?> SelectUniqueSqlSurveyQuestionShowConditionsIntegerArgAsync(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionShowConditionIndex,
+        SqlInt32 surveyQuestionShowConditionArgIndex,
+        CancellationToken cancellationToken)
+    {
+        var command = SelectUniqueSqlSurveyQuestionShowConditionsIntegerArgCommand(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionShowConditionIndex,
+            surveyQuestionShowConditionArgIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!await reader.ReadAsync(cancellationToken))
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
+            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyQuestionShowConditionIndex: reader.GetSqlInt32(3),
+            SurveyQuestionShowConditionArgIndex: reader.GetSqlInt32(4),
+            SurveyQuestionShowConditionArgInteger: reader.GetSqlInt32(5));
+    }
+
+    private SqlCommand InsertSqlSurveyQuestionShowConditionsIntegerArgCommand(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionShowConditionIndex,
+        SqlInt32 surveyQuestionShowConditionArgIndex,
+        SqlInt32 surveyQuestionShowConditionArgInteger)
+    {
+        var command = new SqlCommand(
+            "INSERT INTO [survey_question_show_conditions_integer_args] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [survey_question_show_condition_arg_integer]) VALUES (@survey_id, @affected_survey_page_index, @affected_survey_question_index, @survey_question_show_condition_index, @survey_question_show_condition_arg_index, @survey_question_show_condition_arg_integer)",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
+        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_question_show_condition_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionIndex;
+        command.Parameters.Add("survey_question_show_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionArgIndex;
+        command.Parameters.Add("survey_question_show_condition_arg_integer", SqlDbType.Int).SqlValue = surveyQuestionShowConditionArgInteger;
+
+        return command;
+    }
+
+    public void InsertSqlSurveyQuestionShowConditionsIntegerArg(SqlSurveyQuestionShowConditionsIntegerArg surveyQuestionShowConditionsIntegerArg)
+    {
+        var command = InsertSqlSurveyQuestionShowConditionsIntegerArgCommand(
+            surveyQuestionShowConditionsIntegerArg.SurveyId,
+            surveyQuestionShowConditionsIntegerArg.AffectedSurveyPageIndex,
+            surveyQuestionShowConditionsIntegerArg.AffectedSurveyQuestionIndex,
+            surveyQuestionShowConditionsIntegerArg.SurveyQuestionShowConditionIndex,
+            surveyQuestionShowConditionsIntegerArg.SurveyQuestionShowConditionArgIndex,
+            surveyQuestionShowConditionsIntegerArg.SurveyQuestionShowConditionArgInteger);
+
+        command.ExecuteNonQuery();
+    }
+
+    public Task InsertSqlSurveyQuestionShowConditionsIntegerArgAsync(SqlSurveyQuestionShowConditionsIntegerArg surveyQuestionShowConditionsIntegerArg)
+        => InsertSqlSurveyQuestionShowConditionsIntegerArgAsync(surveyQuestionShowConditionsIntegerArg, CancellationToken.None);
+
+    public Task InsertSqlSurveyQuestionShowConditionsIntegerArgAsync(
+        SqlSurveyQuestionShowConditionsIntegerArg surveyQuestionShowConditionsIntegerArg,
+        CancellationToken cancellationToken)
+    {
+        var command = InsertSqlSurveyQuestionShowConditionsIntegerArgCommand(
+            surveyQuestionShowConditionsIntegerArg.SurveyId,
+            surveyQuestionShowConditionsIntegerArg.AffectedSurveyPageIndex,
+            surveyQuestionShowConditionsIntegerArg.AffectedSurveyQuestionIndex,
+            surveyQuestionShowConditionsIntegerArg.SurveyQuestionShowConditionIndex,
+            surveyQuestionShowConditionsIntegerArg.SurveyQuestionShowConditionArgIndex,
+            surveyQuestionShowConditionsIntegerArg.SurveyQuestionShowConditionArgInteger);
+
+        return command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    private SqlCommand SelectUniqueSqlSurveyQuestionShowConditionsTextArgCommand(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionShowConditionIndex,
+        SqlInt32 surveyQuestionShowConditionArgIndex)
+    {
+        var command = new SqlCommand(
+            "SELECT [survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [survey_question_show_condition_arg_text] FROM [survey_question_show_conditions_text_args] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [affected_survey_page_index,[object Object]] = @affected_survey_page_index,[object Object] AND [affected_survey_question_index,[object Object]] = @affected_survey_question_index,[object Object] AND [survey_question_show_condition_index,[object Object]] = @survey_question_show_condition_index,[object Object] AND [survey_question_show_condition_arg_index,[object Object]] = @survey_question_show_condition_arg_index,[object Object]",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
+        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_question_show_condition_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionIndex;
+        command.Parameters.Add("survey_question_show_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionArgIndex;
+
+        return command;
+    }
+
+    public SqlSurveyQuestionShowConditionsTextArg? SelectUniqueSqlSurveyQuestionShowConditionsTextArg(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionShowConditionIndex,
+        SqlInt32 surveyQuestionShowConditionArgIndex)
+    {
+        var command = SelectUniqueSqlSurveyQuestionShowConditionsTextArgCommand(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionShowConditionIndex,
+            surveyQuestionShowConditionArgIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!reader.Read())
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
+            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyQuestionShowConditionIndex: reader.GetSqlInt32(3),
+            SurveyQuestionShowConditionArgIndex: reader.GetSqlInt32(4),
+            SurveyQuestionShowConditionArgText: reader.GetSqlString(5));
+    }
+
+    public Task<SqlSurveyQuestionShowConditionsTextArg?> SelectUniqueSqlSurveyQuestionShowConditionsTextArgAsync(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionShowConditionIndex,
+        SqlInt32 surveyQuestionShowConditionArgIndex)
+    {
+        return SelectUniqueSqlSurveyQuestionShowConditionsTextArgAsync(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionShowConditionIndex,
+            surveyQuestionShowConditionArgIndex,
+            CancellationToken.None);
+    }
+
+    public async Task<SqlSurveyQuestionShowConditionsTextArg?> SelectUniqueSqlSurveyQuestionShowConditionsTextArgAsync(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionShowConditionIndex,
+        SqlInt32 surveyQuestionShowConditionArgIndex,
+        CancellationToken cancellationToken)
+    {
+        var command = SelectUniqueSqlSurveyQuestionShowConditionsTextArgCommand(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionShowConditionIndex,
+            surveyQuestionShowConditionArgIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!await reader.ReadAsync(cancellationToken))
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
+            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyQuestionShowConditionIndex: reader.GetSqlInt32(3),
+            SurveyQuestionShowConditionArgIndex: reader.GetSqlInt32(4),
+            SurveyQuestionShowConditionArgText: reader.GetSqlString(5));
+    }
+
+    private SqlCommand InsertSqlSurveyQuestionShowConditionsTextArgCommand(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionShowConditionIndex,
+        SqlInt32 surveyQuestionShowConditionArgIndex,
+        SqlString surveyQuestionShowConditionArgText)
+    {
+        var command = new SqlCommand(
+            "INSERT INTO [survey_question_show_conditions_text_args] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [survey_question_show_condition_arg_text]) VALUES (@survey_id, @affected_survey_page_index, @affected_survey_question_index, @survey_question_show_condition_index, @survey_question_show_condition_arg_index, @survey_question_show_condition_arg_text)",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
+        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_question_show_condition_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionIndex;
+        command.Parameters.Add("survey_question_show_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionArgIndex;
+        command.Parameters.Add("survey_question_show_condition_arg_text", SqlDbType.VarChar, VARCHAR_MAX_LENGTH).SqlValue = surveyQuestionShowConditionArgText;
+
+        return command;
+    }
+
+    public void InsertSqlSurveyQuestionShowConditionsTextArg(SqlSurveyQuestionShowConditionsTextArg surveyQuestionShowConditionsTextArg)
+    {
+        var command = InsertSqlSurveyQuestionShowConditionsTextArgCommand(
+            surveyQuestionShowConditionsTextArg.SurveyId,
+            surveyQuestionShowConditionsTextArg.AffectedSurveyPageIndex,
+            surveyQuestionShowConditionsTextArg.AffectedSurveyQuestionIndex,
+            surveyQuestionShowConditionsTextArg.SurveyQuestionShowConditionIndex,
+            surveyQuestionShowConditionsTextArg.SurveyQuestionShowConditionArgIndex,
+            surveyQuestionShowConditionsTextArg.SurveyQuestionShowConditionArgText);
+
+        command.ExecuteNonQuery();
+    }
+
+    public Task InsertSqlSurveyQuestionShowConditionsTextArgAsync(SqlSurveyQuestionShowConditionsTextArg surveyQuestionShowConditionsTextArg)
+        => InsertSqlSurveyQuestionShowConditionsTextArgAsync(surveyQuestionShowConditionsTextArg, CancellationToken.None);
+
+    public Task InsertSqlSurveyQuestionShowConditionsTextArgAsync(
+        SqlSurveyQuestionShowConditionsTextArg surveyQuestionShowConditionsTextArg,
+        CancellationToken cancellationToken)
+    {
+        var command = InsertSqlSurveyQuestionShowConditionsTextArgCommand(
+            surveyQuestionShowConditionsTextArg.SurveyId,
+            surveyQuestionShowConditionsTextArg.AffectedSurveyPageIndex,
+            surveyQuestionShowConditionsTextArg.AffectedSurveyQuestionIndex,
+            surveyQuestionShowConditionsTextArg.SurveyQuestionShowConditionIndex,
+            surveyQuestionShowConditionsTextArg.SurveyQuestionShowConditionArgIndex,
+            surveyQuestionShowConditionsTextArg.SurveyQuestionShowConditionArgText);
+
+        return command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    private SqlCommand SelectUniqueSqlSurveyQuestionValidationConditionTypeCommand(
+        SqlByte surveyQuestionValidationConditionTypeId)
+    {
+        var command = new SqlCommand(
+            "SELECT [survey_question_validation_condition_type_id], [survey_question_validation_condition_type_name] FROM [survey_question_validation_condition_types] WHERE [survey_question_validation_condition_type_id,[object Object]] = @survey_question_validation_condition_type_id,[object Object]",
+            source);
+
+        command.Parameters.Add("survey_question_validation_condition_type_id", SqlDbType.TinyInt).SqlValue = surveyQuestionValidationConditionTypeId;
+
+        return command;
+    }
+
+    public SqlSurveyQuestionValidationConditionType? SelectUniqueSqlSurveyQuestionValidationConditionType(
+        SqlByte surveyQuestionValidationConditionTypeId)
+    {
+        var command = SelectUniqueSqlSurveyQuestionValidationConditionTypeCommand(
+            surveyQuestionValidationConditionTypeId);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!reader.Read())
+            return null;
+
+        return new(
+            SurveyQuestionValidationConditionTypeId: reader.GetSqlByte(0),
+            SurveyQuestionValidationConditionTypeName: reader.GetSqlString(1));
+    }
+
+    public Task<SqlSurveyQuestionValidationConditionType?> SelectUniqueSqlSurveyQuestionValidationConditionTypeAsync(
+        SqlByte surveyQuestionValidationConditionTypeId)
+    {
+        return SelectUniqueSqlSurveyQuestionValidationConditionTypeAsync(
+            surveyQuestionValidationConditionTypeId,
+            CancellationToken.None);
+    }
+
+    public async Task<SqlSurveyQuestionValidationConditionType?> SelectUniqueSqlSurveyQuestionValidationConditionTypeAsync(
+        SqlByte surveyQuestionValidationConditionTypeId,
+        CancellationToken cancellationToken)
+    {
+        var command = SelectUniqueSqlSurveyQuestionValidationConditionTypeCommand(
+            surveyQuestionValidationConditionTypeId);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!await reader.ReadAsync(cancellationToken))
+            return null;
+
+        return new(
+            SurveyQuestionValidationConditionTypeId: reader.GetSqlByte(0),
+            SurveyQuestionValidationConditionTypeName: reader.GetSqlString(1));
+    }
+
+    private SqlCommand InsertSqlSurveyQuestionValidationConditionTypeCommand(
+        SqlByte surveyQuestionValidationConditionTypeId,
+        SqlString surveyQuestionValidationConditionTypeName)
+    {
+        var command = new SqlCommand(
+            "INSERT INTO [survey_question_validation_condition_types] ([survey_question_validation_condition_type_id], [survey_question_validation_condition_type_name]) VALUES (@survey_question_validation_condition_type_id, @survey_question_validation_condition_type_name)",
+            source);
+
+        command.Parameters.Add("survey_question_validation_condition_type_id", SqlDbType.TinyInt).SqlValue = surveyQuestionValidationConditionTypeId;
+        command.Parameters.Add("survey_question_validation_condition_type_name", SqlDbType.VarChar, 255).SqlValue = surveyQuestionValidationConditionTypeName;
+
+        return command;
+    }
+
+    public void InsertSqlSurveyQuestionValidationConditionType(SqlSurveyQuestionValidationConditionType surveyQuestionValidationConditionType)
+    {
+        var command = InsertSqlSurveyQuestionValidationConditionTypeCommand(
+            surveyQuestionValidationConditionType.SurveyQuestionValidationConditionTypeId,
+            surveyQuestionValidationConditionType.SurveyQuestionValidationConditionTypeName);
+
+        command.ExecuteNonQuery();
+    }
+
+    public Task InsertSqlSurveyQuestionValidationConditionTypeAsync(SqlSurveyQuestionValidationConditionType surveyQuestionValidationConditionType)
+        => InsertSqlSurveyQuestionValidationConditionTypeAsync(surveyQuestionValidationConditionType, CancellationToken.None);
+
+    public Task InsertSqlSurveyQuestionValidationConditionTypeAsync(
+        SqlSurveyQuestionValidationConditionType surveyQuestionValidationConditionType,
+        CancellationToken cancellationToken)
+    {
+        var command = InsertSqlSurveyQuestionValidationConditionTypeCommand(
+            surveyQuestionValidationConditionType.SurveyQuestionValidationConditionTypeId,
+            surveyQuestionValidationConditionType.SurveyQuestionValidationConditionTypeName);
+
+        return command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    private SqlCommand SelectUniqueSqlSurveyQuestionValidationConditionCommand(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionValidationConditionIndex)
+    {
+        var command = new SqlCommand(
+            "SELECT [survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_type], [survey_question_validation_condition_operator] FROM [survey_question_validation_conditions] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [affected_survey_page_index,[object Object]] = @affected_survey_page_index,[object Object] AND [affected_survey_question_index,[object Object]] = @affected_survey_question_index,[object Object] AND [survey_question_validation_condition_index,[object Object]] = @survey_question_validation_condition_index,[object Object]",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
+        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_question_validation_condition_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionIndex;
+
+        return command;
+    }
+
+    public SqlSurveyQuestionValidationCondition? SelectUniqueSqlSurveyQuestionValidationCondition(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionValidationConditionIndex)
+    {
+        var command = SelectUniqueSqlSurveyQuestionValidationConditionCommand(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!reader.Read())
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
+            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyQuestionValidationConditionIndex: reader.GetSqlInt32(3),
+            SurveyQuestionValidationConditionType: reader.GetSqlByte(4),
+            SurveyQuestionValidationConditionOperator: reader.GetSqlBoolean(5));
+    }
+
+    public Task<SqlSurveyQuestionValidationCondition?> SelectUniqueSqlSurveyQuestionValidationConditionAsync(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionValidationConditionIndex)
+    {
+        return SelectUniqueSqlSurveyQuestionValidationConditionAsync(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionIndex,
+            CancellationToken.None);
+    }
+
+    public async Task<SqlSurveyQuestionValidationCondition?> SelectUniqueSqlSurveyQuestionValidationConditionAsync(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionValidationConditionIndex,
+        CancellationToken cancellationToken)
+    {
+        var command = SelectUniqueSqlSurveyQuestionValidationConditionCommand(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!await reader.ReadAsync(cancellationToken))
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
+            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyQuestionValidationConditionIndex: reader.GetSqlInt32(3),
+            SurveyQuestionValidationConditionType: reader.GetSqlByte(4),
+            SurveyQuestionValidationConditionOperator: reader.GetSqlBoolean(5));
+    }
+
+    private SqlCommand InsertSqlSurveyQuestionValidationConditionCommand(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionValidationConditionIndex,
+        SqlByte surveyQuestionValidationConditionType,
+        SqlBoolean surveyQuestionValidationConditionOperator)
+    {
+        var command = new SqlCommand(
+            "INSERT INTO [survey_question_validation_conditions] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_type], [survey_question_validation_condition_operator]) VALUES (@survey_id, @affected_survey_page_index, @affected_survey_question_index, @survey_question_validation_condition_index, @survey_question_validation_condition_type, @survey_question_validation_condition_operator)",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
+        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_question_validation_condition_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionIndex;
+        command.Parameters.Add("survey_question_validation_condition_type", SqlDbType.TinyInt).SqlValue = surveyQuestionValidationConditionType;
+        command.Parameters.Add("survey_question_validation_condition_operator", SqlDbType.Bit).SqlValue = surveyQuestionValidationConditionOperator;
+
+        return command;
+    }
+
+    public void InsertSqlSurveyQuestionValidationCondition(SqlSurveyQuestionValidationCondition surveyQuestionValidationCondition)
+    {
+        var command = InsertSqlSurveyQuestionValidationConditionCommand(
+            surveyQuestionValidationCondition.SurveyId,
+            surveyQuestionValidationCondition.AffectedSurveyPageIndex,
+            surveyQuestionValidationCondition.AffectedSurveyQuestionIndex,
+            surveyQuestionValidationCondition.SurveyQuestionValidationConditionIndex,
+            surveyQuestionValidationCondition.SurveyQuestionValidationConditionType,
+            surveyQuestionValidationCondition.SurveyQuestionValidationConditionOperator);
+
+        command.ExecuteNonQuery();
+    }
+
+    public Task InsertSqlSurveyQuestionValidationConditionAsync(SqlSurveyQuestionValidationCondition surveyQuestionValidationCondition)
+        => InsertSqlSurveyQuestionValidationConditionAsync(surveyQuestionValidationCondition, CancellationToken.None);
+
+    public Task InsertSqlSurveyQuestionValidationConditionAsync(
+        SqlSurveyQuestionValidationCondition surveyQuestionValidationCondition,
+        CancellationToken cancellationToken)
+    {
+        var command = InsertSqlSurveyQuestionValidationConditionCommand(
+            surveyQuestionValidationCondition.SurveyId,
+            surveyQuestionValidationCondition.AffectedSurveyPageIndex,
+            surveyQuestionValidationCondition.AffectedSurveyQuestionIndex,
+            surveyQuestionValidationCondition.SurveyQuestionValidationConditionIndex,
+            surveyQuestionValidationCondition.SurveyQuestionValidationConditionType,
+            surveyQuestionValidationCondition.SurveyQuestionValidationConditionOperator);
+
+        return command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    private SqlCommand SelectUniqueSqlSurveyQuestionValidationConditionsRefArgCommand(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionValidationConditionIndex,
+        SqlInt32 surveyQuestionValidationConditionArgIndex)
+    {
+        var command = new SqlCommand(
+            "SELECT [survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index] FROM [survey_question_validation_conditions_ref_args] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [affected_survey_page_index,[object Object]] = @affected_survey_page_index,[object Object] AND [affected_survey_question_index,[object Object]] = @affected_survey_question_index,[object Object] AND [survey_question_validation_condition_index,[object Object]] = @survey_question_validation_condition_index,[object Object] AND [survey_question_validation_condition_arg_index,[object Object]] = @survey_question_validation_condition_arg_index,[object Object]",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
+        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_question_validation_condition_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionIndex;
+        command.Parameters.Add("survey_question_validation_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionArgIndex;
+
+        return command;
+    }
+
+    public SqlSurveyQuestionValidationConditionsRefArg? SelectUniqueSqlSurveyQuestionValidationConditionsRefArg(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionValidationConditionIndex,
+        SqlInt32 surveyQuestionValidationConditionArgIndex)
+    {
+        var command = SelectUniqueSqlSurveyQuestionValidationConditionsRefArgCommand(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionIndex,
+            surveyQuestionValidationConditionArgIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!reader.Read())
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
+            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyQuestionValidationConditionIndex: reader.GetSqlInt32(3),
+            SurveyQuestionValidationConditionArgIndex: reader.GetSqlInt32(4),
+            ReferencedSurveyPageIndex: reader.GetSqlInt32(5),
+            ReferencedSurveyQuestionIndex: reader.GetSqlInt32(6));
+    }
+
+    public Task<SqlSurveyQuestionValidationConditionsRefArg?> SelectUniqueSqlSurveyQuestionValidationConditionsRefArgAsync(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionValidationConditionIndex,
+        SqlInt32 surveyQuestionValidationConditionArgIndex)
+    {
+        return SelectUniqueSqlSurveyQuestionValidationConditionsRefArgAsync(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionIndex,
+            surveyQuestionValidationConditionArgIndex,
+            CancellationToken.None);
+    }
+
+    public async Task<SqlSurveyQuestionValidationConditionsRefArg?> SelectUniqueSqlSurveyQuestionValidationConditionsRefArgAsync(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionValidationConditionIndex,
+        SqlInt32 surveyQuestionValidationConditionArgIndex,
+        CancellationToken cancellationToken)
+    {
+        var command = SelectUniqueSqlSurveyQuestionValidationConditionsRefArgCommand(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionIndex,
+            surveyQuestionValidationConditionArgIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!await reader.ReadAsync(cancellationToken))
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
+            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyQuestionValidationConditionIndex: reader.GetSqlInt32(3),
+            SurveyQuestionValidationConditionArgIndex: reader.GetSqlInt32(4),
+            ReferencedSurveyPageIndex: reader.GetSqlInt32(5),
+            ReferencedSurveyQuestionIndex: reader.GetSqlInt32(6));
+    }
+
+    private SqlCommand InsertSqlSurveyQuestionValidationConditionsRefArgCommand(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionValidationConditionIndex,
+        SqlInt32 surveyQuestionValidationConditionArgIndex,
+        SqlInt32 referencedSurveyPageIndex,
+        SqlInt32 referencedSurveyQuestionIndex)
+    {
+        var command = new SqlCommand(
+            "INSERT INTO [survey_question_validation_conditions_ref_args] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index]) VALUES (@survey_id, @affected_survey_page_index, @affected_survey_question_index, @survey_question_validation_condition_index, @survey_question_validation_condition_arg_index, @referenced_survey_page_index, @referenced_survey_question_index)",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
+        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_question_validation_condition_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionIndex;
+        command.Parameters.Add("survey_question_validation_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionArgIndex;
+        command.Parameters.Add("referenced_survey_page_index", SqlDbType.Int).SqlValue = referencedSurveyPageIndex;
+        command.Parameters.Add("referenced_survey_question_index", SqlDbType.Int).SqlValue = referencedSurveyQuestionIndex;
+
+        return command;
+    }
+
+    public void InsertSqlSurveyQuestionValidationConditionsRefArg(SqlSurveyQuestionValidationConditionsRefArg surveyQuestionValidationConditionsRefArg)
+    {
+        var command = InsertSqlSurveyQuestionValidationConditionsRefArgCommand(
+            surveyQuestionValidationConditionsRefArg.SurveyId,
+            surveyQuestionValidationConditionsRefArg.AffectedSurveyPageIndex,
+            surveyQuestionValidationConditionsRefArg.AffectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionsRefArg.SurveyQuestionValidationConditionIndex,
+            surveyQuestionValidationConditionsRefArg.SurveyQuestionValidationConditionArgIndex,
+            surveyQuestionValidationConditionsRefArg.ReferencedSurveyPageIndex,
+            surveyQuestionValidationConditionsRefArg.ReferencedSurveyQuestionIndex);
+
+        command.ExecuteNonQuery();
+    }
+
+    public Task InsertSqlSurveyQuestionValidationConditionsRefArgAsync(SqlSurveyQuestionValidationConditionsRefArg surveyQuestionValidationConditionsRefArg)
+        => InsertSqlSurveyQuestionValidationConditionsRefArgAsync(surveyQuestionValidationConditionsRefArg, CancellationToken.None);
+
+    public Task InsertSqlSurveyQuestionValidationConditionsRefArgAsync(
+        SqlSurveyQuestionValidationConditionsRefArg surveyQuestionValidationConditionsRefArg,
+        CancellationToken cancellationToken)
+    {
+        var command = InsertSqlSurveyQuestionValidationConditionsRefArgCommand(
+            surveyQuestionValidationConditionsRefArg.SurveyId,
+            surveyQuestionValidationConditionsRefArg.AffectedSurveyPageIndex,
+            surveyQuestionValidationConditionsRefArg.AffectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionsRefArg.SurveyQuestionValidationConditionIndex,
+            surveyQuestionValidationConditionsRefArg.SurveyQuestionValidationConditionArgIndex,
+            surveyQuestionValidationConditionsRefArg.ReferencedSurveyPageIndex,
+            surveyQuestionValidationConditionsRefArg.ReferencedSurveyQuestionIndex);
+
+        return command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    private SqlCommand SelectUniqueSqlSurveyQuestionValidationConditionsIntegerArgCommand(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionValidationConditionIndex,
+        SqlInt32 surveyQuestionValidationConditionArgIndex)
+    {
+        var command = new SqlCommand(
+            "SELECT [survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer] FROM [survey_question_validation_conditions_integer_args] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [affected_survey_page_index,[object Object]] = @affected_survey_page_index,[object Object] AND [affected_survey_question_index,[object Object]] = @affected_survey_question_index,[object Object] AND [survey_question_validation_condition_index,[object Object]] = @survey_question_validation_condition_index,[object Object] AND [survey_question_validation_condition_arg_index,[object Object]] = @survey_question_validation_condition_arg_index,[object Object]",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
+        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_question_validation_condition_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionIndex;
+        command.Parameters.Add("survey_question_validation_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionArgIndex;
+
+        return command;
+    }
+
+    public SqlSurveyQuestionValidationConditionsIntegerArg? SelectUniqueSqlSurveyQuestionValidationConditionsIntegerArg(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionValidationConditionIndex,
+        SqlInt32 surveyQuestionValidationConditionArgIndex)
+    {
+        var command = SelectUniqueSqlSurveyQuestionValidationConditionsIntegerArgCommand(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionIndex,
+            surveyQuestionValidationConditionArgIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!reader.Read())
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
+            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyQuestionValidationConditionIndex: reader.GetSqlInt32(3),
+            SurveyQuestionValidationConditionArgIndex: reader.GetSqlInt32(4),
+            SurveyQuestionValidationConditionArgInteger: reader.GetSqlInt32(5));
+    }
+
+    public Task<SqlSurveyQuestionValidationConditionsIntegerArg?> SelectUniqueSqlSurveyQuestionValidationConditionsIntegerArgAsync(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionValidationConditionIndex,
+        SqlInt32 surveyQuestionValidationConditionArgIndex)
+    {
+        return SelectUniqueSqlSurveyQuestionValidationConditionsIntegerArgAsync(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionIndex,
+            surveyQuestionValidationConditionArgIndex,
+            CancellationToken.None);
+    }
+
+    public async Task<SqlSurveyQuestionValidationConditionsIntegerArg?> SelectUniqueSqlSurveyQuestionValidationConditionsIntegerArgAsync(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionValidationConditionIndex,
+        SqlInt32 surveyQuestionValidationConditionArgIndex,
+        CancellationToken cancellationToken)
+    {
+        var command = SelectUniqueSqlSurveyQuestionValidationConditionsIntegerArgCommand(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionIndex,
+            surveyQuestionValidationConditionArgIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!await reader.ReadAsync(cancellationToken))
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
+            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyQuestionValidationConditionIndex: reader.GetSqlInt32(3),
+            SurveyQuestionValidationConditionArgIndex: reader.GetSqlInt32(4),
+            SurveyQuestionValidationConditionArgInteger: reader.GetSqlInt32(5));
+    }
+
+    private SqlCommand InsertSqlSurveyQuestionValidationConditionsIntegerArgCommand(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionValidationConditionIndex,
+        SqlInt32 surveyQuestionValidationConditionArgIndex,
+        SqlInt32 surveyQuestionValidationConditionArgInteger)
+    {
+        var command = new SqlCommand(
+            "INSERT INTO [survey_question_validation_conditions_integer_args] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer]) VALUES (@survey_id, @affected_survey_page_index, @affected_survey_question_index, @survey_question_validation_condition_index, @survey_question_validation_condition_arg_index, @survey_question_validation_condition_arg_integer)",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
+        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_question_validation_condition_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionIndex;
+        command.Parameters.Add("survey_question_validation_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionArgIndex;
+        command.Parameters.Add("survey_question_validation_condition_arg_integer", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionArgInteger;
+
+        return command;
+    }
+
+    public void InsertSqlSurveyQuestionValidationConditionsIntegerArg(SqlSurveyQuestionValidationConditionsIntegerArg surveyQuestionValidationConditionsIntegerArg)
+    {
+        var command = InsertSqlSurveyQuestionValidationConditionsIntegerArgCommand(
+            surveyQuestionValidationConditionsIntegerArg.SurveyId,
+            surveyQuestionValidationConditionsIntegerArg.AffectedSurveyPageIndex,
+            surveyQuestionValidationConditionsIntegerArg.AffectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionsIntegerArg.SurveyQuestionValidationConditionIndex,
+            surveyQuestionValidationConditionsIntegerArg.SurveyQuestionValidationConditionArgIndex,
+            surveyQuestionValidationConditionsIntegerArg.SurveyQuestionValidationConditionArgInteger);
+
+        command.ExecuteNonQuery();
+    }
+
+    public Task InsertSqlSurveyQuestionValidationConditionsIntegerArgAsync(SqlSurveyQuestionValidationConditionsIntegerArg surveyQuestionValidationConditionsIntegerArg)
+        => InsertSqlSurveyQuestionValidationConditionsIntegerArgAsync(surveyQuestionValidationConditionsIntegerArg, CancellationToken.None);
+
+    public Task InsertSqlSurveyQuestionValidationConditionsIntegerArgAsync(
+        SqlSurveyQuestionValidationConditionsIntegerArg surveyQuestionValidationConditionsIntegerArg,
+        CancellationToken cancellationToken)
+    {
+        var command = InsertSqlSurveyQuestionValidationConditionsIntegerArgCommand(
+            surveyQuestionValidationConditionsIntegerArg.SurveyId,
+            surveyQuestionValidationConditionsIntegerArg.AffectedSurveyPageIndex,
+            surveyQuestionValidationConditionsIntegerArg.AffectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionsIntegerArg.SurveyQuestionValidationConditionIndex,
+            surveyQuestionValidationConditionsIntegerArg.SurveyQuestionValidationConditionArgIndex,
+            surveyQuestionValidationConditionsIntegerArg.SurveyQuestionValidationConditionArgInteger);
+
+        return command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    private SqlCommand SelectUniqueSqlSurveyQuestionValidationConditionsTextArgCommand(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionValidationConditionIndex,
+        SqlInt32 surveyQuestionValidationConditionArgIndex)
+    {
+        var command = new SqlCommand(
+            "SELECT [survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_text] FROM [survey_question_validation_conditions_text_args] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [affected_survey_page_index,[object Object]] = @affected_survey_page_index,[object Object] AND [affected_survey_question_index,[object Object]] = @affected_survey_question_index,[object Object] AND [survey_question_validation_condition_index,[object Object]] = @survey_question_validation_condition_index,[object Object] AND [survey_question_validation_condition_arg_index,[object Object]] = @survey_question_validation_condition_arg_index,[object Object]",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
+        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_question_validation_condition_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionIndex;
+        command.Parameters.Add("survey_question_validation_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionArgIndex;
+
+        return command;
+    }
+
+    public SqlSurveyQuestionValidationConditionsTextArg? SelectUniqueSqlSurveyQuestionValidationConditionsTextArg(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionValidationConditionIndex,
+        SqlInt32 surveyQuestionValidationConditionArgIndex)
+    {
+        var command = SelectUniqueSqlSurveyQuestionValidationConditionsTextArgCommand(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionIndex,
+            surveyQuestionValidationConditionArgIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!reader.Read())
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
+            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyQuestionValidationConditionIndex: reader.GetSqlInt32(3),
+            SurveyQuestionValidationConditionArgIndex: reader.GetSqlInt32(4),
+            SurveyQuestionValidationConditionArgText: reader.GetSqlString(5));
+    }
+
+    public Task<SqlSurveyQuestionValidationConditionsTextArg?> SelectUniqueSqlSurveyQuestionValidationConditionsTextArgAsync(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionValidationConditionIndex,
+        SqlInt32 surveyQuestionValidationConditionArgIndex)
+    {
+        return SelectUniqueSqlSurveyQuestionValidationConditionsTextArgAsync(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionIndex,
+            surveyQuestionValidationConditionArgIndex,
+            CancellationToken.None);
+    }
+
+    public async Task<SqlSurveyQuestionValidationConditionsTextArg?> SelectUniqueSqlSurveyQuestionValidationConditionsTextArgAsync(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionValidationConditionIndex,
+        SqlInt32 surveyQuestionValidationConditionArgIndex,
+        CancellationToken cancellationToken)
+    {
+        var command = SelectUniqueSqlSurveyQuestionValidationConditionsTextArgCommand(
+            surveyId,
+            affectedSurveyPageIndex,
+            affectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionIndex,
+            surveyQuestionValidationConditionArgIndex);
+
+        var reader = command.ExecuteReader(CommandBehavior.SingleRow);
+        if (!await reader.ReadAsync(cancellationToken))
+            return null;
+
+        return new(
+            SurveyId: reader.GetSqlInt32(0),
+            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
+            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyQuestionValidationConditionIndex: reader.GetSqlInt32(3),
+            SurveyQuestionValidationConditionArgIndex: reader.GetSqlInt32(4),
+            SurveyQuestionValidationConditionArgText: reader.GetSqlString(5));
+    }
+
+    private SqlCommand InsertSqlSurveyQuestionValidationConditionsTextArgCommand(
+        SqlInt32 surveyId,
+        SqlInt32 affectedSurveyPageIndex,
+        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyQuestionValidationConditionIndex,
+        SqlInt32 surveyQuestionValidationConditionArgIndex,
+        SqlString surveyQuestionValidationConditionArgText)
+    {
+        var command = new SqlCommand(
+            "INSERT INTO [survey_question_validation_conditions_text_args] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_text]) VALUES (@survey_id, @affected_survey_page_index, @affected_survey_question_index, @survey_question_validation_condition_index, @survey_question_validation_condition_arg_index, @survey_question_validation_condition_arg_text)",
+            source);
+
+        command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
+        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
+        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_question_validation_condition_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionIndex;
+        command.Parameters.Add("survey_question_validation_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionArgIndex;
+        command.Parameters.Add("survey_question_validation_condition_arg_text", SqlDbType.VarChar, VARCHAR_MAX_LENGTH).SqlValue = surveyQuestionValidationConditionArgText;
+
+        return command;
+    }
+
+    public void InsertSqlSurveyQuestionValidationConditionsTextArg(SqlSurveyQuestionValidationConditionsTextArg surveyQuestionValidationConditionsTextArg)
+    {
+        var command = InsertSqlSurveyQuestionValidationConditionsTextArgCommand(
+            surveyQuestionValidationConditionsTextArg.SurveyId,
+            surveyQuestionValidationConditionsTextArg.AffectedSurveyPageIndex,
+            surveyQuestionValidationConditionsTextArg.AffectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionsTextArg.SurveyQuestionValidationConditionIndex,
+            surveyQuestionValidationConditionsTextArg.SurveyQuestionValidationConditionArgIndex,
+            surveyQuestionValidationConditionsTextArg.SurveyQuestionValidationConditionArgText);
+
+        command.ExecuteNonQuery();
+    }
+
+    public Task InsertSqlSurveyQuestionValidationConditionsTextArgAsync(SqlSurveyQuestionValidationConditionsTextArg surveyQuestionValidationConditionsTextArg)
+        => InsertSqlSurveyQuestionValidationConditionsTextArgAsync(surveyQuestionValidationConditionsTextArg, CancellationToken.None);
+
+    public Task InsertSqlSurveyQuestionValidationConditionsTextArgAsync(
+        SqlSurveyQuestionValidationConditionsTextArg surveyQuestionValidationConditionsTextArg,
+        CancellationToken cancellationToken)
+    {
+        var command = InsertSqlSurveyQuestionValidationConditionsTextArgCommand(
+            surveyQuestionValidationConditionsTextArg.SurveyId,
+            surveyQuestionValidationConditionsTextArg.AffectedSurveyPageIndex,
+            surveyQuestionValidationConditionsTextArg.AffectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionsTextArg.SurveyQuestionValidationConditionIndex,
+            surveyQuestionValidationConditionsTextArg.SurveyQuestionValidationConditionArgIndex,
+            surveyQuestionValidationConditionsTextArg.SurveyQuestionValidationConditionArgText);
 
         return command.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -1165,8 +3639,9 @@ public class SqlDataDrivenDataAccess(
 public class SqlSurveyReader(
     SqlDataReader source,
     int surveyIdColumnIndex,
-    int nameColumnIndex,
-    int descriptionColumnIndex,
+    int surveyTitleColumnIndex,
+    int surveyAuthorColumnIndex,
+    int surveyDescriptionColumnIndex,
     bool sourceConsumed = true) : IAsyncEnumerator<SqlSurvey>, IEnumerator<SqlSurvey>
 {
     public SqlDataReader Source { get => source; }
@@ -1180,8 +3655,9 @@ public class SqlSurveyReader(
     {
         get => new(
             SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
-            Name: source.GetSqlString(nameColumnIndex),
-            Description: source.GetSqlString(descriptionColumnIndex));
+            SurveyTitle: source.GetSqlString(surveyTitleColumnIndex),
+            SurveyAuthor: source.GetSqlString(surveyAuthorColumnIndex),
+            SurveyDescription: source.GetSqlString(surveyDescriptionColumnIndex));
     }
 
     object IEnumerator.Current => Current;
@@ -1208,8 +3684,8 @@ public class SqlSurveyPageReader(
     SqlDataReader source,
     int surveyIdColumnIndex,
     int surveyPageIndexColumnIndex,
-    int nameColumnIndex,
-    int descriptionColumnIndex,
+    int surveyPageTitleColumnIndex,
+    int surveyPageDescriptionColumnIndex,
     bool sourceConsumed = true) : IAsyncEnumerator<SqlSurveyPage>, IEnumerator<SqlSurveyPage>
 {
     public SqlDataReader Source { get => source; }
@@ -1224,8 +3700,8 @@ public class SqlSurveyPageReader(
         get => new(
             SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
             SurveyPageIndex: source.GetSqlInt32(surveyPageIndexColumnIndex),
-            Name: source.GetSqlString(nameColumnIndex),
-            Description: source.GetSqlString(descriptionColumnIndex));
+            SurveyPageTitle: source.GetSqlString(surveyPageTitleColumnIndex),
+            SurveyPageDescription: source.GetSqlString(surveyPageDescriptionColumnIndex));
     }
 
     object IEnumerator.Current => Current;
@@ -1248,150 +3724,10 @@ public class SqlSurveyPageReader(
     }
 }
 
-public class SqlSurveyQuestionReader(
-    SqlDataReader source,
-    int surveyIdColumnIndex,
-    int surveyPageIndexColumnIndex,
-    int surveyQuestionIndexColumnIndex,
-    int promptColumnIndex,
-    int answerTypeColumnIndex,
-    bool sourceConsumed = true) : IAsyncEnumerator<SqlSurveyQuestion>, IEnumerator<SqlSurveyQuestion>
-{
-    public SqlDataReader Source { get => source; }
-
-    /// <summary>
-    /// The call to <c>Dispose()</c> will be relayed to the source if this is <c>true</c>.
-    /// </summary>
-    public bool SourceConsumed { get => sourceConsumed; set => sourceConsumed = value; }
-
-    public SqlSurveyQuestion Current
-    {
-        get => new(
-            SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
-            SurveyPageIndex: source.GetSqlInt32(surveyPageIndexColumnIndex),
-            SurveyQuestionIndex: source.GetSqlInt32(surveyQuestionIndexColumnIndex),
-            Prompt: source.GetSqlString(promptColumnIndex),
-            AnswerType: source.GetSqlByte(answerTypeColumnIndex));
-    }
-
-    object IEnumerator.Current => Current;
-
-    SqlSurveyQuestion IAsyncEnumerator<SqlSurveyQuestion>.Current => Current;
-
-    public async ValueTask<bool> MoveNextAsync() => await source.ReadAsync();
-
-    public ValueTask DisposeAsync() => sourceConsumed ? source.DisposeAsync() : ValueTask.CompletedTask;
-
-    public bool MoveNext() => source.Read();
-
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public void Reset() => throw new InvalidOperationException();
-
-    public void Dispose()
-    {
-        if (sourceConsumed)
-            source.Dispose();
-    }
-}
-
-public class SqlSurveyQuestionConditionReader(
-    SqlDataReader source,
-    int surveyIdColumnIndex,
-    int surveyPageIndexColumnIndex,
-    int surveyQuestionIndexColumnIndex,
-    int otherSurveyPageIndexColumnIndex,
-    int otherSurveyQuestionIndexColumnIndex,
-    int conditionColumnIndex,
-    bool sourceConsumed = true) : IAsyncEnumerator<SqlSurveyQuestionCondition>, IEnumerator<SqlSurveyQuestionCondition>
-{
-    public SqlDataReader Source { get => source; }
-
-    /// <summary>
-    /// The call to <c>Dispose()</c> will be relayed to the source if this is <c>true</c>.
-    /// </summary>
-    public bool SourceConsumed { get => sourceConsumed; set => sourceConsumed = value; }
-
-    public SqlSurveyQuestionCondition Current
-    {
-        get => new(
-            SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
-            SurveyPageIndex: source.GetSqlInt32(surveyPageIndexColumnIndex),
-            SurveyQuestionIndex: source.GetSqlInt32(surveyQuestionIndexColumnIndex),
-            OtherSurveyPageIndex: source.GetSqlInt32(otherSurveyPageIndexColumnIndex),
-            OtherSurveyQuestionIndex: source.GetSqlInt32(otherSurveyQuestionIndexColumnIndex),
-            Condition: source.GetSqlString(conditionColumnIndex));
-    }
-
-    object IEnumerator.Current => Current;
-
-    SqlSurveyQuestionCondition IAsyncEnumerator<SqlSurveyQuestionCondition>.Current => Current;
-
-    public async ValueTask<bool> MoveNextAsync() => await source.ReadAsync();
-
-    public ValueTask DisposeAsync() => sourceConsumed ? source.DisposeAsync() : ValueTask.CompletedTask;
-
-    public bool MoveNext() => source.Read();
-
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public void Reset() => throw new InvalidOperationException();
-
-    public void Dispose()
-    {
-        if (sourceConsumed)
-            source.Dispose();
-    }
-}
-
-public class SqlSurveyAnswerReader(
-    SqlDataReader source,
-    int surveyIdColumnIndex,
-    int surveyPageIndexColumnIndex,
-    int surveyQuestionIndexColumnIndex,
-    int surveySubmissionIndexColumnIndex,
-    int answerValueColumnIndex,
-    bool sourceConsumed = true) : IAsyncEnumerator<SqlSurveyAnswer>, IEnumerator<SqlSurveyAnswer>
-{
-    public SqlDataReader Source { get => source; }
-
-    /// <summary>
-    /// The call to <c>Dispose()</c> will be relayed to the source if this is <c>true</c>.
-    /// </summary>
-    public bool SourceConsumed { get => sourceConsumed; set => sourceConsumed = value; }
-
-    public SqlSurveyAnswer Current
-    {
-        get => new(
-            SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
-            SurveyPageIndex: source.GetSqlInt32(surveyPageIndexColumnIndex),
-            SurveyQuestionIndex: source.GetSqlInt32(surveyQuestionIndexColumnIndex),
-            SurveySubmissionIndex: source.GetSqlInt32(surveySubmissionIndexColumnIndex),
-            AnswerValue: source.GetSqlString(answerValueColumnIndex));
-    }
-
-    object IEnumerator.Current => Current;
-
-    SqlSurveyAnswer IAsyncEnumerator<SqlSurveyAnswer>.Current => Current;
-
-    public async ValueTask<bool> MoveNextAsync() => await source.ReadAsync();
-
-    public ValueTask DisposeAsync() => sourceConsumed ? source.DisposeAsync() : ValueTask.CompletedTask;
-
-    public bool MoveNext() => source.Read();
-
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public void Reset() => throw new InvalidOperationException();
-
-    public void Dispose()
-    {
-        if (sourceConsumed)
-            source.Dispose();
-    }
-}
-
 public class SqlAnswerTypeReader(
     SqlDataReader source,
     int answerTypeIdColumnIndex,
-    int nameColumnIndex,
+    int answerTypeNameColumnIndex,
     bool sourceConsumed = true) : IAsyncEnumerator<SqlAnswerType>, IEnumerator<SqlAnswerType>
 {
     public SqlDataReader Source { get => source; }
@@ -1405,7 +3741,7 @@ public class SqlAnswerTypeReader(
     {
         get => new(
             AnswerTypeId: source.GetSqlByte(answerTypeIdColumnIndex),
-            Name: source.GetSqlString(nameColumnIndex));
+            AnswerTypeName: source.GetSqlString(answerTypeNameColumnIndex));
     }
 
     object IEnumerator.Current => Current;
@@ -1428,14 +3764,60 @@ public class SqlAnswerTypeReader(
     }
 }
 
+public class SqlSurveyQuestionReader(
+    SqlDataReader source,
+    int surveyIdColumnIndex,
+    int surveyPageIndexColumnIndex,
+    int surveyQuestionIndexColumnIndex,
+    int surveyQuestionPromptColumnIndex,
+    int surveyQuestionAnswerTypeColumnIndex,
+    bool sourceConsumed = true) : IAsyncEnumerator<SqlSurveyQuestion>, IEnumerator<SqlSurveyQuestion>
+{
+    public SqlDataReader Source { get => source; }
+
+    /// <summary>
+    /// The call to <c>Dispose()</c> will be relayed to the source if this is <c>true</c>.
+    /// </summary>
+    public bool SourceConsumed { get => sourceConsumed; set => sourceConsumed = value; }
+
+    public SqlSurveyQuestion Current
+    {
+        get => new(
+            SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
+            SurveyPageIndex: source.GetSqlInt32(surveyPageIndexColumnIndex),
+            SurveyQuestionIndex: source.GetSqlInt32(surveyQuestionIndexColumnIndex),
+            SurveyQuestionPrompt: source.GetSqlString(surveyQuestionPromptColumnIndex),
+            SurveyQuestionAnswerType: source.GetSqlByte(surveyQuestionAnswerTypeColumnIndex));
+    }
+
+    object IEnumerator.Current => Current;
+
+    SqlSurveyQuestion IAsyncEnumerator<SqlSurveyQuestion>.Current => Current;
+
+    public async ValueTask<bool> MoveNextAsync() => await source.ReadAsync();
+
+    public ValueTask DisposeAsync() => sourceConsumed ? source.DisposeAsync() : ValueTask.CompletedTask;
+
+    public bool MoveNext() => source.Read();
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void Reset() => throw new InvalidOperationException();
+
+    public void Dispose()
+    {
+        if (sourceConsumed)
+            source.Dispose();
+    }
+}
+
 public class SqlRegisteredMemberReader(
     SqlDataReader source,
     int registeredMemberIdColumnIndex,
-    int phoneNumberColumnIndex,
-    int passwordHashColumnIndex,
-    int birthDateColumnIndex,
-    int firstNameColumnIndex,
-    int lastNameColumnIndex,
+    int registeredMemberPasswordHashColumnIndex,
+    int registeredMemberPhoneNumberColumnIndex,
+    int registeredMemberBirthDateColumnIndex,
+    int registeredMemberFirstNameColumnIndex,
+    int registeredMemberLastNameColumnIndex,
     bool sourceConsumed = true) : IAsyncEnumerator<SqlRegisteredMember>, IEnumerator<SqlRegisteredMember>
 {
     public SqlDataReader Source { get => source; }
@@ -1449,11 +3831,11 @@ public class SqlRegisteredMemberReader(
     {
         get => new(
             RegisteredMemberId: source.GetSqlInt32(registeredMemberIdColumnIndex),
-            PhoneNumber: source.GetSqlString(phoneNumberColumnIndex),
-            PasswordHash: source.GetSqlString(passwordHashColumnIndex),
-            BirthDate: source.GetSqlDateTime(birthDateColumnIndex),
-            FirstName: source.GetSqlString(firstNameColumnIndex),
-            LastName: source.GetSqlString(lastNameColumnIndex));
+            RegisteredMemberPasswordHash: source.GetSqlString(registeredMemberPasswordHashColumnIndex),
+            RegisteredMemberPhoneNumber: source.GetSqlString(registeredMemberPhoneNumberColumnIndex),
+            RegisteredMemberBirthDate: source.GetSqlDateTime(registeredMemberBirthDateColumnIndex),
+            RegisteredMemberFirstName: source.GetSqlString(registeredMemberFirstNameColumnIndex),
+            RegisteredMemberLastName: source.GetSqlString(registeredMemberLastNameColumnIndex));
     }
 
     object IEnumerator.Current => Current;
@@ -1476,12 +3858,12 @@ public class SqlRegisteredMemberReader(
     }
 }
 
-public class SqlSurveySubmissionReader(
+public class SqlSubmissionReader(
     SqlDataReader source,
     int surveyIdColumnIndex,
-    int surveySubmissionIndexColumnIndex,
+    int submissionIndexColumnIndex,
     int registeredMemberIdColumnIndex,
-    bool sourceConsumed = true) : IAsyncEnumerator<SqlSurveySubmission>, IEnumerator<SqlSurveySubmission>
+    bool sourceConsumed = true) : IAsyncEnumerator<SqlSubmission>, IEnumerator<SqlSubmission>
 {
     public SqlDataReader Source { get => source; }
 
@@ -1490,17 +3872,675 @@ public class SqlSurveySubmissionReader(
     /// </summary>
     public bool SourceConsumed { get => sourceConsumed; set => sourceConsumed = value; }
 
-    public SqlSurveySubmission Current
+    public SqlSubmission Current
     {
         get => new(
             SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
-            SurveySubmissionIndex: source.GetSqlInt32(surveySubmissionIndexColumnIndex),
+            SubmissionIndex: source.GetSqlInt32(submissionIndexColumnIndex),
             RegisteredMemberId: source.GetSqlInt32(registeredMemberIdColumnIndex));
     }
 
     object IEnumerator.Current => Current;
 
-    SqlSurveySubmission IAsyncEnumerator<SqlSurveySubmission>.Current => Current;
+    SqlSubmission IAsyncEnumerator<SqlSubmission>.Current => Current;
+
+    public async ValueTask<bool> MoveNextAsync() => await source.ReadAsync();
+
+    public ValueTask DisposeAsync() => sourceConsumed ? source.DisposeAsync() : ValueTask.CompletedTask;
+
+    public bool MoveNext() => source.Read();
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void Reset() => throw new InvalidOperationException();
+
+    public void Dispose()
+    {
+        if (sourceConsumed)
+            source.Dispose();
+    }
+}
+
+public class SqlSubmissionTextAnswerReader(
+    SqlDataReader source,
+    int surveyIdColumnIndex,
+    int surveyPageIndexColumnIndex,
+    int surveyQuestionIndexColumnIndex,
+    int submissionIndexColumnIndex,
+    int submissionAnswerIndexColumnIndex,
+    int submissionAnswerTextColumnIndex,
+    bool sourceConsumed = true) : IAsyncEnumerator<SqlSubmissionTextAnswer>, IEnumerator<SqlSubmissionTextAnswer>
+{
+    public SqlDataReader Source { get => source; }
+
+    /// <summary>
+    /// The call to <c>Dispose()</c> will be relayed to the source if this is <c>true</c>.
+    /// </summary>
+    public bool SourceConsumed { get => sourceConsumed; set => sourceConsumed = value; }
+
+    public SqlSubmissionTextAnswer Current
+    {
+        get => new(
+            SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
+            SurveyPageIndex: source.GetSqlInt32(surveyPageIndexColumnIndex),
+            SurveyQuestionIndex: source.GetSqlInt32(surveyQuestionIndexColumnIndex),
+            SubmissionIndex: source.GetSqlInt32(submissionIndexColumnIndex),
+            SubmissionAnswerIndex: source.GetSqlInt32(submissionAnswerIndexColumnIndex),
+            SubmissionAnswerText: source.GetSqlString(submissionAnswerTextColumnIndex));
+    }
+
+    object IEnumerator.Current => Current;
+
+    SqlSubmissionTextAnswer IAsyncEnumerator<SqlSubmissionTextAnswer>.Current => Current;
+
+    public async ValueTask<bool> MoveNextAsync() => await source.ReadAsync();
+
+    public ValueTask DisposeAsync() => sourceConsumed ? source.DisposeAsync() : ValueTask.CompletedTask;
+
+    public bool MoveNext() => source.Read();
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void Reset() => throw new InvalidOperationException();
+
+    public void Dispose()
+    {
+        if (sourceConsumed)
+            source.Dispose();
+    }
+}
+
+public class SqlSubmissionIntegerAnswerReader(
+    SqlDataReader source,
+    int surveyIdColumnIndex,
+    int surveyPageIndexColumnIndex,
+    int surveyQuestionIndexColumnIndex,
+    int submissionIndexColumnIndex,
+    int submissionAnswerIndexColumnIndex,
+    int submissionAnswerIntegerColumnIndex,
+    bool sourceConsumed = true) : IAsyncEnumerator<SqlSubmissionIntegerAnswer>, IEnumerator<SqlSubmissionIntegerAnswer>
+{
+    public SqlDataReader Source { get => source; }
+
+    /// <summary>
+    /// The call to <c>Dispose()</c> will be relayed to the source if this is <c>true</c>.
+    /// </summary>
+    public bool SourceConsumed { get => sourceConsumed; set => sourceConsumed = value; }
+
+    public SqlSubmissionIntegerAnswer Current
+    {
+        get => new(
+            SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
+            SurveyPageIndex: source.GetSqlInt32(surveyPageIndexColumnIndex),
+            SurveyQuestionIndex: source.GetSqlInt32(surveyQuestionIndexColumnIndex),
+            SubmissionIndex: source.GetSqlInt32(submissionIndexColumnIndex),
+            SubmissionAnswerIndex: source.GetSqlInt32(submissionAnswerIndexColumnIndex),
+            SubmissionAnswerInteger: source.GetSqlInt32(submissionAnswerIntegerColumnIndex));
+    }
+
+    object IEnumerator.Current => Current;
+
+    SqlSubmissionIntegerAnswer IAsyncEnumerator<SqlSubmissionIntegerAnswer>.Current => Current;
+
+    public async ValueTask<bool> MoveNextAsync() => await source.ReadAsync();
+
+    public ValueTask DisposeAsync() => sourceConsumed ? source.DisposeAsync() : ValueTask.CompletedTask;
+
+    public bool MoveNext() => source.Read();
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void Reset() => throw new InvalidOperationException();
+
+    public void Dispose()
+    {
+        if (sourceConsumed)
+            source.Dispose();
+    }
+}
+
+public class SqlSubmissionBoolAnswerReader(
+    SqlDataReader source,
+    int surveyIdColumnIndex,
+    int surveyPageIndexColumnIndex,
+    int surveyQuestionIndexColumnIndex,
+    int submissionIndexColumnIndex,
+    int submissionAnswerIndexColumnIndex,
+    int submissionAnswerBoolColumnIndex,
+    bool sourceConsumed = true) : IAsyncEnumerator<SqlSubmissionBoolAnswer>, IEnumerator<SqlSubmissionBoolAnswer>
+{
+    public SqlDataReader Source { get => source; }
+
+    /// <summary>
+    /// The call to <c>Dispose()</c> will be relayed to the source if this is <c>true</c>.
+    /// </summary>
+    public bool SourceConsumed { get => sourceConsumed; set => sourceConsumed = value; }
+
+    public SqlSubmissionBoolAnswer Current
+    {
+        get => new(
+            SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
+            SurveyPageIndex: source.GetSqlInt32(surveyPageIndexColumnIndex),
+            SurveyQuestionIndex: source.GetSqlInt32(surveyQuestionIndexColumnIndex),
+            SubmissionIndex: source.GetSqlInt32(submissionIndexColumnIndex),
+            SubmissionAnswerIndex: source.GetSqlInt32(submissionAnswerIndexColumnIndex),
+            SubmissionAnswerBool: source.GetSqlBoolean(submissionAnswerBoolColumnIndex));
+    }
+
+    object IEnumerator.Current => Current;
+
+    SqlSubmissionBoolAnswer IAsyncEnumerator<SqlSubmissionBoolAnswer>.Current => Current;
+
+    public async ValueTask<bool> MoveNextAsync() => await source.ReadAsync();
+
+    public ValueTask DisposeAsync() => sourceConsumed ? source.DisposeAsync() : ValueTask.CompletedTask;
+
+    public bool MoveNext() => source.Read();
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void Reset() => throw new InvalidOperationException();
+
+    public void Dispose()
+    {
+        if (sourceConsumed)
+            source.Dispose();
+    }
+}
+
+public class SqlSurveyQuestionAnswerOptionReader(
+    SqlDataReader source,
+    int surveyIdColumnIndex,
+    int surveyPageIndexColumnIndex,
+    int surveyQuestionIndexColumnIndex,
+    int surveyAnswerOptionIndexColumnIndex,
+    int surveyAnswerOptionTextColumnIndex,
+    bool sourceConsumed = true) : IAsyncEnumerator<SqlSurveyQuestionAnswerOption>, IEnumerator<SqlSurveyQuestionAnswerOption>
+{
+    public SqlDataReader Source { get => source; }
+
+    /// <summary>
+    /// The call to <c>Dispose()</c> will be relayed to the source if this is <c>true</c>.
+    /// </summary>
+    public bool SourceConsumed { get => sourceConsumed; set => sourceConsumed = value; }
+
+    public SqlSurveyQuestionAnswerOption Current
+    {
+        get => new(
+            SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
+            SurveyPageIndex: source.GetSqlInt32(surveyPageIndexColumnIndex),
+            SurveyQuestionIndex: source.GetSqlInt32(surveyQuestionIndexColumnIndex),
+            SurveyAnswerOptionIndex: source.GetSqlInt32(surveyAnswerOptionIndexColumnIndex),
+            SurveyAnswerOptionText: source.GetSqlString(surveyAnswerOptionTextColumnIndex));
+    }
+
+    object IEnumerator.Current => Current;
+
+    SqlSurveyQuestionAnswerOption IAsyncEnumerator<SqlSurveyQuestionAnswerOption>.Current => Current;
+
+    public async ValueTask<bool> MoveNextAsync() => await source.ReadAsync();
+
+    public ValueTask DisposeAsync() => sourceConsumed ? source.DisposeAsync() : ValueTask.CompletedTask;
+
+    public bool MoveNext() => source.Read();
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void Reset() => throw new InvalidOperationException();
+
+    public void Dispose()
+    {
+        if (sourceConsumed)
+            source.Dispose();
+    }
+}
+
+public class SqlSurveyQuestionShowConditionTypeReader(
+    SqlDataReader source,
+    int surveyQuestionShowConditionTypeIdColumnIndex,
+    int surveyQuestionShowConditionTypeNameColumnIndex,
+    bool sourceConsumed = true) : IAsyncEnumerator<SqlSurveyQuestionShowConditionType>, IEnumerator<SqlSurveyQuestionShowConditionType>
+{
+    public SqlDataReader Source { get => source; }
+
+    /// <summary>
+    /// The call to <c>Dispose()</c> will be relayed to the source if this is <c>true</c>.
+    /// </summary>
+    public bool SourceConsumed { get => sourceConsumed; set => sourceConsumed = value; }
+
+    public SqlSurveyQuestionShowConditionType Current
+    {
+        get => new(
+            SurveyQuestionShowConditionTypeId: source.GetSqlByte(surveyQuestionShowConditionTypeIdColumnIndex),
+            SurveyQuestionShowConditionTypeName: source.GetSqlString(surveyQuestionShowConditionTypeNameColumnIndex));
+    }
+
+    object IEnumerator.Current => Current;
+
+    SqlSurveyQuestionShowConditionType IAsyncEnumerator<SqlSurveyQuestionShowConditionType>.Current => Current;
+
+    public async ValueTask<bool> MoveNextAsync() => await source.ReadAsync();
+
+    public ValueTask DisposeAsync() => sourceConsumed ? source.DisposeAsync() : ValueTask.CompletedTask;
+
+    public bool MoveNext() => source.Read();
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void Reset() => throw new InvalidOperationException();
+
+    public void Dispose()
+    {
+        if (sourceConsumed)
+            source.Dispose();
+    }
+}
+
+public class SqlSurveyQuestionShowConditionReader(
+    SqlDataReader source,
+    int surveyIdColumnIndex,
+    int affectedSurveyPageIndexColumnIndex,
+    int affectedSurveyQuestionIndexColumnIndex,
+    int surveyQuestionShowConditionIndexColumnIndex,
+    int surveyQuestionShowConditionTypeColumnIndex,
+    int surveyQuestionShowConditionOperatorColumnIndex,
+    bool sourceConsumed = true) : IAsyncEnumerator<SqlSurveyQuestionShowCondition>, IEnumerator<SqlSurveyQuestionShowCondition>
+{
+    public SqlDataReader Source { get => source; }
+
+    /// <summary>
+    /// The call to <c>Dispose()</c> will be relayed to the source if this is <c>true</c>.
+    /// </summary>
+    public bool SourceConsumed { get => sourceConsumed; set => sourceConsumed = value; }
+
+    public SqlSurveyQuestionShowCondition Current
+    {
+        get => new(
+            SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
+            AffectedSurveyPageIndex: source.GetSqlInt32(affectedSurveyPageIndexColumnIndex),
+            AffectedSurveyQuestionIndex: source.GetSqlInt32(affectedSurveyQuestionIndexColumnIndex),
+            SurveyQuestionShowConditionIndex: source.GetSqlInt32(surveyQuestionShowConditionIndexColumnIndex),
+            SurveyQuestionShowConditionType: source.GetSqlByte(surveyQuestionShowConditionTypeColumnIndex),
+            SurveyQuestionShowConditionOperator: source.GetSqlBoolean(surveyQuestionShowConditionOperatorColumnIndex));
+    }
+
+    object IEnumerator.Current => Current;
+
+    SqlSurveyQuestionShowCondition IAsyncEnumerator<SqlSurveyQuestionShowCondition>.Current => Current;
+
+    public async ValueTask<bool> MoveNextAsync() => await source.ReadAsync();
+
+    public ValueTask DisposeAsync() => sourceConsumed ? source.DisposeAsync() : ValueTask.CompletedTask;
+
+    public bool MoveNext() => source.Read();
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void Reset() => throw new InvalidOperationException();
+
+    public void Dispose()
+    {
+        if (sourceConsumed)
+            source.Dispose();
+    }
+}
+
+public class SqlSurveyQuestionShowConditionsRefArgReader(
+    SqlDataReader source,
+    int surveyIdColumnIndex,
+    int affectedSurveyPageIndexColumnIndex,
+    int affectedSurveyQuestionIndexColumnIndex,
+    int surveyQuestionShowConditionIndexColumnIndex,
+    int surveyQuestionShowConditionArgIndexColumnIndex,
+    int referencedSurveyPageIndexColumnIndex,
+    int referencedSurveyQuestionIndexColumnIndex,
+    bool sourceConsumed = true) : IAsyncEnumerator<SqlSurveyQuestionShowConditionsRefArg>, IEnumerator<SqlSurveyQuestionShowConditionsRefArg>
+{
+    public SqlDataReader Source { get => source; }
+
+    /// <summary>
+    /// The call to <c>Dispose()</c> will be relayed to the source if this is <c>true</c>.
+    /// </summary>
+    public bool SourceConsumed { get => sourceConsumed; set => sourceConsumed = value; }
+
+    public SqlSurveyQuestionShowConditionsRefArg Current
+    {
+        get => new(
+            SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
+            AffectedSurveyPageIndex: source.GetSqlInt32(affectedSurveyPageIndexColumnIndex),
+            AffectedSurveyQuestionIndex: source.GetSqlInt32(affectedSurveyQuestionIndexColumnIndex),
+            SurveyQuestionShowConditionIndex: source.GetSqlInt32(surveyQuestionShowConditionIndexColumnIndex),
+            SurveyQuestionShowConditionArgIndex: source.GetSqlInt32(surveyQuestionShowConditionArgIndexColumnIndex),
+            ReferencedSurveyPageIndex: source.GetSqlInt32(referencedSurveyPageIndexColumnIndex),
+            ReferencedSurveyQuestionIndex: source.GetSqlInt32(referencedSurveyQuestionIndexColumnIndex));
+    }
+
+    object IEnumerator.Current => Current;
+
+    SqlSurveyQuestionShowConditionsRefArg IAsyncEnumerator<SqlSurveyQuestionShowConditionsRefArg>.Current => Current;
+
+    public async ValueTask<bool> MoveNextAsync() => await source.ReadAsync();
+
+    public ValueTask DisposeAsync() => sourceConsumed ? source.DisposeAsync() : ValueTask.CompletedTask;
+
+    public bool MoveNext() => source.Read();
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void Reset() => throw new InvalidOperationException();
+
+    public void Dispose()
+    {
+        if (sourceConsumed)
+            source.Dispose();
+    }
+}
+
+public class SqlSurveyQuestionShowConditionsIntegerArgReader(
+    SqlDataReader source,
+    int surveyIdColumnIndex,
+    int affectedSurveyPageIndexColumnIndex,
+    int affectedSurveyQuestionIndexColumnIndex,
+    int surveyQuestionShowConditionIndexColumnIndex,
+    int surveyQuestionShowConditionArgIndexColumnIndex,
+    int surveyQuestionShowConditionArgIntegerColumnIndex,
+    bool sourceConsumed = true) : IAsyncEnumerator<SqlSurveyQuestionShowConditionsIntegerArg>, IEnumerator<SqlSurveyQuestionShowConditionsIntegerArg>
+{
+    public SqlDataReader Source { get => source; }
+
+    /// <summary>
+    /// The call to <c>Dispose()</c> will be relayed to the source if this is <c>true</c>.
+    /// </summary>
+    public bool SourceConsumed { get => sourceConsumed; set => sourceConsumed = value; }
+
+    public SqlSurveyQuestionShowConditionsIntegerArg Current
+    {
+        get => new(
+            SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
+            AffectedSurveyPageIndex: source.GetSqlInt32(affectedSurveyPageIndexColumnIndex),
+            AffectedSurveyQuestionIndex: source.GetSqlInt32(affectedSurveyQuestionIndexColumnIndex),
+            SurveyQuestionShowConditionIndex: source.GetSqlInt32(surveyQuestionShowConditionIndexColumnIndex),
+            SurveyQuestionShowConditionArgIndex: source.GetSqlInt32(surveyQuestionShowConditionArgIndexColumnIndex),
+            SurveyQuestionShowConditionArgInteger: source.GetSqlInt32(surveyQuestionShowConditionArgIntegerColumnIndex));
+    }
+
+    object IEnumerator.Current => Current;
+
+    SqlSurveyQuestionShowConditionsIntegerArg IAsyncEnumerator<SqlSurveyQuestionShowConditionsIntegerArg>.Current => Current;
+
+    public async ValueTask<bool> MoveNextAsync() => await source.ReadAsync();
+
+    public ValueTask DisposeAsync() => sourceConsumed ? source.DisposeAsync() : ValueTask.CompletedTask;
+
+    public bool MoveNext() => source.Read();
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void Reset() => throw new InvalidOperationException();
+
+    public void Dispose()
+    {
+        if (sourceConsumed)
+            source.Dispose();
+    }
+}
+
+public class SqlSurveyQuestionShowConditionsTextArgReader(
+    SqlDataReader source,
+    int surveyIdColumnIndex,
+    int affectedSurveyPageIndexColumnIndex,
+    int affectedSurveyQuestionIndexColumnIndex,
+    int surveyQuestionShowConditionIndexColumnIndex,
+    int surveyQuestionShowConditionArgIndexColumnIndex,
+    int surveyQuestionShowConditionArgTextColumnIndex,
+    bool sourceConsumed = true) : IAsyncEnumerator<SqlSurveyQuestionShowConditionsTextArg>, IEnumerator<SqlSurveyQuestionShowConditionsTextArg>
+{
+    public SqlDataReader Source { get => source; }
+
+    /// <summary>
+    /// The call to <c>Dispose()</c> will be relayed to the source if this is <c>true</c>.
+    /// </summary>
+    public bool SourceConsumed { get => sourceConsumed; set => sourceConsumed = value; }
+
+    public SqlSurveyQuestionShowConditionsTextArg Current
+    {
+        get => new(
+            SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
+            AffectedSurveyPageIndex: source.GetSqlInt32(affectedSurveyPageIndexColumnIndex),
+            AffectedSurveyQuestionIndex: source.GetSqlInt32(affectedSurveyQuestionIndexColumnIndex),
+            SurveyQuestionShowConditionIndex: source.GetSqlInt32(surveyQuestionShowConditionIndexColumnIndex),
+            SurveyQuestionShowConditionArgIndex: source.GetSqlInt32(surveyQuestionShowConditionArgIndexColumnIndex),
+            SurveyQuestionShowConditionArgText: source.GetSqlString(surveyQuestionShowConditionArgTextColumnIndex));
+    }
+
+    object IEnumerator.Current => Current;
+
+    SqlSurveyQuestionShowConditionsTextArg IAsyncEnumerator<SqlSurveyQuestionShowConditionsTextArg>.Current => Current;
+
+    public async ValueTask<bool> MoveNextAsync() => await source.ReadAsync();
+
+    public ValueTask DisposeAsync() => sourceConsumed ? source.DisposeAsync() : ValueTask.CompletedTask;
+
+    public bool MoveNext() => source.Read();
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void Reset() => throw new InvalidOperationException();
+
+    public void Dispose()
+    {
+        if (sourceConsumed)
+            source.Dispose();
+    }
+}
+
+public class SqlSurveyQuestionValidationConditionTypeReader(
+    SqlDataReader source,
+    int surveyQuestionValidationConditionTypeIdColumnIndex,
+    int surveyQuestionValidationConditionTypeNameColumnIndex,
+    bool sourceConsumed = true) : IAsyncEnumerator<SqlSurveyQuestionValidationConditionType>, IEnumerator<SqlSurveyQuestionValidationConditionType>
+{
+    public SqlDataReader Source { get => source; }
+
+    /// <summary>
+    /// The call to <c>Dispose()</c> will be relayed to the source if this is <c>true</c>.
+    /// </summary>
+    public bool SourceConsumed { get => sourceConsumed; set => sourceConsumed = value; }
+
+    public SqlSurveyQuestionValidationConditionType Current
+    {
+        get => new(
+            SurveyQuestionValidationConditionTypeId: source.GetSqlByte(surveyQuestionValidationConditionTypeIdColumnIndex),
+            SurveyQuestionValidationConditionTypeName: source.GetSqlString(surveyQuestionValidationConditionTypeNameColumnIndex));
+    }
+
+    object IEnumerator.Current => Current;
+
+    SqlSurveyQuestionValidationConditionType IAsyncEnumerator<SqlSurveyQuestionValidationConditionType>.Current => Current;
+
+    public async ValueTask<bool> MoveNextAsync() => await source.ReadAsync();
+
+    public ValueTask DisposeAsync() => sourceConsumed ? source.DisposeAsync() : ValueTask.CompletedTask;
+
+    public bool MoveNext() => source.Read();
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void Reset() => throw new InvalidOperationException();
+
+    public void Dispose()
+    {
+        if (sourceConsumed)
+            source.Dispose();
+    }
+}
+
+public class SqlSurveyQuestionValidationConditionReader(
+    SqlDataReader source,
+    int surveyIdColumnIndex,
+    int affectedSurveyPageIndexColumnIndex,
+    int affectedSurveyQuestionIndexColumnIndex,
+    int surveyQuestionValidationConditionIndexColumnIndex,
+    int surveyQuestionValidationConditionTypeColumnIndex,
+    int surveyQuestionValidationConditionOperatorColumnIndex,
+    bool sourceConsumed = true) : IAsyncEnumerator<SqlSurveyQuestionValidationCondition>, IEnumerator<SqlSurveyQuestionValidationCondition>
+{
+    public SqlDataReader Source { get => source; }
+
+    /// <summary>
+    /// The call to <c>Dispose()</c> will be relayed to the source if this is <c>true</c>.
+    /// </summary>
+    public bool SourceConsumed { get => sourceConsumed; set => sourceConsumed = value; }
+
+    public SqlSurveyQuestionValidationCondition Current
+    {
+        get => new(
+            SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
+            AffectedSurveyPageIndex: source.GetSqlInt32(affectedSurveyPageIndexColumnIndex),
+            AffectedSurveyQuestionIndex: source.GetSqlInt32(affectedSurveyQuestionIndexColumnIndex),
+            SurveyQuestionValidationConditionIndex: source.GetSqlInt32(surveyQuestionValidationConditionIndexColumnIndex),
+            SurveyQuestionValidationConditionType: source.GetSqlByte(surveyQuestionValidationConditionTypeColumnIndex),
+            SurveyQuestionValidationConditionOperator: source.GetSqlBoolean(surveyQuestionValidationConditionOperatorColumnIndex));
+    }
+
+    object IEnumerator.Current => Current;
+
+    SqlSurveyQuestionValidationCondition IAsyncEnumerator<SqlSurveyQuestionValidationCondition>.Current => Current;
+
+    public async ValueTask<bool> MoveNextAsync() => await source.ReadAsync();
+
+    public ValueTask DisposeAsync() => sourceConsumed ? source.DisposeAsync() : ValueTask.CompletedTask;
+
+    public bool MoveNext() => source.Read();
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void Reset() => throw new InvalidOperationException();
+
+    public void Dispose()
+    {
+        if (sourceConsumed)
+            source.Dispose();
+    }
+}
+
+public class SqlSurveyQuestionValidationConditionsRefArgReader(
+    SqlDataReader source,
+    int surveyIdColumnIndex,
+    int affectedSurveyPageIndexColumnIndex,
+    int affectedSurveyQuestionIndexColumnIndex,
+    int surveyQuestionValidationConditionIndexColumnIndex,
+    int surveyQuestionValidationConditionArgIndexColumnIndex,
+    int referencedSurveyPageIndexColumnIndex,
+    int referencedSurveyQuestionIndexColumnIndex,
+    bool sourceConsumed = true) : IAsyncEnumerator<SqlSurveyQuestionValidationConditionsRefArg>, IEnumerator<SqlSurveyQuestionValidationConditionsRefArg>
+{
+    public SqlDataReader Source { get => source; }
+
+    /// <summary>
+    /// The call to <c>Dispose()</c> will be relayed to the source if this is <c>true</c>.
+    /// </summary>
+    public bool SourceConsumed { get => sourceConsumed; set => sourceConsumed = value; }
+
+    public SqlSurveyQuestionValidationConditionsRefArg Current
+    {
+        get => new(
+            SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
+            AffectedSurveyPageIndex: source.GetSqlInt32(affectedSurveyPageIndexColumnIndex),
+            AffectedSurveyQuestionIndex: source.GetSqlInt32(affectedSurveyQuestionIndexColumnIndex),
+            SurveyQuestionValidationConditionIndex: source.GetSqlInt32(surveyQuestionValidationConditionIndexColumnIndex),
+            SurveyQuestionValidationConditionArgIndex: source.GetSqlInt32(surveyQuestionValidationConditionArgIndexColumnIndex),
+            ReferencedSurveyPageIndex: source.GetSqlInt32(referencedSurveyPageIndexColumnIndex),
+            ReferencedSurveyQuestionIndex: source.GetSqlInt32(referencedSurveyQuestionIndexColumnIndex));
+    }
+
+    object IEnumerator.Current => Current;
+
+    SqlSurveyQuestionValidationConditionsRefArg IAsyncEnumerator<SqlSurveyQuestionValidationConditionsRefArg>.Current => Current;
+
+    public async ValueTask<bool> MoveNextAsync() => await source.ReadAsync();
+
+    public ValueTask DisposeAsync() => sourceConsumed ? source.DisposeAsync() : ValueTask.CompletedTask;
+
+    public bool MoveNext() => source.Read();
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void Reset() => throw new InvalidOperationException();
+
+    public void Dispose()
+    {
+        if (sourceConsumed)
+            source.Dispose();
+    }
+}
+
+public class SqlSurveyQuestionValidationConditionsIntegerArgReader(
+    SqlDataReader source,
+    int surveyIdColumnIndex,
+    int affectedSurveyPageIndexColumnIndex,
+    int affectedSurveyQuestionIndexColumnIndex,
+    int surveyQuestionValidationConditionIndexColumnIndex,
+    int surveyQuestionValidationConditionArgIndexColumnIndex,
+    int surveyQuestionValidationConditionArgIntegerColumnIndex,
+    bool sourceConsumed = true) : IAsyncEnumerator<SqlSurveyQuestionValidationConditionsIntegerArg>, IEnumerator<SqlSurveyQuestionValidationConditionsIntegerArg>
+{
+    public SqlDataReader Source { get => source; }
+
+    /// <summary>
+    /// The call to <c>Dispose()</c> will be relayed to the source if this is <c>true</c>.
+    /// </summary>
+    public bool SourceConsumed { get => sourceConsumed; set => sourceConsumed = value; }
+
+    public SqlSurveyQuestionValidationConditionsIntegerArg Current
+    {
+        get => new(
+            SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
+            AffectedSurveyPageIndex: source.GetSqlInt32(affectedSurveyPageIndexColumnIndex),
+            AffectedSurveyQuestionIndex: source.GetSqlInt32(affectedSurveyQuestionIndexColumnIndex),
+            SurveyQuestionValidationConditionIndex: source.GetSqlInt32(surveyQuestionValidationConditionIndexColumnIndex),
+            SurveyQuestionValidationConditionArgIndex: source.GetSqlInt32(surveyQuestionValidationConditionArgIndexColumnIndex),
+            SurveyQuestionValidationConditionArgInteger: source.GetSqlInt32(surveyQuestionValidationConditionArgIntegerColumnIndex));
+    }
+
+    object IEnumerator.Current => Current;
+
+    SqlSurveyQuestionValidationConditionsIntegerArg IAsyncEnumerator<SqlSurveyQuestionValidationConditionsIntegerArg>.Current => Current;
+
+    public async ValueTask<bool> MoveNextAsync() => await source.ReadAsync();
+
+    public ValueTask DisposeAsync() => sourceConsumed ? source.DisposeAsync() : ValueTask.CompletedTask;
+
+    public bool MoveNext() => source.Read();
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void Reset() => throw new InvalidOperationException();
+
+    public void Dispose()
+    {
+        if (sourceConsumed)
+            source.Dispose();
+    }
+}
+
+public class SqlSurveyQuestionValidationConditionsTextArgReader(
+    SqlDataReader source,
+    int surveyIdColumnIndex,
+    int affectedSurveyPageIndexColumnIndex,
+    int affectedSurveyQuestionIndexColumnIndex,
+    int surveyQuestionValidationConditionIndexColumnIndex,
+    int surveyQuestionValidationConditionArgIndexColumnIndex,
+    int surveyQuestionValidationConditionArgTextColumnIndex,
+    bool sourceConsumed = true) : IAsyncEnumerator<SqlSurveyQuestionValidationConditionsTextArg>, IEnumerator<SqlSurveyQuestionValidationConditionsTextArg>
+{
+    public SqlDataReader Source { get => source; }
+
+    /// <summary>
+    /// The call to <c>Dispose()</c> will be relayed to the source if this is <c>true</c>.
+    /// </summary>
+    public bool SourceConsumed { get => sourceConsumed; set => sourceConsumed = value; }
+
+    public SqlSurveyQuestionValidationConditionsTextArg Current
+    {
+        get => new(
+            SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
+            AffectedSurveyPageIndex: source.GetSqlInt32(affectedSurveyPageIndexColumnIndex),
+            AffectedSurveyQuestionIndex: source.GetSqlInt32(affectedSurveyQuestionIndexColumnIndex),
+            SurveyQuestionValidationConditionIndex: source.GetSqlInt32(surveyQuestionValidationConditionIndexColumnIndex),
+            SurveyQuestionValidationConditionArgIndex: source.GetSqlInt32(surveyQuestionValidationConditionArgIndexColumnIndex),
+            SurveyQuestionValidationConditionArgText: source.GetSqlString(surveyQuestionValidationConditionArgTextColumnIndex));
+    }
+
+    object IEnumerator.Current => Current;
+
+    SqlSurveyQuestionValidationConditionsTextArg IAsyncEnumerator<SqlSurveyQuestionValidationConditionsTextArg>.Current => Current;
 
     public async ValueTask<bool> MoveNextAsync() => await source.ReadAsync();
 

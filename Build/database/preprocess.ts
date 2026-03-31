@@ -3,43 +3,46 @@ export type DatabaseColumn =
     & {
         pascalSingle: string,
         camelSingle: string,
+        blockSingle: string,
         pascalShortenedSingle: string,
         camelShortenedSingle: string,
-        csType: string,
-        csSqlType: string,
-        csSqlTypeEnum: string,
+        blockShortenedSingle: string,
         nullable: boolean,
     }
     & (
-        | { type: "BIGINT", size: undefined }
-        | { type: "INT", size: undefined }
-        | { type: "SMALLINT", size: undefined }
-        | { type: "TINYINT", size: undefined }
-        | { type: "DATETIME", size: undefined }
-        | { type: "VARCHAR", size: number | "MAX" }
-        | { type: "CHAR", size: number | "MAX" }
-        | { type: "VARBINARY", size: number | "MAX" }
-        | { type: "BINARY", size: number | "MAX" });
+        | ({ type: "BIGINT", size: undefined, precision: undefined } & typeof typenameMap["BIGINT"])
+        | ({ type: "INT", size: undefined, precision: undefined } & typeof typenameMap["INT"])
+        | ({ type: "SMALLINT", size: undefined, precision: undefined } & typeof typenameMap["SMALLINT"])
+        | ({ type: "TINYINT", size: undefined, precision: undefined } & typeof typenameMap["TINYINT"])
+        | ({ type: "DATETIME", size: undefined, precision: undefined } & typeof typenameMap["DATETIME"])
+        | ({ type: "BIT", size: undefined, precision: undefined } & typeof typenameMap["BIT"])
+        | ({ type: "DECIMAL", size: number, precision: number } & typeof typenameMap["DECIMAL"])
+        | ({ type: "VARCHAR", size: number | "MAX", precision: undefined } & typeof typenameMap["VARCHAR"])
+        | ({ type: "CHAR", size: number | "MAX", precision: undefined } & typeof typenameMap["CHAR"])
+        | ({ type: "VARBINARY", size: number | "MAX", precision: undefined } & typeof typenameMap["VARBINARY"])
+        | ({ type: "BINARY", size: number | "MAX", precision: undefined }) & typeof typenameMap["BINARY"]);
 
 export type DatabaseConstraint =
-    | { type: "primary", columns: string[], other: undefined, otherColumns: undefined }
-    | { type: "unique", columns: string[], other: undefined, otherColumns: undefined }
-    | { type: "foreign", columns: string[], other: string, otherColumns: string[] };
+    & { columns: Map<string, DatabaseColumn> }
+    & (
+        | { type: "primary", other: undefined, otherColumns: undefined }
+        | { type: "unique", other: undefined, otherColumns: undefined }
+        | { type: "foreign", other: string, otherColumns: Map<string, DatabaseColumn> });
 
-export const typenameMap: Record<
-    DatabaseColumn["type"],
-    { csType: string, csSqlType: string, csSqlTypeEnum: string }> =
+export const typenameMap = Object.freeze(
 {
-    "BIGINT": { csType: "long", csSqlType: "SqlInt64", csSqlTypeEnum: "BigInt" },
-    "INT": { csType: "int", csSqlType: "SqlInt32", csSqlTypeEnum: "Int" },
-    "SMALLINT": { csType: "short", csSqlType: "SqlInt16", csSqlTypeEnum: "SmallInt" },
-    "TINYINT": { csType: "byte", csSqlType: "SqlByte", csSqlTypeEnum: "TinyInt" },
-    "DATETIME": { csType: "DateTime", csSqlType: "SqlDateTime", csSqlTypeEnum: "DateTime" },
-    "VARCHAR": { csType: "string", csSqlType: "SqlString", csSqlTypeEnum: "VarChar" },
-    "CHAR": { csType: "string", csSqlType: "SqlString", csSqlTypeEnum: "Char" },
-    "VARBINARY": { csType: "byte[]", csSqlType: "SqlBinary", csSqlTypeEnum: "VarBinary" },
-    "BINARY": { csType: "byte[]", csSqlType: "SqlBinary", csSqlTypeEnum: "Binary" },
-}
+    "BIGINT": Object.freeze({ csType: "long", csSqlType: "SqlInt64", csSqlTypeEnum: "BigInt" }),
+    "INT": Object.freeze({ csType: "int", csSqlType: "SqlInt32", csSqlTypeEnum: "Int" }),
+    "SMALLINT": Object.freeze({ csType: "short", csSqlType: "SqlInt16", csSqlTypeEnum: "SmallInt" }),
+    "TINYINT": Object.freeze({ csType: "byte", csSqlType: "SqlByte", csSqlTypeEnum: "TinyInt" }),
+    "DATETIME": Object.freeze({ csType: "DateTime", csSqlType: "SqlDateTime", csSqlTypeEnum: "DateTime" }),
+    "BIT": Object.freeze({ csType: "bool", csSqlType: "SqlBoolean", csSqlTypeEnum: "Bit" }),
+    "DECIMAL": Object.freeze({ csType: "decimal", csSqlType: "SqlDecimal", csSqlTypeEnum: "Decimal" }),
+    "VARCHAR": Object.freeze({ csType: "string", csSqlType: "SqlString", csSqlTypeEnum: "VarChar" }),
+    "CHAR": Object.freeze({ csType: "string", csSqlType: "SqlString", csSqlTypeEnum: "Char" }),
+    "VARBINARY": Object.freeze({ csType: "byte[]", csSqlType: "SqlBinary", csSqlTypeEnum: "VarBinary" }),
+    "BINARY": Object.freeze({ csType: "byte[]", csSqlType: "SqlBinary", csSqlTypeEnum: "Binary" }),
+});
 
 export type DatabaseTable =
 {
@@ -47,10 +50,14 @@ export type DatabaseTable =
     pascalPlural: string,
     camelSingle: string,
     camelPlural: string,
+    blockSingle: string,
+    blockPlural: string,
     pascalShortenedSingle: string,
     pascalShortenedPlural: string,
     camelShortenedSingle: string,
     camelShortenedPlural: string,
+    blockShortenedSingle: string,
+    blockShortenedPlural: string,
     columns: Map<string, DatabaseColumn>,
     constraints: DatabaseConstraint[],
 };
@@ -80,6 +87,25 @@ export function snakeCaseToPascalCase(string: string): string
     return buffer;
 }
 
+export function pascalCaseToBlockCase(string: string): string
+{
+    let buffer = null;
+    const pattern = /(?:[A-Z](?:[A-Z](?=[A-Z]))*[a-z]*|[a-z]+|\d+)/gy;
+
+    let match;
+    while ((match = pattern.exec(string)) !== null)
+    {
+        if (buffer === null)
+            buffer = "";
+        else
+            buffer += "_";
+
+        buffer += match[0].toUpperCase();
+    }
+
+    return buffer ?? "";
+}
+
 export function preprocessObject(source: any): DatabaseStructure
 {
     const
@@ -99,10 +125,14 @@ export function preprocessObject(source: any): DatabaseStructure
         const pascalSingle = String(sourceTable["C# Single"] ?? pascalPlural.substring(0, pascalPlural.length - 1));
         const camelPlural = pascalPlural.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
         const camelSingle = pascalSingle.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
+        const blockPlural = pascalCaseToBlockCase(pascalPlural);
+        const blockSingle = pascalCaseToBlockCase(pascalSingle);
         const pascalShortenedPlural = String(sourceTable["C# Short Plural"] ?? pascalPlural);
         const pascalShortenedSingle = String(sourceTable["C# Short Single"] ?? pascalSingle);
         const camelShortenedPlural = pascalShortenedPlural.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
         const camelShortenedSingle = pascalShortenedSingle.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
+        const blockShortenedPlural = pascalCaseToBlockCase(pascalShortenedPlural);
+        const blockShortenedSingle = pascalCaseToBlockCase(pascalShortenedSingle);
 
         const sourceColumns = sourceTable["columns"];
         const columns = new Map<string, DatabaseColumn>();
@@ -125,12 +155,15 @@ export function preprocessObject(source: any): DatabaseStructure
 
             const pascalSingle = String(sourceColumn["C# Single"] ?? snakeCaseToPascalCase(name));
             const camelSingle = pascalSingle.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
+            const blockSingle = pascalCaseToBlockCase(pascalSingle);
             const pascalShortenedSingle = String(sourceColumn["C# Short Single"] ?? pascalSingle);
             const camelShortenedSingle = pascalShortenedSingle.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
+            const blockShortenedSingle = pascalCaseToBlockCase(pascalShortenedSingle);
 
             const type = String.prototype.toUpperCase.call(sourceColumn["type"]);
             const nullable = Boolean(sourceColumn["nullable"]);
             let size: any;
+            let precision: any;
 
             switch (type)
             {
@@ -139,7 +172,15 @@ export function preprocessObject(source: any): DatabaseStructure
                 case "SMALLINT":
                 case "TINYINT":
                 case "DATETIME":
+                case "BIT":
                 {
+                    break;
+                }
+                case "DECIMAL":
+                {
+                    size = Math.max(0, eval(sourceColumn["size"]) | 0);
+                    precision = Math.max(0, eval(sourceColumn["precision"]) | 0);
+
                     break;
                 }
                 case "VARCHAR":
@@ -147,14 +188,17 @@ export function preprocessObject(source: any): DatabaseStructure
                 case "VARBINARY":
                 case "BINARY":
                 {
-                    const sourceSize = sourceColumn["size"];
-                    try
+                    const sourceSize = String(sourceColumn["size"]);
+
+                    switch (sourceSize.toUpperCase())
                     {
-                        size = sourceSize.toUpperCase() === "MAX"
-                            ? "MAX"
-                            : Math.max(0, eval(sourceColumn["size"]) | 0);
+                        case "MAX":
+                            size = "MAX";
+                            break;
+                        default:
+                            size = Math.max(0, eval(sourceSize) | 0);
+                            break;
                     }
-                    catch { size = undefined }
 
                     break;
                 }
@@ -170,13 +214,16 @@ export function preprocessObject(source: any): DatabaseStructure
                 {
                     pascalSingle,
                     camelSingle,
+                    blockSingle,
                     pascalShortenedSingle,
                     camelShortenedSingle,
-                    csType: typenameMap[type].csType,
-                    csSqlType: typenameMap[type].csSqlType,
-                    csSqlTypeEnum: typenameMap[type].csSqlTypeEnum,
+                    blockShortenedSingle,
+                    csType: typenameMap[type].csType as any,
+                    csSqlType: typenameMap[type].csSqlType as any,
+                    csSqlTypeEnum: typenameMap[type].csSqlTypeEnum as any,
                     type,
                     size,
+                    precision,
                     nullable,
                 });
         }
@@ -197,9 +244,10 @@ export function preprocessObject(source: any): DatabaseStructure
                         constraints.push(
                         {
                             type,
-                            columns: Array.prototype.map.call(
-                                sourceConstraint[sourceType],
-                                String) as string[],
+                            columns: new Map(
+                                (Iterator.prototype.map<[string, DatabaseColumn]>).call(
+                                    sourceConstraint[sourceType][Symbol.iterator](),
+                                    (x) => [String(x), null as any])),
                             other: undefined,
                             otherColumns: undefined,
                         });
@@ -224,13 +272,15 @@ export function preprocessObject(source: any): DatabaseStructure
                         constraints.push(
                         {
                             type,
-                            columns: Array.prototype.map.call(
-                                first,
-                                String) as string[],
+                            columns: new Map(
+                                (Iterator.prototype.map<[string, DatabaseColumn]>).call(
+                                    first[Symbol.iterator](),
+                                    (x) => [String(x), null as any])),
                             other,
-                            otherColumns: Array.prototype.map.call(
-                                second,
-                                String) as string[],
+                            otherColumns: new Map(
+                                (Iterator.prototype.map<[string, DatabaseColumn]>).call(
+                                    second[Symbol.iterator](),
+                                    (x) => [String(x), null as any])),
                         });
 
                         break;
@@ -251,13 +301,52 @@ export function preprocessObject(source: any): DatabaseStructure
                 pascalSingle,
                 camelSingle,
                 camelPlural,
+                blockSingle,
+                blockPlural,
                 pascalShortenedPlural,
                 pascalShortenedSingle,
                 camelShortenedSingle,
                 camelShortenedPlural,
+                blockShortenedSingle,
+                blockShortenedPlural,
                 columns,
                 constraints,
             });
+    }
+
+    for (const [tableName, table] of tables)
+    {
+        for (const constraint of table.constraints)
+        {
+            for (const columnName of constraint.columns.keys())
+            {
+                const column = table.columns.get(columnName);
+                if (column === undefined)
+                    throw new SyntaxError(
+                        `Unknown column in ${tableName}: ${columnName}`);
+
+                constraint.columns.set(columnName, column);
+            }
+
+            if (constraint.otherColumns !== undefined)
+            {
+                const table = tables.get(constraint.other);
+
+                if (table === undefined)
+                    throw new SyntaxError(
+                        `Unknown table: ${constraint.other}`);
+
+                for (const columnName of constraint.otherColumns.keys())
+                {
+                    const column = table.columns.get(columnName);
+                    if (column === undefined)
+                        throw new SyntaxError(
+                            `Unknown column in ${tableName}: ${columnName}`);
+
+                    constraint.otherColumns.set(columnName, column);
+                }
+            }
+        }
     }
 
     return { tables };

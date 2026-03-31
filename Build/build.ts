@@ -20,9 +20,11 @@ log("success", "Build Started.");
     try { file = YAML.parse(await fs.readFile("./Build/database/database_structure.yaml", "utf-8")) }
     catch (e)
     {
-        log("error", e instanceof Error ? e.message : e);
+        log("error", e instanceof Error ? e.stack : e);
         return;
     }
+
+    const databaseStructure = preprocessObject(file);
 
     try
     {
@@ -31,29 +33,24 @@ log("success", "Build Started.");
             fs.writeFile(
                 "./Build/database/database_structure.sql",
                 `--- This file was auto-generated based on ./Build/database/database_structure.yaml
-` + sqlFileFrom(preprocessObject(file)),
+` + sqlFileFrom(databaseStructure),
                 "utf-8")
                 .then(() => log("success", "Converted database structure to SQL file.")),
 
             fs.writeFile(
                 "./Models/DatabaseStructure.cs",
                 `// This file was auto-generated based on ./Build/database/database_structure.yaml
-` + csFileFrom(preprocessObject(file)),
+` + csFileFrom(databaseStructure),
                 "utf-8")
                 .then(() => log("success", "Converted database structure to C# accessors.")),
 
             new Promise<void>((resolve, reject) => exec("npx tsc", {}, (error) =>
             {
                 if (error !== null)
-                {
-                    log("error", error.message);
-                    reject(error);
-                }
-                else
-                {
-                    log("success", "Transpiled TypeScript.");
-                    resolve();
-                }
+                    return reject(error);
+
+                log("success", "Transpiled TypeScript.");
+                resolve();
             })),
         ]);
 
@@ -61,7 +58,7 @@ log("success", "Build Started.");
     }
     catch (e)
     {
-        log("error", e instanceof Error ? e.message : e);
+        log("error", e instanceof Error ? e.stack : e);
         return;
     }
 })();
