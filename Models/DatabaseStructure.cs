@@ -24,19 +24,19 @@ public record SqlSurvey(
 
     public const string ID = "[survey_id]";
 
-    public const string TABLE_ID = $"{TABLE}.{ID}";
+    public const string TABLE_ID = $"[surveys].[survey_id]";
 
     public const string TITLE = "[survey_title]";
 
-    public const string TABLE_TITLE = $"{TABLE}.{TITLE}";
+    public const string TABLE_TITLE = $"[surveys].[survey_title]";
 
     public const string AUTHOR = "[survey_author]";
 
-    public const string TABLE_AUTHOR = $"{TABLE}.{AUTHOR}";
+    public const string TABLE_AUTHOR = $"[surveys].[survey_author]";
 
     public const string DESCRIPTION = "[survey_description]";
 
-    public const string TABLE_DESCRIPTION = $"{TABLE}.{DESCRIPTION}";
+    public const string TABLE_DESCRIPTION = $"[surveys].[survey_description]";
 
     public Survey Value => new(
         SurveyId.Value,
@@ -70,19 +70,19 @@ public record SqlSurveyPage(
 
     public const string SURVEY_ID = "[survey_id]";
 
-    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+    public const string TABLE_SURVEY_ID = $"[survey_pages].[survey_id]";
 
     public const string INDEX = "[survey_page_index]";
 
-    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+    public const string TABLE_INDEX = $"[survey_pages].[survey_page_index]";
 
     public const string TITLE = "[survey_page_title]";
 
-    public const string TABLE_TITLE = $"{TABLE}.{TITLE}";
+    public const string TABLE_TITLE = $"[survey_pages].[survey_page_title]";
 
     public const string DESCRIPTION = "[survey_page_description]";
 
-    public const string TABLE_DESCRIPTION = $"{TABLE}.{DESCRIPTION}";
+    public const string TABLE_DESCRIPTION = $"[survey_pages].[survey_page_description]";
 
     public SurveyPage Value => new(
         SurveyId.Value,
@@ -112,11 +112,11 @@ public record SqlAnswerType(
 
     public const string ID = "[answer_type_id]";
 
-    public const string TABLE_ID = $"{TABLE}.{ID}";
+    public const string TABLE_ID = $"[answer_types].[answer_type_id]";
 
     public const string NAME = "[answer_type_name]";
 
-    public const string TABLE_NAME = $"{TABLE}.{NAME}";
+    public const string TABLE_NAME = $"[answer_types].[answer_type_name]";
 
     public AnswerType Value => new(
         AnswerTypeId.Value,
@@ -135,7 +135,7 @@ public partial record SurveyQuestion(
     int PageIndex,
     int Index,
     string Title,
-    byte Description);
+    byte Type);
 
 public record SqlSurveyQuestion(
     SqlInt32 SurveyId,
@@ -148,23 +148,23 @@ public record SqlSurveyQuestion(
 
     public const string SURVEY_ID = "[survey_id]";
 
-    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+    public const string TABLE_SURVEY_ID = $"[survey_questions].[survey_id]";
 
     public const string PAGE_INDEX = "[survey_page_index]";
 
-    public const string TABLE_PAGE_INDEX = $"{TABLE}.{PAGE_INDEX}";
+    public const string TABLE_PAGE_INDEX = $"[survey_questions].[survey_page_index]";
 
     public const string INDEX = "[survey_question_index]";
 
-    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+    public const string TABLE_INDEX = $"[survey_questions].[survey_question_index]";
 
     public const string TITLE = "[survey_question_prompt]";
 
-    public const string TABLE_TITLE = $"{TABLE}.{TITLE}";
+    public const string TABLE_TITLE = $"[survey_questions].[survey_question_prompt]";
 
-    public const string DESCRIPTION = "[survey_question_answer_type]";
+    public const string TYPE = "[survey_question_answer_type]";
 
-    public const string TABLE_DESCRIPTION = $"{TABLE}.{DESCRIPTION}";
+    public const string TABLE_TYPE = $"[survey_questions].[survey_question_answer_type]";
 
     public SurveyQuestion Value => new(
         SurveyId.Value,
@@ -178,7 +178,7 @@ public record SqlSurveyQuestion(
         data.PageIndex,
         data.Index,
         data.Title,
-        data.Description) { }
+        data.Type) { }
 
     public static explicit operator SurveyQuestion(SqlSurveyQuestion value) => value.Value;
     public static implicit operator SqlSurveyQuestion(SurveyQuestion value) => new(value);
@@ -204,27 +204,27 @@ public record SqlRegisteredMember(
 
     public const string ID = "[registered_member_id]";
 
-    public const string TABLE_ID = $"{TABLE}.{ID}";
+    public const string TABLE_ID = $"[registered_members].[registered_member_id]";
 
     public const string PASSWORD_HASH = "[registered_member_password_hash]";
 
-    public const string TABLE_PASSWORD_HASH = $"{TABLE}.{PASSWORD_HASH}";
+    public const string TABLE_PASSWORD_HASH = $"[registered_members].[registered_member_password_hash]";
 
     public const string PHONE_NUMBER = "[registered_member_phone_number]";
 
-    public const string TABLE_PHONE_NUMBER = $"{TABLE}.{PHONE_NUMBER}";
+    public const string TABLE_PHONE_NUMBER = $"[registered_members].[registered_member_phone_number]";
 
     public const string BIRTH_DATE = "[registered_member_birth_date]";
 
-    public const string TABLE_BIRTH_DATE = $"{TABLE}.{BIRTH_DATE}";
+    public const string TABLE_BIRTH_DATE = $"[registered_members].[registered_member_birth_date]";
 
     public const string FIRST_NAME = "[registered_member_first_name]";
 
-    public const string TABLE_FIRST_NAME = $"{TABLE}.{FIRST_NAME}";
+    public const string TABLE_FIRST_NAME = $"[registered_members].[registered_member_first_name]";
 
     public const string LAST_NAME = "[registered_member_last_name]";
 
-    public const string TABLE_LAST_NAME = $"{TABLE}.{LAST_NAME}";
+    public const string TABLE_LAST_NAME = $"[registered_members].[registered_member_last_name]";
 
     public RegisteredMember Value => new(
         RegisteredMemberId.Value,
@@ -260,15 +260,15 @@ public record SqlSubmission(
 
     public const string SURVEY_ID = "[survey_id]";
 
-    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+    public const string TABLE_SURVEY_ID = $"[submissions].[survey_id]";
 
     public const string INDEX = "[submission_index]";
 
-    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+    public const string TABLE_INDEX = $"[submissions].[submission_index]";
 
     public const string REGISTERED_MEMBER_ID = "[registered_member_id]";
 
-    public const string TABLE_REGISTERED_MEMBER_ID = $"{TABLE}.{REGISTERED_MEMBER_ID}";
+    public const string TABLE_REGISTERED_MEMBER_ID = $"[submissions].[registered_member_id]";
 
     public Submission Value => new(
         SurveyId.Value,
@@ -304,27 +304,27 @@ public record SqlSubmissionTextAnswer(
 
     public const string SURVEY_ID = "[survey_id]";
 
-    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+    public const string TABLE_SURVEY_ID = $"[submission_text_answers].[survey_id]";
 
     public const string PAGE_INDEX = "[survey_page_index]";
 
-    public const string TABLE_PAGE_INDEX = $"{TABLE}.{PAGE_INDEX}";
+    public const string TABLE_PAGE_INDEX = $"[submission_text_answers].[survey_page_index]";
 
     public const string QUESTION_INDEX = "[survey_question_index]";
 
-    public const string TABLE_QUESTION_INDEX = $"{TABLE}.{QUESTION_INDEX}";
+    public const string TABLE_QUESTION_INDEX = $"[submission_text_answers].[survey_question_index]";
 
     public const string SUBMISSION_INDEX = "[submission_index]";
 
-    public const string TABLE_SUBMISSION_INDEX = $"{TABLE}.{SUBMISSION_INDEX}";
+    public const string TABLE_SUBMISSION_INDEX = $"[submission_text_answers].[submission_index]";
 
     public const string ANSWER_INDEX = "[submission_answer_index]";
 
-    public const string TABLE_ANSWER_INDEX = $"{TABLE}.{ANSWER_INDEX}";
+    public const string TABLE_ANSWER_INDEX = $"[submission_text_answers].[submission_answer_index]";
 
     public const string VALUE = "[submission_answer_text]";
 
-    public const string TABLE_VALUE = $"{TABLE}.{VALUE}";
+    public const string TABLE_VALUE = $"[submission_text_answers].[submission_answer_text]";
 
     public SubmissionTextAnswer Value => new(
         SurveyId.Value,
@@ -366,27 +366,27 @@ public record SqlSubmissionIntegerAnswer(
 
     public const string SURVEY_ID = "[survey_id]";
 
-    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+    public const string TABLE_SURVEY_ID = $"[submission_integer_answers].[survey_id]";
 
     public const string PAGE_INDEX = "[survey_page_index]";
 
-    public const string TABLE_PAGE_INDEX = $"{TABLE}.{PAGE_INDEX}";
+    public const string TABLE_PAGE_INDEX = $"[submission_integer_answers].[survey_page_index]";
 
     public const string QUESTION_INDEX = "[survey_question_index]";
 
-    public const string TABLE_QUESTION_INDEX = $"{TABLE}.{QUESTION_INDEX}";
+    public const string TABLE_QUESTION_INDEX = $"[submission_integer_answers].[survey_question_index]";
 
     public const string SUBMISSION_INDEX = "[submission_index]";
 
-    public const string TABLE_SUBMISSION_INDEX = $"{TABLE}.{SUBMISSION_INDEX}";
+    public const string TABLE_SUBMISSION_INDEX = $"[submission_integer_answers].[submission_index]";
 
     public const string ANSWER_INDEX = "[submission_answer_index]";
 
-    public const string TABLE_ANSWER_INDEX = $"{TABLE}.{ANSWER_INDEX}";
+    public const string TABLE_ANSWER_INDEX = $"[submission_integer_answers].[submission_answer_index]";
 
     public const string VALUE = "[submission_answer_integer]";
 
-    public const string TABLE_VALUE = $"{TABLE}.{VALUE}";
+    public const string TABLE_VALUE = $"[submission_integer_answers].[submission_answer_integer]";
 
     public SubmissionIntegerAnswer Value => new(
         SurveyId.Value,
@@ -428,27 +428,27 @@ public record SqlSubmissionBoolAnswer(
 
     public const string SURVEY_ID = "[survey_id]";
 
-    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+    public const string TABLE_SURVEY_ID = $"[submission_bool_answers].[survey_id]";
 
     public const string PAGE_INDEX = "[survey_page_index]";
 
-    public const string TABLE_PAGE_INDEX = $"{TABLE}.{PAGE_INDEX}";
+    public const string TABLE_PAGE_INDEX = $"[submission_bool_answers].[survey_page_index]";
 
     public const string QUESTION_INDEX = "[survey_question_index]";
 
-    public const string TABLE_QUESTION_INDEX = $"{TABLE}.{QUESTION_INDEX}";
+    public const string TABLE_QUESTION_INDEX = $"[submission_bool_answers].[survey_question_index]";
 
     public const string SUBMISSION_INDEX = "[submission_index]";
 
-    public const string TABLE_SUBMISSION_INDEX = $"{TABLE}.{SUBMISSION_INDEX}";
+    public const string TABLE_SUBMISSION_INDEX = $"[submission_bool_answers].[submission_index]";
 
     public const string INDEX = "[submission_answer_index]";
 
-    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+    public const string TABLE_INDEX = $"[submission_bool_answers].[submission_answer_index]";
 
     public const string VALUE = "[submission_answer_bool]";
 
-    public const string TABLE_VALUE = $"{TABLE}.{VALUE}";
+    public const string TABLE_VALUE = $"[submission_bool_answers].[submission_answer_bool]";
 
     public SubmissionBoolAnswer Value => new(
         SurveyId.Value,
@@ -488,23 +488,23 @@ public record SqlSurveyQuestionAnswerOption(
 
     public const string SURVEY_ID = "[survey_id]";
 
-    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+    public const string TABLE_SURVEY_ID = $"[survey_question_answer_options].[survey_id]";
 
     public const string PAGE_INDEX = "[survey_page_index]";
 
-    public const string TABLE_PAGE_INDEX = $"{TABLE}.{PAGE_INDEX}";
+    public const string TABLE_PAGE_INDEX = $"[survey_question_answer_options].[survey_page_index]";
 
     public const string QUESTION_INDEX = "[survey_question_index]";
 
-    public const string TABLE_QUESTION_INDEX = $"{TABLE}.{QUESTION_INDEX}";
+    public const string TABLE_QUESTION_INDEX = $"[survey_question_answer_options].[survey_question_index]";
 
     public const string INDEX = "[survey_answer_option_index]";
 
-    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+    public const string TABLE_INDEX = $"[survey_question_answer_options].[survey_answer_option_index]";
 
     public const string TEXT = "[survey_answer_option_text]";
 
-    public const string TABLE_TEXT = $"{TABLE}.{TEXT}";
+    public const string TABLE_TEXT = $"[survey_question_answer_options].[survey_answer_option_text]";
 
     public SurveyQuestionAnswerOption Value => new(
         SurveyId.Value,
@@ -536,11 +536,11 @@ public record SqlSurveyQuestionShowConditionType(
 
     public const string ID = "[survey_question_show_condition_type_id]";
 
-    public const string TABLE_ID = $"{TABLE}.{ID}";
+    public const string TABLE_ID = $"[survey_question_show_condition_types].[survey_question_show_condition_type_id]";
 
     public const string NAME = "[survey_question_show_condition_type_name]";
 
-    public const string TABLE_NAME = $"{TABLE}.{NAME}";
+    public const string TABLE_NAME = $"[survey_question_show_condition_types].[survey_question_show_condition_type_name]";
 
     public SurveyQuestionShowConditionType Value => new(
         SurveyQuestionShowConditionTypeId.Value,
@@ -556,16 +556,16 @@ public record SqlSurveyQuestionShowConditionType(
 
 public partial record SurveyQuestionShowCondition(
     int SurveyId,
-    int AffectedPageIndex,
-    int AffectedQuestionIndex,
+    int PageIndex,
+    int QuestionIndex,
     int Index,
     byte Type,
     bool IsOrOperator);
 
 public record SqlSurveyQuestionShowCondition(
     SqlInt32 SurveyId,
-    SqlInt32 AffectedSurveyPageIndex,
-    SqlInt32 AffectedSurveyQuestionIndex,
+    SqlInt32 SurveyPageIndex,
+    SqlInt32 SurveyQuestionIndex,
     SqlInt32 SurveyQuestionShowConditionIndex,
     SqlByte SurveyQuestionShowConditionType,
     SqlBoolean SurveyQuestionShowConditionOperator)
@@ -574,40 +574,40 @@ public record SqlSurveyQuestionShowCondition(
 
     public const string SURVEY_ID = "[survey_id]";
 
-    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+    public const string TABLE_SURVEY_ID = $"[survey_question_show_conditions].[survey_id]";
 
-    public const string AFFECTED_PAGE_INDEX = "[affected_survey_page_index]";
+    public const string PAGE_INDEX = "[survey_page_index]";
 
-    public const string TABLE_AFFECTED_PAGE_INDEX = $"{TABLE}.{AFFECTED_PAGE_INDEX}";
+    public const string TABLE_PAGE_INDEX = $"[survey_question_show_conditions].[survey_page_index]";
 
-    public const string AFFECTED_QUESTION_INDEX = "[affected_survey_question_index]";
+    public const string QUESTION_INDEX = "[survey_question_index]";
 
-    public const string TABLE_AFFECTED_QUESTION_INDEX = $"{TABLE}.{AFFECTED_QUESTION_INDEX}";
+    public const string TABLE_QUESTION_INDEX = $"[survey_question_show_conditions].[survey_question_index]";
 
     public const string INDEX = "[survey_question_show_condition_index]";
 
-    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+    public const string TABLE_INDEX = $"[survey_question_show_conditions].[survey_question_show_condition_index]";
 
     public const string TYPE = "[survey_question_show_condition_type]";
 
-    public const string TABLE_TYPE = $"{TABLE}.{TYPE}";
+    public const string TABLE_TYPE = $"[survey_question_show_conditions].[survey_question_show_condition_type]";
 
     public const string IS_OR_OPERATOR = "[survey_question_show_condition_operator]";
 
-    public const string TABLE_IS_OR_OPERATOR = $"{TABLE}.{IS_OR_OPERATOR}";
+    public const string TABLE_IS_OR_OPERATOR = $"[survey_question_show_conditions].[survey_question_show_condition_operator]";
 
     public SurveyQuestionShowCondition Value => new(
         SurveyId.Value,
-        AffectedSurveyPageIndex.Value,
-        AffectedSurveyQuestionIndex.Value,
+        SurveyPageIndex.Value,
+        SurveyQuestionIndex.Value,
         SurveyQuestionShowConditionIndex.Value,
         SurveyQuestionShowConditionType.Value,
         SurveyQuestionShowConditionOperator.Value);
 
     public SqlSurveyQuestionShowCondition(SurveyQuestionShowCondition data) : this(
         data.SurveyId,
-        data.AffectedPageIndex,
-        data.AffectedQuestionIndex,
+        data.PageIndex,
+        data.QuestionIndex,
         data.Index,
         data.Type,
         data.IsOrOperator) { }
@@ -618,8 +618,8 @@ public record SqlSurveyQuestionShowCondition(
 
 public partial record SurveyQuestionShowConditionsRefArg(
     int SurveyId,
-    int AffectedPageIndex,
-    int AffectedQuestionIndex,
+    int PageIndex,
+    int QuestionIndex,
     int Index,
     int ArgIndex,
     int ReferencedPageIndex,
@@ -627,8 +627,8 @@ public partial record SurveyQuestionShowConditionsRefArg(
 
 public record SqlSurveyQuestionShowConditionsRefArg(
     SqlInt32 SurveyId,
-    SqlInt32 AffectedSurveyPageIndex,
-    SqlInt32 AffectedSurveyQuestionIndex,
+    SqlInt32 SurveyPageIndex,
+    SqlInt32 SurveyQuestionIndex,
     SqlInt32 SurveyQuestionShowConditionIndex,
     SqlInt32 SurveyQuestionShowConditionArgIndex,
     SqlInt32 ReferencedSurveyPageIndex,
@@ -638,36 +638,36 @@ public record SqlSurveyQuestionShowConditionsRefArg(
 
     public const string SURVEY_ID = "[survey_id]";
 
-    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+    public const string TABLE_SURVEY_ID = $"[survey_question_show_conditions_ref_args].[survey_id]";
 
-    public const string AFFECTED_PAGE_INDEX = "[affected_survey_page_index]";
+    public const string PAGE_INDEX = "[survey_page_index]";
 
-    public const string TABLE_AFFECTED_PAGE_INDEX = $"{TABLE}.{AFFECTED_PAGE_INDEX}";
+    public const string TABLE_PAGE_INDEX = $"[survey_question_show_conditions_ref_args].[survey_page_index]";
 
-    public const string AFFECTED_QUESTION_INDEX = "[affected_survey_question_index]";
+    public const string QUESTION_INDEX = "[survey_question_index]";
 
-    public const string TABLE_AFFECTED_QUESTION_INDEX = $"{TABLE}.{AFFECTED_QUESTION_INDEX}";
+    public const string TABLE_QUESTION_INDEX = $"[survey_question_show_conditions_ref_args].[survey_question_index]";
 
     public const string INDEX = "[survey_question_show_condition_index]";
 
-    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+    public const string TABLE_INDEX = $"[survey_question_show_conditions_ref_args].[survey_question_show_condition_index]";
 
     public const string ARG_INDEX = "[survey_question_show_condition_arg_index]";
 
-    public const string TABLE_ARG_INDEX = $"{TABLE}.{ARG_INDEX}";
+    public const string TABLE_ARG_INDEX = $"[survey_question_show_conditions_ref_args].[survey_question_show_condition_arg_index]";
 
     public const string REFERENCED_PAGE_INDEX = "[referenced_survey_page_index]";
 
-    public const string TABLE_REFERENCED_PAGE_INDEX = $"{TABLE}.{REFERENCED_PAGE_INDEX}";
+    public const string TABLE_REFERENCED_PAGE_INDEX = $"[survey_question_show_conditions_ref_args].[referenced_survey_page_index]";
 
     public const string REFERENCED_QUESTION_INDEX = "[referenced_survey_question_index]";
 
-    public const string TABLE_REFERENCED_QUESTION_INDEX = $"{TABLE}.{REFERENCED_QUESTION_INDEX}";
+    public const string TABLE_REFERENCED_QUESTION_INDEX = $"[survey_question_show_conditions_ref_args].[referenced_survey_question_index]";
 
     public SurveyQuestionShowConditionsRefArg Value => new(
         SurveyId.Value,
-        AffectedSurveyPageIndex.Value,
-        AffectedSurveyQuestionIndex.Value,
+        SurveyPageIndex.Value,
+        SurveyQuestionIndex.Value,
         SurveyQuestionShowConditionIndex.Value,
         SurveyQuestionShowConditionArgIndex.Value,
         ReferencedSurveyPageIndex.Value,
@@ -675,8 +675,8 @@ public record SqlSurveyQuestionShowConditionsRefArg(
 
     public SqlSurveyQuestionShowConditionsRefArg(SurveyQuestionShowConditionsRefArg data) : this(
         data.SurveyId,
-        data.AffectedPageIndex,
-        data.AffectedQuestionIndex,
+        data.PageIndex,
+        data.QuestionIndex,
         data.Index,
         data.ArgIndex,
         data.ReferencedPageIndex,
@@ -688,16 +688,16 @@ public record SqlSurveyQuestionShowConditionsRefArg(
 
 public partial record SurveyQuestionShowConditionsIntegerArg(
     int SurveyId,
-    int AffectedPageIndex,
-    int AffectedQuestionIndex,
+    int PageIndex,
+    int QuestionIndex,
     int Index,
     int ArgIndex,
     int ArgValue);
 
 public record SqlSurveyQuestionShowConditionsIntegerArg(
     SqlInt32 SurveyId,
-    SqlInt32 AffectedSurveyPageIndex,
-    SqlInt32 AffectedSurveyQuestionIndex,
+    SqlInt32 SurveyPageIndex,
+    SqlInt32 SurveyQuestionIndex,
     SqlInt32 SurveyQuestionShowConditionIndex,
     SqlInt32 SurveyQuestionShowConditionArgIndex,
     SqlInt32 SurveyQuestionShowConditionArgInteger)
@@ -706,40 +706,40 @@ public record SqlSurveyQuestionShowConditionsIntegerArg(
 
     public const string SURVEY_ID = "[survey_id]";
 
-    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+    public const string TABLE_SURVEY_ID = $"[survey_question_show_conditions_integer_args].[survey_id]";
 
-    public const string AFFECTED_PAGE_INDEX = "[affected_survey_page_index]";
+    public const string PAGE_INDEX = "[survey_page_index]";
 
-    public const string TABLE_AFFECTED_PAGE_INDEX = $"{TABLE}.{AFFECTED_PAGE_INDEX}";
+    public const string TABLE_PAGE_INDEX = $"[survey_question_show_conditions_integer_args].[survey_page_index]";
 
-    public const string AFFECTED_QUESTION_INDEX = "[affected_survey_question_index]";
+    public const string QUESTION_INDEX = "[survey_question_index]";
 
-    public const string TABLE_AFFECTED_QUESTION_INDEX = $"{TABLE}.{AFFECTED_QUESTION_INDEX}";
+    public const string TABLE_QUESTION_INDEX = $"[survey_question_show_conditions_integer_args].[survey_question_index]";
 
     public const string INDEX = "[survey_question_show_condition_index]";
 
-    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+    public const string TABLE_INDEX = $"[survey_question_show_conditions_integer_args].[survey_question_show_condition_index]";
 
     public const string ARG_INDEX = "[survey_question_show_condition_arg_index]";
 
-    public const string TABLE_ARG_INDEX = $"{TABLE}.{ARG_INDEX}";
+    public const string TABLE_ARG_INDEX = $"[survey_question_show_conditions_integer_args].[survey_question_show_condition_arg_index]";
 
     public const string ARG_VALUE = "[survey_question_show_condition_arg_integer]";
 
-    public const string TABLE_ARG_VALUE = $"{TABLE}.{ARG_VALUE}";
+    public const string TABLE_ARG_VALUE = $"[survey_question_show_conditions_integer_args].[survey_question_show_condition_arg_integer]";
 
     public SurveyQuestionShowConditionsIntegerArg Value => new(
         SurveyId.Value,
-        AffectedSurveyPageIndex.Value,
-        AffectedSurveyQuestionIndex.Value,
+        SurveyPageIndex.Value,
+        SurveyQuestionIndex.Value,
         SurveyQuestionShowConditionIndex.Value,
         SurveyQuestionShowConditionArgIndex.Value,
         SurveyQuestionShowConditionArgInteger.Value);
 
     public SqlSurveyQuestionShowConditionsIntegerArg(SurveyQuestionShowConditionsIntegerArg data) : this(
         data.SurveyId,
-        data.AffectedPageIndex,
-        data.AffectedQuestionIndex,
+        data.PageIndex,
+        data.QuestionIndex,
         data.Index,
         data.ArgIndex,
         data.ArgValue) { }
@@ -750,16 +750,16 @@ public record SqlSurveyQuestionShowConditionsIntegerArg(
 
 public partial record SurveyQuestionShowConditionsTextArg(
     int SurveyId,
-    int AffectedPageIndex,
-    int AffectedQuestionIndex,
+    int PageIndex,
+    int QuestionIndex,
     int Index,
     int ArgIndex,
     string ArgValue);
 
 public record SqlSurveyQuestionShowConditionsTextArg(
     SqlInt32 SurveyId,
-    SqlInt32 AffectedSurveyPageIndex,
-    SqlInt32 AffectedSurveyQuestionIndex,
+    SqlInt32 SurveyPageIndex,
+    SqlInt32 SurveyQuestionIndex,
     SqlInt32 SurveyQuestionShowConditionIndex,
     SqlInt32 SurveyQuestionShowConditionArgIndex,
     SqlString SurveyQuestionShowConditionArgText)
@@ -768,40 +768,40 @@ public record SqlSurveyQuestionShowConditionsTextArg(
 
     public const string SURVEY_ID = "[survey_id]";
 
-    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+    public const string TABLE_SURVEY_ID = $"[survey_question_show_conditions_text_args].[survey_id]";
 
-    public const string AFFECTED_PAGE_INDEX = "[affected_survey_page_index]";
+    public const string PAGE_INDEX = "[survey_page_index]";
 
-    public const string TABLE_AFFECTED_PAGE_INDEX = $"{TABLE}.{AFFECTED_PAGE_INDEX}";
+    public const string TABLE_PAGE_INDEX = $"[survey_question_show_conditions_text_args].[survey_page_index]";
 
-    public const string AFFECTED_QUESTION_INDEX = "[affected_survey_question_index]";
+    public const string QUESTION_INDEX = "[survey_question_index]";
 
-    public const string TABLE_AFFECTED_QUESTION_INDEX = $"{TABLE}.{AFFECTED_QUESTION_INDEX}";
+    public const string TABLE_QUESTION_INDEX = $"[survey_question_show_conditions_text_args].[survey_question_index]";
 
     public const string INDEX = "[survey_question_show_condition_index]";
 
-    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+    public const string TABLE_INDEX = $"[survey_question_show_conditions_text_args].[survey_question_show_condition_index]";
 
     public const string ARG_INDEX = "[survey_question_show_condition_arg_index]";
 
-    public const string TABLE_ARG_INDEX = $"{TABLE}.{ARG_INDEX}";
+    public const string TABLE_ARG_INDEX = $"[survey_question_show_conditions_text_args].[survey_question_show_condition_arg_index]";
 
     public const string ARG_VALUE = "[survey_question_show_condition_arg_text]";
 
-    public const string TABLE_ARG_VALUE = $"{TABLE}.{ARG_VALUE}";
+    public const string TABLE_ARG_VALUE = $"[survey_question_show_conditions_text_args].[survey_question_show_condition_arg_text]";
 
     public SurveyQuestionShowConditionsTextArg Value => new(
         SurveyId.Value,
-        AffectedSurveyPageIndex.Value,
-        AffectedSurveyQuestionIndex.Value,
+        SurveyPageIndex.Value,
+        SurveyQuestionIndex.Value,
         SurveyQuestionShowConditionIndex.Value,
         SurveyQuestionShowConditionArgIndex.Value,
         SurveyQuestionShowConditionArgText.Value);
 
     public SqlSurveyQuestionShowConditionsTextArg(SurveyQuestionShowConditionsTextArg data) : this(
         data.SurveyId,
-        data.AffectedPageIndex,
-        data.AffectedQuestionIndex,
+        data.PageIndex,
+        data.QuestionIndex,
         data.Index,
         data.ArgIndex,
         data.ArgValue) { }
@@ -822,11 +822,11 @@ public record SqlSurveyQuestionValidationConditionType(
 
     public const string ID = "[survey_question_validation_condition_type_id]";
 
-    public const string TABLE_ID = $"{TABLE}.{ID}";
+    public const string TABLE_ID = $"[survey_question_validation_condition_types].[survey_question_validation_condition_type_id]";
 
     public const string NAME = "[survey_question_validation_condition_type_name]";
 
-    public const string TABLE_NAME = $"{TABLE}.{NAME}";
+    public const string TABLE_NAME = $"[survey_question_validation_condition_types].[survey_question_validation_condition_type_name]";
 
     public SurveyQuestionValidationConditionType Value => new(
         SurveyQuestionValidationConditionTypeId.Value,
@@ -842,16 +842,16 @@ public record SqlSurveyQuestionValidationConditionType(
 
 public partial record SurveyQuestionValidationCondition(
     int SurveyId,
-    int AffectedPageIndex,
-    int AffectedQuestionIndex,
+    int PageIndex,
+    int QuestionIndex,
     int Index,
     byte Type,
     bool IsOrOperator);
 
 public record SqlSurveyQuestionValidationCondition(
     SqlInt32 SurveyId,
-    SqlInt32 AffectedSurveyPageIndex,
-    SqlInt32 AffectedSurveyQuestionIndex,
+    SqlInt32 SurveyPageIndex,
+    SqlInt32 SurveyQuestionIndex,
     SqlInt32 SurveyQuestionValidationConditionIndex,
     SqlByte SurveyQuestionValidationConditionType,
     SqlBoolean SurveyQuestionValidationConditionOperator)
@@ -860,40 +860,40 @@ public record SqlSurveyQuestionValidationCondition(
 
     public const string SURVEY_ID = "[survey_id]";
 
-    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+    public const string TABLE_SURVEY_ID = $"[survey_question_validation_conditions].[survey_id]";
 
-    public const string AFFECTED_PAGE_INDEX = "[affected_survey_page_index]";
+    public const string PAGE_INDEX = "[survey_page_index]";
 
-    public const string TABLE_AFFECTED_PAGE_INDEX = $"{TABLE}.{AFFECTED_PAGE_INDEX}";
+    public const string TABLE_PAGE_INDEX = $"[survey_question_validation_conditions].[survey_page_index]";
 
-    public const string AFFECTED_QUESTION_INDEX = "[affected_survey_question_index]";
+    public const string QUESTION_INDEX = "[survey_question_index]";
 
-    public const string TABLE_AFFECTED_QUESTION_INDEX = $"{TABLE}.{AFFECTED_QUESTION_INDEX}";
+    public const string TABLE_QUESTION_INDEX = $"[survey_question_validation_conditions].[survey_question_index]";
 
     public const string INDEX = "[survey_question_validation_condition_index]";
 
-    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+    public const string TABLE_INDEX = $"[survey_question_validation_conditions].[survey_question_validation_condition_index]";
 
     public const string TYPE = "[survey_question_validation_condition_type]";
 
-    public const string TABLE_TYPE = $"{TABLE}.{TYPE}";
+    public const string TABLE_TYPE = $"[survey_question_validation_conditions].[survey_question_validation_condition_type]";
 
     public const string IS_OR_OPERATOR = "[survey_question_validation_condition_operator]";
 
-    public const string TABLE_IS_OR_OPERATOR = $"{TABLE}.{IS_OR_OPERATOR}";
+    public const string TABLE_IS_OR_OPERATOR = $"[survey_question_validation_conditions].[survey_question_validation_condition_operator]";
 
     public SurveyQuestionValidationCondition Value => new(
         SurveyId.Value,
-        AffectedSurveyPageIndex.Value,
-        AffectedSurveyQuestionIndex.Value,
+        SurveyPageIndex.Value,
+        SurveyQuestionIndex.Value,
         SurveyQuestionValidationConditionIndex.Value,
         SurveyQuestionValidationConditionType.Value,
         SurveyQuestionValidationConditionOperator.Value);
 
     public SqlSurveyQuestionValidationCondition(SurveyQuestionValidationCondition data) : this(
         data.SurveyId,
-        data.AffectedPageIndex,
-        data.AffectedQuestionIndex,
+        data.PageIndex,
+        data.QuestionIndex,
         data.Index,
         data.Type,
         data.IsOrOperator) { }
@@ -904,8 +904,8 @@ public record SqlSurveyQuestionValidationCondition(
 
 public partial record SurveyQuestionValidationConditionsRefArg(
     int SurveyId,
-    int AffectedPageIndex,
-    int AffectedQuestionIndex,
+    int PageIndex,
+    int QuestionIndex,
     int Index,
     int ArgIndex,
     int ReferencedPageIndex,
@@ -913,8 +913,8 @@ public partial record SurveyQuestionValidationConditionsRefArg(
 
 public record SqlSurveyQuestionValidationConditionsRefArg(
     SqlInt32 SurveyId,
-    SqlInt32 AffectedSurveyPageIndex,
-    SqlInt32 AffectedSurveyQuestionIndex,
+    SqlInt32 SurveyPageIndex,
+    SqlInt32 SurveyQuestionIndex,
     SqlInt32 SurveyQuestionValidationConditionIndex,
     SqlInt32 SurveyQuestionValidationConditionArgIndex,
     SqlInt32 ReferencedSurveyPageIndex,
@@ -924,36 +924,36 @@ public record SqlSurveyQuestionValidationConditionsRefArg(
 
     public const string SURVEY_ID = "[survey_id]";
 
-    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+    public const string TABLE_SURVEY_ID = $"[survey_question_validation_conditions_ref_args].[survey_id]";
 
-    public const string AFFECTED_PAGE_INDEX = "[affected_survey_page_index]";
+    public const string PAGE_INDEX = "[survey_page_index]";
 
-    public const string TABLE_AFFECTED_PAGE_INDEX = $"{TABLE}.{AFFECTED_PAGE_INDEX}";
+    public const string TABLE_PAGE_INDEX = $"[survey_question_validation_conditions_ref_args].[survey_page_index]";
 
-    public const string AFFECTED_QUESTION_INDEX = "[affected_survey_question_index]";
+    public const string QUESTION_INDEX = "[survey_question_index]";
 
-    public const string TABLE_AFFECTED_QUESTION_INDEX = $"{TABLE}.{AFFECTED_QUESTION_INDEX}";
+    public const string TABLE_QUESTION_INDEX = $"[survey_question_validation_conditions_ref_args].[survey_question_index]";
 
     public const string INDEX = "[survey_question_validation_condition_index]";
 
-    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+    public const string TABLE_INDEX = $"[survey_question_validation_conditions_ref_args].[survey_question_validation_condition_index]";
 
     public const string ARG_INDEX = "[survey_question_validation_condition_arg_index]";
 
-    public const string TABLE_ARG_INDEX = $"{TABLE}.{ARG_INDEX}";
+    public const string TABLE_ARG_INDEX = $"[survey_question_validation_conditions_ref_args].[survey_question_validation_condition_arg_index]";
 
     public const string REFERENCED_PAGE_INDEX = "[referenced_survey_page_index]";
 
-    public const string TABLE_REFERENCED_PAGE_INDEX = $"{TABLE}.{REFERENCED_PAGE_INDEX}";
+    public const string TABLE_REFERENCED_PAGE_INDEX = $"[survey_question_validation_conditions_ref_args].[referenced_survey_page_index]";
 
     public const string REFERENCED_QUESTION_INDEX = "[referenced_survey_question_index]";
 
-    public const string TABLE_REFERENCED_QUESTION_INDEX = $"{TABLE}.{REFERENCED_QUESTION_INDEX}";
+    public const string TABLE_REFERENCED_QUESTION_INDEX = $"[survey_question_validation_conditions_ref_args].[referenced_survey_question_index]";
 
     public SurveyQuestionValidationConditionsRefArg Value => new(
         SurveyId.Value,
-        AffectedSurveyPageIndex.Value,
-        AffectedSurveyQuestionIndex.Value,
+        SurveyPageIndex.Value,
+        SurveyQuestionIndex.Value,
         SurveyQuestionValidationConditionIndex.Value,
         SurveyQuestionValidationConditionArgIndex.Value,
         ReferencedSurveyPageIndex.Value,
@@ -961,8 +961,8 @@ public record SqlSurveyQuestionValidationConditionsRefArg(
 
     public SqlSurveyQuestionValidationConditionsRefArg(SurveyQuestionValidationConditionsRefArg data) : this(
         data.SurveyId,
-        data.AffectedPageIndex,
-        data.AffectedQuestionIndex,
+        data.PageIndex,
+        data.QuestionIndex,
         data.Index,
         data.ArgIndex,
         data.ReferencedPageIndex,
@@ -974,16 +974,16 @@ public record SqlSurveyQuestionValidationConditionsRefArg(
 
 public partial record SurveyQuestionValidationConditionsIntegerArg(
     int SurveyId,
-    int AffectedPageIndex,
-    int AffectedQuestionIndex,
+    int PageIndex,
+    int QuestionIndex,
     int Index,
     int ArgIndex,
     int ArgValue);
 
 public record SqlSurveyQuestionValidationConditionsIntegerArg(
     SqlInt32 SurveyId,
-    SqlInt32 AffectedSurveyPageIndex,
-    SqlInt32 AffectedSurveyQuestionIndex,
+    SqlInt32 SurveyPageIndex,
+    SqlInt32 SurveyQuestionIndex,
     SqlInt32 SurveyQuestionValidationConditionIndex,
     SqlInt32 SurveyQuestionValidationConditionArgIndex,
     SqlInt32 SurveyQuestionValidationConditionArgInteger)
@@ -992,40 +992,40 @@ public record SqlSurveyQuestionValidationConditionsIntegerArg(
 
     public const string SURVEY_ID = "[survey_id]";
 
-    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+    public const string TABLE_SURVEY_ID = $"[survey_question_validation_conditions_integer_args].[survey_id]";
 
-    public const string AFFECTED_PAGE_INDEX = "[affected_survey_page_index]";
+    public const string PAGE_INDEX = "[survey_page_index]";
 
-    public const string TABLE_AFFECTED_PAGE_INDEX = $"{TABLE}.{AFFECTED_PAGE_INDEX}";
+    public const string TABLE_PAGE_INDEX = $"[survey_question_validation_conditions_integer_args].[survey_page_index]";
 
-    public const string AFFECTED_QUESTION_INDEX = "[affected_survey_question_index]";
+    public const string QUESTION_INDEX = "[survey_question_index]";
 
-    public const string TABLE_AFFECTED_QUESTION_INDEX = $"{TABLE}.{AFFECTED_QUESTION_INDEX}";
+    public const string TABLE_QUESTION_INDEX = $"[survey_question_validation_conditions_integer_args].[survey_question_index]";
 
     public const string INDEX = "[survey_question_validation_condition_index]";
 
-    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+    public const string TABLE_INDEX = $"[survey_question_validation_conditions_integer_args].[survey_question_validation_condition_index]";
 
     public const string ARG_INDEX = "[survey_question_validation_condition_arg_index]";
 
-    public const string TABLE_ARG_INDEX = $"{TABLE}.{ARG_INDEX}";
+    public const string TABLE_ARG_INDEX = $"[survey_question_validation_conditions_integer_args].[survey_question_validation_condition_arg_index]";
 
     public const string ARG_VALUE = "[survey_question_validation_condition_arg_integer]";
 
-    public const string TABLE_ARG_VALUE = $"{TABLE}.{ARG_VALUE}";
+    public const string TABLE_ARG_VALUE = $"[survey_question_validation_conditions_integer_args].[survey_question_validation_condition_arg_integer]";
 
     public SurveyQuestionValidationConditionsIntegerArg Value => new(
         SurveyId.Value,
-        AffectedSurveyPageIndex.Value,
-        AffectedSurveyQuestionIndex.Value,
+        SurveyPageIndex.Value,
+        SurveyQuestionIndex.Value,
         SurveyQuestionValidationConditionIndex.Value,
         SurveyQuestionValidationConditionArgIndex.Value,
         SurveyQuestionValidationConditionArgInteger.Value);
 
     public SqlSurveyQuestionValidationConditionsIntegerArg(SurveyQuestionValidationConditionsIntegerArg data) : this(
         data.SurveyId,
-        data.AffectedPageIndex,
-        data.AffectedQuestionIndex,
+        data.PageIndex,
+        data.QuestionIndex,
         data.Index,
         data.ArgIndex,
         data.ArgValue) { }
@@ -1036,16 +1036,16 @@ public record SqlSurveyQuestionValidationConditionsIntegerArg(
 
 public partial record SurveyQuestionValidationConditionsTextArg(
     int SurveyId,
-    int AffectedPageIndex,
-    int AffectedQuestionIndex,
+    int PageIndex,
+    int QuestionIndex,
     int Index,
     int ArgIndex,
     string ArgValue);
 
 public record SqlSurveyQuestionValidationConditionsTextArg(
     SqlInt32 SurveyId,
-    SqlInt32 AffectedSurveyPageIndex,
-    SqlInt32 AffectedSurveyQuestionIndex,
+    SqlInt32 SurveyPageIndex,
+    SqlInt32 SurveyQuestionIndex,
     SqlInt32 SurveyQuestionValidationConditionIndex,
     SqlInt32 SurveyQuestionValidationConditionArgIndex,
     SqlString SurveyQuestionValidationConditionArgText)
@@ -1054,40 +1054,40 @@ public record SqlSurveyQuestionValidationConditionsTextArg(
 
     public const string SURVEY_ID = "[survey_id]";
 
-    public const string TABLE_SURVEY_ID = $"{TABLE}.{SURVEY_ID}";
+    public const string TABLE_SURVEY_ID = $"[survey_question_validation_conditions_text_args].[survey_id]";
 
-    public const string AFFECTED_PAGE_INDEX = "[affected_survey_page_index]";
+    public const string PAGE_INDEX = "[survey_page_index]";
 
-    public const string TABLE_AFFECTED_PAGE_INDEX = $"{TABLE}.{AFFECTED_PAGE_INDEX}";
+    public const string TABLE_PAGE_INDEX = $"[survey_question_validation_conditions_text_args].[survey_page_index]";
 
-    public const string AFFECTED_QUESTION_INDEX = "[affected_survey_question_index]";
+    public const string QUESTION_INDEX = "[survey_question_index]";
 
-    public const string TABLE_AFFECTED_QUESTION_INDEX = $"{TABLE}.{AFFECTED_QUESTION_INDEX}";
+    public const string TABLE_QUESTION_INDEX = $"[survey_question_validation_conditions_text_args].[survey_question_index]";
 
     public const string INDEX = "[survey_question_validation_condition_index]";
 
-    public const string TABLE_INDEX = $"{TABLE}.{INDEX}";
+    public const string TABLE_INDEX = $"[survey_question_validation_conditions_text_args].[survey_question_validation_condition_index]";
 
     public const string ARG_INDEX = "[survey_question_validation_condition_arg_index]";
 
-    public const string TABLE_ARG_INDEX = $"{TABLE}.{ARG_INDEX}";
+    public const string TABLE_ARG_INDEX = $"[survey_question_validation_conditions_text_args].[survey_question_validation_condition_arg_index]";
 
     public const string ARG_VALUE = "[survey_question_validation_condition_arg_text]";
 
-    public const string TABLE_ARG_VALUE = $"{TABLE}.{ARG_VALUE}";
+    public const string TABLE_ARG_VALUE = $"[survey_question_validation_conditions_text_args].[survey_question_validation_condition_arg_text]";
 
     public SurveyQuestionValidationConditionsTextArg Value => new(
         SurveyId.Value,
-        AffectedSurveyPageIndex.Value,
-        AffectedSurveyQuestionIndex.Value,
+        SurveyPageIndex.Value,
+        SurveyQuestionIndex.Value,
         SurveyQuestionValidationConditionIndex.Value,
         SurveyQuestionValidationConditionArgIndex.Value,
         SurveyQuestionValidationConditionArgText.Value);
 
     public SqlSurveyQuestionValidationConditionsTextArg(SurveyQuestionValidationConditionsTextArg data) : this(
         data.SurveyId,
-        data.AffectedPageIndex,
-        data.AffectedQuestionIndex,
+        data.PageIndex,
+        data.QuestionIndex,
         data.Index,
         data.ArgIndex,
         data.ArgValue) { }
@@ -2393,17 +2393,17 @@ public class SqlDataDrivenDataAccess(
 
     private SqlCommand SelectUniqueSqlSurveyQuestionShowConditionCommand(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionShowConditionIndex)
     {
         var command = new SqlCommand(
-            "SELECT [survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_type], [survey_question_show_condition_operator] FROM [survey_question_show_conditions] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [affected_survey_page_index,[object Object]] = @affected_survey_page_index,[object Object] AND [affected_survey_question_index,[object Object]] = @affected_survey_question_index,[object Object] AND [survey_question_show_condition_index,[object Object]] = @survey_question_show_condition_index,[object Object]",
+            "SELECT [survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_type], [survey_question_show_condition_operator] FROM [survey_question_show_conditions] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [survey_page_index,[object Object]] = @survey_page_index,[object Object] AND [survey_question_index,[object Object]] = @survey_question_index,[object Object] AND [survey_question_show_condition_index,[object Object]] = @survey_question_show_condition_index,[object Object]",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
-        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
         command.Parameters.Add("survey_question_show_condition_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionIndex;
 
         return command;
@@ -2411,14 +2411,14 @@ public class SqlDataDrivenDataAccess(
 
     public SqlSurveyQuestionShowCondition? SelectUniqueSqlSurveyQuestionShowCondition(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionShowConditionIndex)
     {
         var command = SelectUniqueSqlSurveyQuestionShowConditionCommand(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionShowConditionIndex);
 
         var reader = command.ExecuteReader(CommandBehavior.SingleRow);
@@ -2427,8 +2427,8 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             SurveyId: reader.GetSqlInt32(0),
-            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
-            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
             SurveyQuestionShowConditionIndex: reader.GetSqlInt32(3),
             SurveyQuestionShowConditionType: reader.GetSqlByte(4),
             SurveyQuestionShowConditionOperator: reader.GetSqlBoolean(5));
@@ -2436,29 +2436,29 @@ public class SqlDataDrivenDataAccess(
 
     public Task<SqlSurveyQuestionShowCondition?> SelectUniqueSqlSurveyQuestionShowConditionAsync(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionShowConditionIndex)
     {
         return SelectUniqueSqlSurveyQuestionShowConditionAsync(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionShowConditionIndex,
             CancellationToken.None);
     }
 
     public async Task<SqlSurveyQuestionShowCondition?> SelectUniqueSqlSurveyQuestionShowConditionAsync(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionShowConditionIndex,
         CancellationToken cancellationToken)
     {
         var command = SelectUniqueSqlSurveyQuestionShowConditionCommand(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionShowConditionIndex);
 
         var reader = command.ExecuteReader(CommandBehavior.SingleRow);
@@ -2467,8 +2467,8 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             SurveyId: reader.GetSqlInt32(0),
-            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
-            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
             SurveyQuestionShowConditionIndex: reader.GetSqlInt32(3),
             SurveyQuestionShowConditionType: reader.GetSqlByte(4),
             SurveyQuestionShowConditionOperator: reader.GetSqlBoolean(5));
@@ -2476,19 +2476,19 @@ public class SqlDataDrivenDataAccess(
 
     private SqlCommand InsertSqlSurveyQuestionShowConditionCommand(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionShowConditionIndex,
         SqlByte surveyQuestionShowConditionType,
         SqlBoolean surveyQuestionShowConditionOperator)
     {
         var command = new SqlCommand(
-            "INSERT INTO [survey_question_show_conditions] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_type], [survey_question_show_condition_operator]) VALUES (@survey_id, @affected_survey_page_index, @affected_survey_question_index, @survey_question_show_condition_index, @survey_question_show_condition_type, @survey_question_show_condition_operator)",
+            "INSERT INTO [survey_question_show_conditions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_type], [survey_question_show_condition_operator]) VALUES (@survey_id, @survey_page_index, @survey_question_index, @survey_question_show_condition_index, @survey_question_show_condition_type, @survey_question_show_condition_operator)",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
-        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
         command.Parameters.Add("survey_question_show_condition_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionIndex;
         command.Parameters.Add("survey_question_show_condition_type", SqlDbType.TinyInt).SqlValue = surveyQuestionShowConditionType;
         command.Parameters.Add("survey_question_show_condition_operator", SqlDbType.Bit).SqlValue = surveyQuestionShowConditionOperator;
@@ -2500,8 +2500,8 @@ public class SqlDataDrivenDataAccess(
     {
         var command = InsertSqlSurveyQuestionShowConditionCommand(
             surveyQuestionShowCondition.SurveyId,
-            surveyQuestionShowCondition.AffectedSurveyPageIndex,
-            surveyQuestionShowCondition.AffectedSurveyQuestionIndex,
+            surveyQuestionShowCondition.SurveyPageIndex,
+            surveyQuestionShowCondition.SurveyQuestionIndex,
             surveyQuestionShowCondition.SurveyQuestionShowConditionIndex,
             surveyQuestionShowCondition.SurveyQuestionShowConditionType,
             surveyQuestionShowCondition.SurveyQuestionShowConditionOperator);
@@ -2518,8 +2518,8 @@ public class SqlDataDrivenDataAccess(
     {
         var command = InsertSqlSurveyQuestionShowConditionCommand(
             surveyQuestionShowCondition.SurveyId,
-            surveyQuestionShowCondition.AffectedSurveyPageIndex,
-            surveyQuestionShowCondition.AffectedSurveyQuestionIndex,
+            surveyQuestionShowCondition.SurveyPageIndex,
+            surveyQuestionShowCondition.SurveyQuestionIndex,
             surveyQuestionShowCondition.SurveyQuestionShowConditionIndex,
             surveyQuestionShowCondition.SurveyQuestionShowConditionType,
             surveyQuestionShowCondition.SurveyQuestionShowConditionOperator);
@@ -2529,18 +2529,18 @@ public class SqlDataDrivenDataAccess(
 
     private SqlCommand SelectUniqueSqlSurveyQuestionShowConditionsRefArgCommand(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionShowConditionIndex,
         SqlInt32 surveyQuestionShowConditionArgIndex)
     {
         var command = new SqlCommand(
-            "SELECT [survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index] FROM [survey_question_show_conditions_ref_args] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [affected_survey_page_index,[object Object]] = @affected_survey_page_index,[object Object] AND [affected_survey_question_index,[object Object]] = @affected_survey_question_index,[object Object] AND [survey_question_show_condition_index,[object Object]] = @survey_question_show_condition_index,[object Object] AND [survey_question_show_condition_arg_index,[object Object]] = @survey_question_show_condition_arg_index,[object Object]",
+            "SELECT [survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index] FROM [survey_question_show_conditions_ref_args] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [survey_page_index,[object Object]] = @survey_page_index,[object Object] AND [survey_question_index,[object Object]] = @survey_question_index,[object Object] AND [survey_question_show_condition_index,[object Object]] = @survey_question_show_condition_index,[object Object] AND [survey_question_show_condition_arg_index,[object Object]] = @survey_question_show_condition_arg_index,[object Object]",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
-        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
         command.Parameters.Add("survey_question_show_condition_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionIndex;
         command.Parameters.Add("survey_question_show_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionArgIndex;
 
@@ -2549,15 +2549,15 @@ public class SqlDataDrivenDataAccess(
 
     public SqlSurveyQuestionShowConditionsRefArg? SelectUniqueSqlSurveyQuestionShowConditionsRefArg(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionShowConditionIndex,
         SqlInt32 surveyQuestionShowConditionArgIndex)
     {
         var command = SelectUniqueSqlSurveyQuestionShowConditionsRefArgCommand(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionShowConditionIndex,
             surveyQuestionShowConditionArgIndex);
 
@@ -2567,8 +2567,8 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             SurveyId: reader.GetSqlInt32(0),
-            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
-            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
             SurveyQuestionShowConditionIndex: reader.GetSqlInt32(3),
             SurveyQuestionShowConditionArgIndex: reader.GetSqlInt32(4),
             ReferencedSurveyPageIndex: reader.GetSqlInt32(5),
@@ -2577,15 +2577,15 @@ public class SqlDataDrivenDataAccess(
 
     public Task<SqlSurveyQuestionShowConditionsRefArg?> SelectUniqueSqlSurveyQuestionShowConditionsRefArgAsync(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionShowConditionIndex,
         SqlInt32 surveyQuestionShowConditionArgIndex)
     {
         return SelectUniqueSqlSurveyQuestionShowConditionsRefArgAsync(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionShowConditionIndex,
             surveyQuestionShowConditionArgIndex,
             CancellationToken.None);
@@ -2593,16 +2593,16 @@ public class SqlDataDrivenDataAccess(
 
     public async Task<SqlSurveyQuestionShowConditionsRefArg?> SelectUniqueSqlSurveyQuestionShowConditionsRefArgAsync(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionShowConditionIndex,
         SqlInt32 surveyQuestionShowConditionArgIndex,
         CancellationToken cancellationToken)
     {
         var command = SelectUniqueSqlSurveyQuestionShowConditionsRefArgCommand(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionShowConditionIndex,
             surveyQuestionShowConditionArgIndex);
 
@@ -2612,8 +2612,8 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             SurveyId: reader.GetSqlInt32(0),
-            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
-            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
             SurveyQuestionShowConditionIndex: reader.GetSqlInt32(3),
             SurveyQuestionShowConditionArgIndex: reader.GetSqlInt32(4),
             ReferencedSurveyPageIndex: reader.GetSqlInt32(5),
@@ -2622,20 +2622,20 @@ public class SqlDataDrivenDataAccess(
 
     private SqlCommand InsertSqlSurveyQuestionShowConditionsRefArgCommand(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionShowConditionIndex,
         SqlInt32 surveyQuestionShowConditionArgIndex,
         SqlInt32 referencedSurveyPageIndex,
         SqlInt32 referencedSurveyQuestionIndex)
     {
         var command = new SqlCommand(
-            "INSERT INTO [survey_question_show_conditions_ref_args] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index]) VALUES (@survey_id, @affected_survey_page_index, @affected_survey_question_index, @survey_question_show_condition_index, @survey_question_show_condition_arg_index, @referenced_survey_page_index, @referenced_survey_question_index)",
+            "INSERT INTO [survey_question_show_conditions_ref_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index]) VALUES (@survey_id, @survey_page_index, @survey_question_index, @survey_question_show_condition_index, @survey_question_show_condition_arg_index, @referenced_survey_page_index, @referenced_survey_question_index)",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
-        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
         command.Parameters.Add("survey_question_show_condition_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionIndex;
         command.Parameters.Add("survey_question_show_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionArgIndex;
         command.Parameters.Add("referenced_survey_page_index", SqlDbType.Int).SqlValue = referencedSurveyPageIndex;
@@ -2648,8 +2648,8 @@ public class SqlDataDrivenDataAccess(
     {
         var command = InsertSqlSurveyQuestionShowConditionsRefArgCommand(
             surveyQuestionShowConditionsRefArg.SurveyId,
-            surveyQuestionShowConditionsRefArg.AffectedSurveyPageIndex,
-            surveyQuestionShowConditionsRefArg.AffectedSurveyQuestionIndex,
+            surveyQuestionShowConditionsRefArg.SurveyPageIndex,
+            surveyQuestionShowConditionsRefArg.SurveyQuestionIndex,
             surveyQuestionShowConditionsRefArg.SurveyQuestionShowConditionIndex,
             surveyQuestionShowConditionsRefArg.SurveyQuestionShowConditionArgIndex,
             surveyQuestionShowConditionsRefArg.ReferencedSurveyPageIndex,
@@ -2667,8 +2667,8 @@ public class SqlDataDrivenDataAccess(
     {
         var command = InsertSqlSurveyQuestionShowConditionsRefArgCommand(
             surveyQuestionShowConditionsRefArg.SurveyId,
-            surveyQuestionShowConditionsRefArg.AffectedSurveyPageIndex,
-            surveyQuestionShowConditionsRefArg.AffectedSurveyQuestionIndex,
+            surveyQuestionShowConditionsRefArg.SurveyPageIndex,
+            surveyQuestionShowConditionsRefArg.SurveyQuestionIndex,
             surveyQuestionShowConditionsRefArg.SurveyQuestionShowConditionIndex,
             surveyQuestionShowConditionsRefArg.SurveyQuestionShowConditionArgIndex,
             surveyQuestionShowConditionsRefArg.ReferencedSurveyPageIndex,
@@ -2679,18 +2679,18 @@ public class SqlDataDrivenDataAccess(
 
     private SqlCommand SelectUniqueSqlSurveyQuestionShowConditionsIntegerArgCommand(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionShowConditionIndex,
         SqlInt32 surveyQuestionShowConditionArgIndex)
     {
         var command = new SqlCommand(
-            "SELECT [survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [survey_question_show_condition_arg_integer] FROM [survey_question_show_conditions_integer_args] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [affected_survey_page_index,[object Object]] = @affected_survey_page_index,[object Object] AND [affected_survey_question_index,[object Object]] = @affected_survey_question_index,[object Object] AND [survey_question_show_condition_index,[object Object]] = @survey_question_show_condition_index,[object Object] AND [survey_question_show_condition_arg_index,[object Object]] = @survey_question_show_condition_arg_index,[object Object]",
+            "SELECT [survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [survey_question_show_condition_arg_integer] FROM [survey_question_show_conditions_integer_args] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [survey_page_index,[object Object]] = @survey_page_index,[object Object] AND [survey_question_index,[object Object]] = @survey_question_index,[object Object] AND [survey_question_show_condition_index,[object Object]] = @survey_question_show_condition_index,[object Object] AND [survey_question_show_condition_arg_index,[object Object]] = @survey_question_show_condition_arg_index,[object Object]",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
-        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
         command.Parameters.Add("survey_question_show_condition_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionIndex;
         command.Parameters.Add("survey_question_show_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionArgIndex;
 
@@ -2699,15 +2699,15 @@ public class SqlDataDrivenDataAccess(
 
     public SqlSurveyQuestionShowConditionsIntegerArg? SelectUniqueSqlSurveyQuestionShowConditionsIntegerArg(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionShowConditionIndex,
         SqlInt32 surveyQuestionShowConditionArgIndex)
     {
         var command = SelectUniqueSqlSurveyQuestionShowConditionsIntegerArgCommand(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionShowConditionIndex,
             surveyQuestionShowConditionArgIndex);
 
@@ -2717,8 +2717,8 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             SurveyId: reader.GetSqlInt32(0),
-            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
-            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
             SurveyQuestionShowConditionIndex: reader.GetSqlInt32(3),
             SurveyQuestionShowConditionArgIndex: reader.GetSqlInt32(4),
             SurveyQuestionShowConditionArgInteger: reader.GetSqlInt32(5));
@@ -2726,15 +2726,15 @@ public class SqlDataDrivenDataAccess(
 
     public Task<SqlSurveyQuestionShowConditionsIntegerArg?> SelectUniqueSqlSurveyQuestionShowConditionsIntegerArgAsync(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionShowConditionIndex,
         SqlInt32 surveyQuestionShowConditionArgIndex)
     {
         return SelectUniqueSqlSurveyQuestionShowConditionsIntegerArgAsync(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionShowConditionIndex,
             surveyQuestionShowConditionArgIndex,
             CancellationToken.None);
@@ -2742,16 +2742,16 @@ public class SqlDataDrivenDataAccess(
 
     public async Task<SqlSurveyQuestionShowConditionsIntegerArg?> SelectUniqueSqlSurveyQuestionShowConditionsIntegerArgAsync(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionShowConditionIndex,
         SqlInt32 surveyQuestionShowConditionArgIndex,
         CancellationToken cancellationToken)
     {
         var command = SelectUniqueSqlSurveyQuestionShowConditionsIntegerArgCommand(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionShowConditionIndex,
             surveyQuestionShowConditionArgIndex);
 
@@ -2761,8 +2761,8 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             SurveyId: reader.GetSqlInt32(0),
-            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
-            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
             SurveyQuestionShowConditionIndex: reader.GetSqlInt32(3),
             SurveyQuestionShowConditionArgIndex: reader.GetSqlInt32(4),
             SurveyQuestionShowConditionArgInteger: reader.GetSqlInt32(5));
@@ -2770,19 +2770,19 @@ public class SqlDataDrivenDataAccess(
 
     private SqlCommand InsertSqlSurveyQuestionShowConditionsIntegerArgCommand(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionShowConditionIndex,
         SqlInt32 surveyQuestionShowConditionArgIndex,
         SqlInt32 surveyQuestionShowConditionArgInteger)
     {
         var command = new SqlCommand(
-            "INSERT INTO [survey_question_show_conditions_integer_args] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [survey_question_show_condition_arg_integer]) VALUES (@survey_id, @affected_survey_page_index, @affected_survey_question_index, @survey_question_show_condition_index, @survey_question_show_condition_arg_index, @survey_question_show_condition_arg_integer)",
+            "INSERT INTO [survey_question_show_conditions_integer_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [survey_question_show_condition_arg_integer]) VALUES (@survey_id, @survey_page_index, @survey_question_index, @survey_question_show_condition_index, @survey_question_show_condition_arg_index, @survey_question_show_condition_arg_integer)",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
-        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
         command.Parameters.Add("survey_question_show_condition_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionIndex;
         command.Parameters.Add("survey_question_show_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionArgIndex;
         command.Parameters.Add("survey_question_show_condition_arg_integer", SqlDbType.Int).SqlValue = surveyQuestionShowConditionArgInteger;
@@ -2794,8 +2794,8 @@ public class SqlDataDrivenDataAccess(
     {
         var command = InsertSqlSurveyQuestionShowConditionsIntegerArgCommand(
             surveyQuestionShowConditionsIntegerArg.SurveyId,
-            surveyQuestionShowConditionsIntegerArg.AffectedSurveyPageIndex,
-            surveyQuestionShowConditionsIntegerArg.AffectedSurveyQuestionIndex,
+            surveyQuestionShowConditionsIntegerArg.SurveyPageIndex,
+            surveyQuestionShowConditionsIntegerArg.SurveyQuestionIndex,
             surveyQuestionShowConditionsIntegerArg.SurveyQuestionShowConditionIndex,
             surveyQuestionShowConditionsIntegerArg.SurveyQuestionShowConditionArgIndex,
             surveyQuestionShowConditionsIntegerArg.SurveyQuestionShowConditionArgInteger);
@@ -2812,8 +2812,8 @@ public class SqlDataDrivenDataAccess(
     {
         var command = InsertSqlSurveyQuestionShowConditionsIntegerArgCommand(
             surveyQuestionShowConditionsIntegerArg.SurveyId,
-            surveyQuestionShowConditionsIntegerArg.AffectedSurveyPageIndex,
-            surveyQuestionShowConditionsIntegerArg.AffectedSurveyQuestionIndex,
+            surveyQuestionShowConditionsIntegerArg.SurveyPageIndex,
+            surveyQuestionShowConditionsIntegerArg.SurveyQuestionIndex,
             surveyQuestionShowConditionsIntegerArg.SurveyQuestionShowConditionIndex,
             surveyQuestionShowConditionsIntegerArg.SurveyQuestionShowConditionArgIndex,
             surveyQuestionShowConditionsIntegerArg.SurveyQuestionShowConditionArgInteger);
@@ -2823,18 +2823,18 @@ public class SqlDataDrivenDataAccess(
 
     private SqlCommand SelectUniqueSqlSurveyQuestionShowConditionsTextArgCommand(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionShowConditionIndex,
         SqlInt32 surveyQuestionShowConditionArgIndex)
     {
         var command = new SqlCommand(
-            "SELECT [survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [survey_question_show_condition_arg_text] FROM [survey_question_show_conditions_text_args] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [affected_survey_page_index,[object Object]] = @affected_survey_page_index,[object Object] AND [affected_survey_question_index,[object Object]] = @affected_survey_question_index,[object Object] AND [survey_question_show_condition_index,[object Object]] = @survey_question_show_condition_index,[object Object] AND [survey_question_show_condition_arg_index,[object Object]] = @survey_question_show_condition_arg_index,[object Object]",
+            "SELECT [survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [survey_question_show_condition_arg_text] FROM [survey_question_show_conditions_text_args] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [survey_page_index,[object Object]] = @survey_page_index,[object Object] AND [survey_question_index,[object Object]] = @survey_question_index,[object Object] AND [survey_question_show_condition_index,[object Object]] = @survey_question_show_condition_index,[object Object] AND [survey_question_show_condition_arg_index,[object Object]] = @survey_question_show_condition_arg_index,[object Object]",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
-        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
         command.Parameters.Add("survey_question_show_condition_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionIndex;
         command.Parameters.Add("survey_question_show_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionArgIndex;
 
@@ -2843,15 +2843,15 @@ public class SqlDataDrivenDataAccess(
 
     public SqlSurveyQuestionShowConditionsTextArg? SelectUniqueSqlSurveyQuestionShowConditionsTextArg(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionShowConditionIndex,
         SqlInt32 surveyQuestionShowConditionArgIndex)
     {
         var command = SelectUniqueSqlSurveyQuestionShowConditionsTextArgCommand(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionShowConditionIndex,
             surveyQuestionShowConditionArgIndex);
 
@@ -2861,8 +2861,8 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             SurveyId: reader.GetSqlInt32(0),
-            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
-            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
             SurveyQuestionShowConditionIndex: reader.GetSqlInt32(3),
             SurveyQuestionShowConditionArgIndex: reader.GetSqlInt32(4),
             SurveyQuestionShowConditionArgText: reader.GetSqlString(5));
@@ -2870,15 +2870,15 @@ public class SqlDataDrivenDataAccess(
 
     public Task<SqlSurveyQuestionShowConditionsTextArg?> SelectUniqueSqlSurveyQuestionShowConditionsTextArgAsync(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionShowConditionIndex,
         SqlInt32 surveyQuestionShowConditionArgIndex)
     {
         return SelectUniqueSqlSurveyQuestionShowConditionsTextArgAsync(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionShowConditionIndex,
             surveyQuestionShowConditionArgIndex,
             CancellationToken.None);
@@ -2886,16 +2886,16 @@ public class SqlDataDrivenDataAccess(
 
     public async Task<SqlSurveyQuestionShowConditionsTextArg?> SelectUniqueSqlSurveyQuestionShowConditionsTextArgAsync(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionShowConditionIndex,
         SqlInt32 surveyQuestionShowConditionArgIndex,
         CancellationToken cancellationToken)
     {
         var command = SelectUniqueSqlSurveyQuestionShowConditionsTextArgCommand(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionShowConditionIndex,
             surveyQuestionShowConditionArgIndex);
 
@@ -2905,8 +2905,8 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             SurveyId: reader.GetSqlInt32(0),
-            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
-            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
             SurveyQuestionShowConditionIndex: reader.GetSqlInt32(3),
             SurveyQuestionShowConditionArgIndex: reader.GetSqlInt32(4),
             SurveyQuestionShowConditionArgText: reader.GetSqlString(5));
@@ -2914,19 +2914,19 @@ public class SqlDataDrivenDataAccess(
 
     private SqlCommand InsertSqlSurveyQuestionShowConditionsTextArgCommand(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionShowConditionIndex,
         SqlInt32 surveyQuestionShowConditionArgIndex,
         SqlString surveyQuestionShowConditionArgText)
     {
         var command = new SqlCommand(
-            "INSERT INTO [survey_question_show_conditions_text_args] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [survey_question_show_condition_arg_text]) VALUES (@survey_id, @affected_survey_page_index, @affected_survey_question_index, @survey_question_show_condition_index, @survey_question_show_condition_arg_index, @survey_question_show_condition_arg_text)",
+            "INSERT INTO [survey_question_show_conditions_text_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [survey_question_show_condition_arg_text]) VALUES (@survey_id, @survey_page_index, @survey_question_index, @survey_question_show_condition_index, @survey_question_show_condition_arg_index, @survey_question_show_condition_arg_text)",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
-        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
         command.Parameters.Add("survey_question_show_condition_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionIndex;
         command.Parameters.Add("survey_question_show_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionShowConditionArgIndex;
         command.Parameters.Add("survey_question_show_condition_arg_text", SqlDbType.VarChar, VARCHAR_MAX_LENGTH).SqlValue = surveyQuestionShowConditionArgText;
@@ -2938,8 +2938,8 @@ public class SqlDataDrivenDataAccess(
     {
         var command = InsertSqlSurveyQuestionShowConditionsTextArgCommand(
             surveyQuestionShowConditionsTextArg.SurveyId,
-            surveyQuestionShowConditionsTextArg.AffectedSurveyPageIndex,
-            surveyQuestionShowConditionsTextArg.AffectedSurveyQuestionIndex,
+            surveyQuestionShowConditionsTextArg.SurveyPageIndex,
+            surveyQuestionShowConditionsTextArg.SurveyQuestionIndex,
             surveyQuestionShowConditionsTextArg.SurveyQuestionShowConditionIndex,
             surveyQuestionShowConditionsTextArg.SurveyQuestionShowConditionArgIndex,
             surveyQuestionShowConditionsTextArg.SurveyQuestionShowConditionArgText);
@@ -2956,8 +2956,8 @@ public class SqlDataDrivenDataAccess(
     {
         var command = InsertSqlSurveyQuestionShowConditionsTextArgCommand(
             surveyQuestionShowConditionsTextArg.SurveyId,
-            surveyQuestionShowConditionsTextArg.AffectedSurveyPageIndex,
-            surveyQuestionShowConditionsTextArg.AffectedSurveyQuestionIndex,
+            surveyQuestionShowConditionsTextArg.SurveyPageIndex,
+            surveyQuestionShowConditionsTextArg.SurveyQuestionIndex,
             surveyQuestionShowConditionsTextArg.SurveyQuestionShowConditionIndex,
             surveyQuestionShowConditionsTextArg.SurveyQuestionShowConditionArgIndex,
             surveyQuestionShowConditionsTextArg.SurveyQuestionShowConditionArgText);
@@ -3055,17 +3055,17 @@ public class SqlDataDrivenDataAccess(
 
     private SqlCommand SelectUniqueSqlSurveyQuestionValidationConditionCommand(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionValidationConditionIndex)
     {
         var command = new SqlCommand(
-            "SELECT [survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_type], [survey_question_validation_condition_operator] FROM [survey_question_validation_conditions] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [affected_survey_page_index,[object Object]] = @affected_survey_page_index,[object Object] AND [affected_survey_question_index,[object Object]] = @affected_survey_question_index,[object Object] AND [survey_question_validation_condition_index,[object Object]] = @survey_question_validation_condition_index,[object Object]",
+            "SELECT [survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_type], [survey_question_validation_condition_operator] FROM [survey_question_validation_conditions] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [survey_page_index,[object Object]] = @survey_page_index,[object Object] AND [survey_question_index,[object Object]] = @survey_question_index,[object Object] AND [survey_question_validation_condition_index,[object Object]] = @survey_question_validation_condition_index,[object Object]",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
-        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
         command.Parameters.Add("survey_question_validation_condition_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionIndex;
 
         return command;
@@ -3073,14 +3073,14 @@ public class SqlDataDrivenDataAccess(
 
     public SqlSurveyQuestionValidationCondition? SelectUniqueSqlSurveyQuestionValidationCondition(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionValidationConditionIndex)
     {
         var command = SelectUniqueSqlSurveyQuestionValidationConditionCommand(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionValidationConditionIndex);
 
         var reader = command.ExecuteReader(CommandBehavior.SingleRow);
@@ -3089,8 +3089,8 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             SurveyId: reader.GetSqlInt32(0),
-            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
-            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
             SurveyQuestionValidationConditionIndex: reader.GetSqlInt32(3),
             SurveyQuestionValidationConditionType: reader.GetSqlByte(4),
             SurveyQuestionValidationConditionOperator: reader.GetSqlBoolean(5));
@@ -3098,29 +3098,29 @@ public class SqlDataDrivenDataAccess(
 
     public Task<SqlSurveyQuestionValidationCondition?> SelectUniqueSqlSurveyQuestionValidationConditionAsync(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionValidationConditionIndex)
     {
         return SelectUniqueSqlSurveyQuestionValidationConditionAsync(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionValidationConditionIndex,
             CancellationToken.None);
     }
 
     public async Task<SqlSurveyQuestionValidationCondition?> SelectUniqueSqlSurveyQuestionValidationConditionAsync(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionValidationConditionIndex,
         CancellationToken cancellationToken)
     {
         var command = SelectUniqueSqlSurveyQuestionValidationConditionCommand(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionValidationConditionIndex);
 
         var reader = command.ExecuteReader(CommandBehavior.SingleRow);
@@ -3129,8 +3129,8 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             SurveyId: reader.GetSqlInt32(0),
-            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
-            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
             SurveyQuestionValidationConditionIndex: reader.GetSqlInt32(3),
             SurveyQuestionValidationConditionType: reader.GetSqlByte(4),
             SurveyQuestionValidationConditionOperator: reader.GetSqlBoolean(5));
@@ -3138,19 +3138,19 @@ public class SqlDataDrivenDataAccess(
 
     private SqlCommand InsertSqlSurveyQuestionValidationConditionCommand(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionValidationConditionIndex,
         SqlByte surveyQuestionValidationConditionType,
         SqlBoolean surveyQuestionValidationConditionOperator)
     {
         var command = new SqlCommand(
-            "INSERT INTO [survey_question_validation_conditions] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_type], [survey_question_validation_condition_operator]) VALUES (@survey_id, @affected_survey_page_index, @affected_survey_question_index, @survey_question_validation_condition_index, @survey_question_validation_condition_type, @survey_question_validation_condition_operator)",
+            "INSERT INTO [survey_question_validation_conditions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_type], [survey_question_validation_condition_operator]) VALUES (@survey_id, @survey_page_index, @survey_question_index, @survey_question_validation_condition_index, @survey_question_validation_condition_type, @survey_question_validation_condition_operator)",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
-        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
         command.Parameters.Add("survey_question_validation_condition_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionIndex;
         command.Parameters.Add("survey_question_validation_condition_type", SqlDbType.TinyInt).SqlValue = surveyQuestionValidationConditionType;
         command.Parameters.Add("survey_question_validation_condition_operator", SqlDbType.Bit).SqlValue = surveyQuestionValidationConditionOperator;
@@ -3162,8 +3162,8 @@ public class SqlDataDrivenDataAccess(
     {
         var command = InsertSqlSurveyQuestionValidationConditionCommand(
             surveyQuestionValidationCondition.SurveyId,
-            surveyQuestionValidationCondition.AffectedSurveyPageIndex,
-            surveyQuestionValidationCondition.AffectedSurveyQuestionIndex,
+            surveyQuestionValidationCondition.SurveyPageIndex,
+            surveyQuestionValidationCondition.SurveyQuestionIndex,
             surveyQuestionValidationCondition.SurveyQuestionValidationConditionIndex,
             surveyQuestionValidationCondition.SurveyQuestionValidationConditionType,
             surveyQuestionValidationCondition.SurveyQuestionValidationConditionOperator);
@@ -3180,8 +3180,8 @@ public class SqlDataDrivenDataAccess(
     {
         var command = InsertSqlSurveyQuestionValidationConditionCommand(
             surveyQuestionValidationCondition.SurveyId,
-            surveyQuestionValidationCondition.AffectedSurveyPageIndex,
-            surveyQuestionValidationCondition.AffectedSurveyQuestionIndex,
+            surveyQuestionValidationCondition.SurveyPageIndex,
+            surveyQuestionValidationCondition.SurveyQuestionIndex,
             surveyQuestionValidationCondition.SurveyQuestionValidationConditionIndex,
             surveyQuestionValidationCondition.SurveyQuestionValidationConditionType,
             surveyQuestionValidationCondition.SurveyQuestionValidationConditionOperator);
@@ -3191,18 +3191,18 @@ public class SqlDataDrivenDataAccess(
 
     private SqlCommand SelectUniqueSqlSurveyQuestionValidationConditionsRefArgCommand(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionValidationConditionIndex,
         SqlInt32 surveyQuestionValidationConditionArgIndex)
     {
         var command = new SqlCommand(
-            "SELECT [survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index] FROM [survey_question_validation_conditions_ref_args] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [affected_survey_page_index,[object Object]] = @affected_survey_page_index,[object Object] AND [affected_survey_question_index,[object Object]] = @affected_survey_question_index,[object Object] AND [survey_question_validation_condition_index,[object Object]] = @survey_question_validation_condition_index,[object Object] AND [survey_question_validation_condition_arg_index,[object Object]] = @survey_question_validation_condition_arg_index,[object Object]",
+            "SELECT [survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index] FROM [survey_question_validation_conditions_ref_args] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [survey_page_index,[object Object]] = @survey_page_index,[object Object] AND [survey_question_index,[object Object]] = @survey_question_index,[object Object] AND [survey_question_validation_condition_index,[object Object]] = @survey_question_validation_condition_index,[object Object] AND [survey_question_validation_condition_arg_index,[object Object]] = @survey_question_validation_condition_arg_index,[object Object]",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
-        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
         command.Parameters.Add("survey_question_validation_condition_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionIndex;
         command.Parameters.Add("survey_question_validation_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionArgIndex;
 
@@ -3211,15 +3211,15 @@ public class SqlDataDrivenDataAccess(
 
     public SqlSurveyQuestionValidationConditionsRefArg? SelectUniqueSqlSurveyQuestionValidationConditionsRefArg(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionValidationConditionIndex,
         SqlInt32 surveyQuestionValidationConditionArgIndex)
     {
         var command = SelectUniqueSqlSurveyQuestionValidationConditionsRefArgCommand(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionValidationConditionIndex,
             surveyQuestionValidationConditionArgIndex);
 
@@ -3229,8 +3229,8 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             SurveyId: reader.GetSqlInt32(0),
-            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
-            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
             SurveyQuestionValidationConditionIndex: reader.GetSqlInt32(3),
             SurveyQuestionValidationConditionArgIndex: reader.GetSqlInt32(4),
             ReferencedSurveyPageIndex: reader.GetSqlInt32(5),
@@ -3239,15 +3239,15 @@ public class SqlDataDrivenDataAccess(
 
     public Task<SqlSurveyQuestionValidationConditionsRefArg?> SelectUniqueSqlSurveyQuestionValidationConditionsRefArgAsync(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionValidationConditionIndex,
         SqlInt32 surveyQuestionValidationConditionArgIndex)
     {
         return SelectUniqueSqlSurveyQuestionValidationConditionsRefArgAsync(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionValidationConditionIndex,
             surveyQuestionValidationConditionArgIndex,
             CancellationToken.None);
@@ -3255,16 +3255,16 @@ public class SqlDataDrivenDataAccess(
 
     public async Task<SqlSurveyQuestionValidationConditionsRefArg?> SelectUniqueSqlSurveyQuestionValidationConditionsRefArgAsync(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionValidationConditionIndex,
         SqlInt32 surveyQuestionValidationConditionArgIndex,
         CancellationToken cancellationToken)
     {
         var command = SelectUniqueSqlSurveyQuestionValidationConditionsRefArgCommand(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionValidationConditionIndex,
             surveyQuestionValidationConditionArgIndex);
 
@@ -3274,8 +3274,8 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             SurveyId: reader.GetSqlInt32(0),
-            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
-            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
             SurveyQuestionValidationConditionIndex: reader.GetSqlInt32(3),
             SurveyQuestionValidationConditionArgIndex: reader.GetSqlInt32(4),
             ReferencedSurveyPageIndex: reader.GetSqlInt32(5),
@@ -3284,20 +3284,20 @@ public class SqlDataDrivenDataAccess(
 
     private SqlCommand InsertSqlSurveyQuestionValidationConditionsRefArgCommand(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionValidationConditionIndex,
         SqlInt32 surveyQuestionValidationConditionArgIndex,
         SqlInt32 referencedSurveyPageIndex,
         SqlInt32 referencedSurveyQuestionIndex)
     {
         var command = new SqlCommand(
-            "INSERT INTO [survey_question_validation_conditions_ref_args] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index]) VALUES (@survey_id, @affected_survey_page_index, @affected_survey_question_index, @survey_question_validation_condition_index, @survey_question_validation_condition_arg_index, @referenced_survey_page_index, @referenced_survey_question_index)",
+            "INSERT INTO [survey_question_validation_conditions_ref_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index]) VALUES (@survey_id, @survey_page_index, @survey_question_index, @survey_question_validation_condition_index, @survey_question_validation_condition_arg_index, @referenced_survey_page_index, @referenced_survey_question_index)",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
-        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
         command.Parameters.Add("survey_question_validation_condition_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionIndex;
         command.Parameters.Add("survey_question_validation_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionArgIndex;
         command.Parameters.Add("referenced_survey_page_index", SqlDbType.Int).SqlValue = referencedSurveyPageIndex;
@@ -3310,8 +3310,8 @@ public class SqlDataDrivenDataAccess(
     {
         var command = InsertSqlSurveyQuestionValidationConditionsRefArgCommand(
             surveyQuestionValidationConditionsRefArg.SurveyId,
-            surveyQuestionValidationConditionsRefArg.AffectedSurveyPageIndex,
-            surveyQuestionValidationConditionsRefArg.AffectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionsRefArg.SurveyPageIndex,
+            surveyQuestionValidationConditionsRefArg.SurveyQuestionIndex,
             surveyQuestionValidationConditionsRefArg.SurveyQuestionValidationConditionIndex,
             surveyQuestionValidationConditionsRefArg.SurveyQuestionValidationConditionArgIndex,
             surveyQuestionValidationConditionsRefArg.ReferencedSurveyPageIndex,
@@ -3329,8 +3329,8 @@ public class SqlDataDrivenDataAccess(
     {
         var command = InsertSqlSurveyQuestionValidationConditionsRefArgCommand(
             surveyQuestionValidationConditionsRefArg.SurveyId,
-            surveyQuestionValidationConditionsRefArg.AffectedSurveyPageIndex,
-            surveyQuestionValidationConditionsRefArg.AffectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionsRefArg.SurveyPageIndex,
+            surveyQuestionValidationConditionsRefArg.SurveyQuestionIndex,
             surveyQuestionValidationConditionsRefArg.SurveyQuestionValidationConditionIndex,
             surveyQuestionValidationConditionsRefArg.SurveyQuestionValidationConditionArgIndex,
             surveyQuestionValidationConditionsRefArg.ReferencedSurveyPageIndex,
@@ -3341,18 +3341,18 @@ public class SqlDataDrivenDataAccess(
 
     private SqlCommand SelectUniqueSqlSurveyQuestionValidationConditionsIntegerArgCommand(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionValidationConditionIndex,
         SqlInt32 surveyQuestionValidationConditionArgIndex)
     {
         var command = new SqlCommand(
-            "SELECT [survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer] FROM [survey_question_validation_conditions_integer_args] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [affected_survey_page_index,[object Object]] = @affected_survey_page_index,[object Object] AND [affected_survey_question_index,[object Object]] = @affected_survey_question_index,[object Object] AND [survey_question_validation_condition_index,[object Object]] = @survey_question_validation_condition_index,[object Object] AND [survey_question_validation_condition_arg_index,[object Object]] = @survey_question_validation_condition_arg_index,[object Object]",
+            "SELECT [survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer] FROM [survey_question_validation_conditions_integer_args] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [survey_page_index,[object Object]] = @survey_page_index,[object Object] AND [survey_question_index,[object Object]] = @survey_question_index,[object Object] AND [survey_question_validation_condition_index,[object Object]] = @survey_question_validation_condition_index,[object Object] AND [survey_question_validation_condition_arg_index,[object Object]] = @survey_question_validation_condition_arg_index,[object Object]",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
-        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
         command.Parameters.Add("survey_question_validation_condition_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionIndex;
         command.Parameters.Add("survey_question_validation_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionArgIndex;
 
@@ -3361,15 +3361,15 @@ public class SqlDataDrivenDataAccess(
 
     public SqlSurveyQuestionValidationConditionsIntegerArg? SelectUniqueSqlSurveyQuestionValidationConditionsIntegerArg(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionValidationConditionIndex,
         SqlInt32 surveyQuestionValidationConditionArgIndex)
     {
         var command = SelectUniqueSqlSurveyQuestionValidationConditionsIntegerArgCommand(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionValidationConditionIndex,
             surveyQuestionValidationConditionArgIndex);
 
@@ -3379,8 +3379,8 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             SurveyId: reader.GetSqlInt32(0),
-            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
-            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
             SurveyQuestionValidationConditionIndex: reader.GetSqlInt32(3),
             SurveyQuestionValidationConditionArgIndex: reader.GetSqlInt32(4),
             SurveyQuestionValidationConditionArgInteger: reader.GetSqlInt32(5));
@@ -3388,15 +3388,15 @@ public class SqlDataDrivenDataAccess(
 
     public Task<SqlSurveyQuestionValidationConditionsIntegerArg?> SelectUniqueSqlSurveyQuestionValidationConditionsIntegerArgAsync(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionValidationConditionIndex,
         SqlInt32 surveyQuestionValidationConditionArgIndex)
     {
         return SelectUniqueSqlSurveyQuestionValidationConditionsIntegerArgAsync(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionValidationConditionIndex,
             surveyQuestionValidationConditionArgIndex,
             CancellationToken.None);
@@ -3404,16 +3404,16 @@ public class SqlDataDrivenDataAccess(
 
     public async Task<SqlSurveyQuestionValidationConditionsIntegerArg?> SelectUniqueSqlSurveyQuestionValidationConditionsIntegerArgAsync(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionValidationConditionIndex,
         SqlInt32 surveyQuestionValidationConditionArgIndex,
         CancellationToken cancellationToken)
     {
         var command = SelectUniqueSqlSurveyQuestionValidationConditionsIntegerArgCommand(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionValidationConditionIndex,
             surveyQuestionValidationConditionArgIndex);
 
@@ -3423,8 +3423,8 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             SurveyId: reader.GetSqlInt32(0),
-            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
-            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
             SurveyQuestionValidationConditionIndex: reader.GetSqlInt32(3),
             SurveyQuestionValidationConditionArgIndex: reader.GetSqlInt32(4),
             SurveyQuestionValidationConditionArgInteger: reader.GetSqlInt32(5));
@@ -3432,19 +3432,19 @@ public class SqlDataDrivenDataAccess(
 
     private SqlCommand InsertSqlSurveyQuestionValidationConditionsIntegerArgCommand(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionValidationConditionIndex,
         SqlInt32 surveyQuestionValidationConditionArgIndex,
         SqlInt32 surveyQuestionValidationConditionArgInteger)
     {
         var command = new SqlCommand(
-            "INSERT INTO [survey_question_validation_conditions_integer_args] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer]) VALUES (@survey_id, @affected_survey_page_index, @affected_survey_question_index, @survey_question_validation_condition_index, @survey_question_validation_condition_arg_index, @survey_question_validation_condition_arg_integer)",
+            "INSERT INTO [survey_question_validation_conditions_integer_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer]) VALUES (@survey_id, @survey_page_index, @survey_question_index, @survey_question_validation_condition_index, @survey_question_validation_condition_arg_index, @survey_question_validation_condition_arg_integer)",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
-        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
         command.Parameters.Add("survey_question_validation_condition_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionIndex;
         command.Parameters.Add("survey_question_validation_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionArgIndex;
         command.Parameters.Add("survey_question_validation_condition_arg_integer", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionArgInteger;
@@ -3456,8 +3456,8 @@ public class SqlDataDrivenDataAccess(
     {
         var command = InsertSqlSurveyQuestionValidationConditionsIntegerArgCommand(
             surveyQuestionValidationConditionsIntegerArg.SurveyId,
-            surveyQuestionValidationConditionsIntegerArg.AffectedSurveyPageIndex,
-            surveyQuestionValidationConditionsIntegerArg.AffectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionsIntegerArg.SurveyPageIndex,
+            surveyQuestionValidationConditionsIntegerArg.SurveyQuestionIndex,
             surveyQuestionValidationConditionsIntegerArg.SurveyQuestionValidationConditionIndex,
             surveyQuestionValidationConditionsIntegerArg.SurveyQuestionValidationConditionArgIndex,
             surveyQuestionValidationConditionsIntegerArg.SurveyQuestionValidationConditionArgInteger);
@@ -3474,8 +3474,8 @@ public class SqlDataDrivenDataAccess(
     {
         var command = InsertSqlSurveyQuestionValidationConditionsIntegerArgCommand(
             surveyQuestionValidationConditionsIntegerArg.SurveyId,
-            surveyQuestionValidationConditionsIntegerArg.AffectedSurveyPageIndex,
-            surveyQuestionValidationConditionsIntegerArg.AffectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionsIntegerArg.SurveyPageIndex,
+            surveyQuestionValidationConditionsIntegerArg.SurveyQuestionIndex,
             surveyQuestionValidationConditionsIntegerArg.SurveyQuestionValidationConditionIndex,
             surveyQuestionValidationConditionsIntegerArg.SurveyQuestionValidationConditionArgIndex,
             surveyQuestionValidationConditionsIntegerArg.SurveyQuestionValidationConditionArgInteger);
@@ -3485,18 +3485,18 @@ public class SqlDataDrivenDataAccess(
 
     private SqlCommand SelectUniqueSqlSurveyQuestionValidationConditionsTextArgCommand(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionValidationConditionIndex,
         SqlInt32 surveyQuestionValidationConditionArgIndex)
     {
         var command = new SqlCommand(
-            "SELECT [survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_text] FROM [survey_question_validation_conditions_text_args] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [affected_survey_page_index,[object Object]] = @affected_survey_page_index,[object Object] AND [affected_survey_question_index,[object Object]] = @affected_survey_question_index,[object Object] AND [survey_question_validation_condition_index,[object Object]] = @survey_question_validation_condition_index,[object Object] AND [survey_question_validation_condition_arg_index,[object Object]] = @survey_question_validation_condition_arg_index,[object Object]",
+            "SELECT [survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_text] FROM [survey_question_validation_conditions_text_args] WHERE [survey_id,[object Object]] = @survey_id,[object Object] AND [survey_page_index,[object Object]] = @survey_page_index,[object Object] AND [survey_question_index,[object Object]] = @survey_question_index,[object Object] AND [survey_question_validation_condition_index,[object Object]] = @survey_question_validation_condition_index,[object Object] AND [survey_question_validation_condition_arg_index,[object Object]] = @survey_question_validation_condition_arg_index,[object Object]",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
-        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
         command.Parameters.Add("survey_question_validation_condition_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionIndex;
         command.Parameters.Add("survey_question_validation_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionArgIndex;
 
@@ -3505,15 +3505,15 @@ public class SqlDataDrivenDataAccess(
 
     public SqlSurveyQuestionValidationConditionsTextArg? SelectUniqueSqlSurveyQuestionValidationConditionsTextArg(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionValidationConditionIndex,
         SqlInt32 surveyQuestionValidationConditionArgIndex)
     {
         var command = SelectUniqueSqlSurveyQuestionValidationConditionsTextArgCommand(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionValidationConditionIndex,
             surveyQuestionValidationConditionArgIndex);
 
@@ -3523,8 +3523,8 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             SurveyId: reader.GetSqlInt32(0),
-            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
-            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
             SurveyQuestionValidationConditionIndex: reader.GetSqlInt32(3),
             SurveyQuestionValidationConditionArgIndex: reader.GetSqlInt32(4),
             SurveyQuestionValidationConditionArgText: reader.GetSqlString(5));
@@ -3532,15 +3532,15 @@ public class SqlDataDrivenDataAccess(
 
     public Task<SqlSurveyQuestionValidationConditionsTextArg?> SelectUniqueSqlSurveyQuestionValidationConditionsTextArgAsync(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionValidationConditionIndex,
         SqlInt32 surveyQuestionValidationConditionArgIndex)
     {
         return SelectUniqueSqlSurveyQuestionValidationConditionsTextArgAsync(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionValidationConditionIndex,
             surveyQuestionValidationConditionArgIndex,
             CancellationToken.None);
@@ -3548,16 +3548,16 @@ public class SqlDataDrivenDataAccess(
 
     public async Task<SqlSurveyQuestionValidationConditionsTextArg?> SelectUniqueSqlSurveyQuestionValidationConditionsTextArgAsync(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionValidationConditionIndex,
         SqlInt32 surveyQuestionValidationConditionArgIndex,
         CancellationToken cancellationToken)
     {
         var command = SelectUniqueSqlSurveyQuestionValidationConditionsTextArgCommand(
             surveyId,
-            affectedSurveyPageIndex,
-            affectedSurveyQuestionIndex,
+            surveyPageIndex,
+            surveyQuestionIndex,
             surveyQuestionValidationConditionIndex,
             surveyQuestionValidationConditionArgIndex);
 
@@ -3567,8 +3567,8 @@ public class SqlDataDrivenDataAccess(
 
         return new(
             SurveyId: reader.GetSqlInt32(0),
-            AffectedSurveyPageIndex: reader.GetSqlInt32(1),
-            AffectedSurveyQuestionIndex: reader.GetSqlInt32(2),
+            SurveyPageIndex: reader.GetSqlInt32(1),
+            SurveyQuestionIndex: reader.GetSqlInt32(2),
             SurveyQuestionValidationConditionIndex: reader.GetSqlInt32(3),
             SurveyQuestionValidationConditionArgIndex: reader.GetSqlInt32(4),
             SurveyQuestionValidationConditionArgText: reader.GetSqlString(5));
@@ -3576,19 +3576,19 @@ public class SqlDataDrivenDataAccess(
 
     private SqlCommand InsertSqlSurveyQuestionValidationConditionsTextArgCommand(
         SqlInt32 surveyId,
-        SqlInt32 affectedSurveyPageIndex,
-        SqlInt32 affectedSurveyQuestionIndex,
+        SqlInt32 surveyPageIndex,
+        SqlInt32 surveyQuestionIndex,
         SqlInt32 surveyQuestionValidationConditionIndex,
         SqlInt32 surveyQuestionValidationConditionArgIndex,
         SqlString surveyQuestionValidationConditionArgText)
     {
         var command = new SqlCommand(
-            "INSERT INTO [survey_question_validation_conditions_text_args] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_text]) VALUES (@survey_id, @affected_survey_page_index, @affected_survey_question_index, @survey_question_validation_condition_index, @survey_question_validation_condition_arg_index, @survey_question_validation_condition_arg_text)",
+            "INSERT INTO [survey_question_validation_conditions_text_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_text]) VALUES (@survey_id, @survey_page_index, @survey_question_index, @survey_question_validation_condition_index, @survey_question_validation_condition_arg_index, @survey_question_validation_condition_arg_text)",
             source);
 
         command.Parameters.Add("survey_id", SqlDbType.Int).SqlValue = surveyId;
-        command.Parameters.Add("affected_survey_page_index", SqlDbType.Int).SqlValue = affectedSurveyPageIndex;
-        command.Parameters.Add("affected_survey_question_index", SqlDbType.Int).SqlValue = affectedSurveyQuestionIndex;
+        command.Parameters.Add("survey_page_index", SqlDbType.Int).SqlValue = surveyPageIndex;
+        command.Parameters.Add("survey_question_index", SqlDbType.Int).SqlValue = surveyQuestionIndex;
         command.Parameters.Add("survey_question_validation_condition_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionIndex;
         command.Parameters.Add("survey_question_validation_condition_arg_index", SqlDbType.Int).SqlValue = surveyQuestionValidationConditionArgIndex;
         command.Parameters.Add("survey_question_validation_condition_arg_text", SqlDbType.VarChar, VARCHAR_MAX_LENGTH).SqlValue = surveyQuestionValidationConditionArgText;
@@ -3600,8 +3600,8 @@ public class SqlDataDrivenDataAccess(
     {
         var command = InsertSqlSurveyQuestionValidationConditionsTextArgCommand(
             surveyQuestionValidationConditionsTextArg.SurveyId,
-            surveyQuestionValidationConditionsTextArg.AffectedSurveyPageIndex,
-            surveyQuestionValidationConditionsTextArg.AffectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionsTextArg.SurveyPageIndex,
+            surveyQuestionValidationConditionsTextArg.SurveyQuestionIndex,
             surveyQuestionValidationConditionsTextArg.SurveyQuestionValidationConditionIndex,
             surveyQuestionValidationConditionsTextArg.SurveyQuestionValidationConditionArgIndex,
             surveyQuestionValidationConditionsTextArg.SurveyQuestionValidationConditionArgText);
@@ -3618,8 +3618,8 @@ public class SqlDataDrivenDataAccess(
     {
         var command = InsertSqlSurveyQuestionValidationConditionsTextArgCommand(
             surveyQuestionValidationConditionsTextArg.SurveyId,
-            surveyQuestionValidationConditionsTextArg.AffectedSurveyPageIndex,
-            surveyQuestionValidationConditionsTextArg.AffectedSurveyQuestionIndex,
+            surveyQuestionValidationConditionsTextArg.SurveyPageIndex,
+            surveyQuestionValidationConditionsTextArg.SurveyQuestionIndex,
             surveyQuestionValidationConditionsTextArg.SurveyQuestionValidationConditionIndex,
             surveyQuestionValidationConditionsTextArg.SurveyQuestionValidationConditionArgIndex,
             surveyQuestionValidationConditionsTextArg.SurveyQuestionValidationConditionArgText);
@@ -4133,8 +4133,8 @@ public class SqlSurveyQuestionShowConditionTypeReader(
 public class SqlSurveyQuestionShowConditionReader(
     SqlDataReader source,
     int surveyIdColumnIndex,
-    int affectedSurveyPageIndexColumnIndex,
-    int affectedSurveyQuestionIndexColumnIndex,
+    int surveyPageIndexColumnIndex,
+    int surveyQuestionIndexColumnIndex,
     int surveyQuestionShowConditionIndexColumnIndex,
     int surveyQuestionShowConditionTypeColumnIndex,
     int surveyQuestionShowConditionOperatorColumnIndex,
@@ -4151,8 +4151,8 @@ public class SqlSurveyQuestionShowConditionReader(
     {
         get => new(
             SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
-            AffectedSurveyPageIndex: source.GetSqlInt32(affectedSurveyPageIndexColumnIndex),
-            AffectedSurveyQuestionIndex: source.GetSqlInt32(affectedSurveyQuestionIndexColumnIndex),
+            SurveyPageIndex: source.GetSqlInt32(surveyPageIndexColumnIndex),
+            SurveyQuestionIndex: source.GetSqlInt32(surveyQuestionIndexColumnIndex),
             SurveyQuestionShowConditionIndex: source.GetSqlInt32(surveyQuestionShowConditionIndexColumnIndex),
             SurveyQuestionShowConditionType: source.GetSqlByte(surveyQuestionShowConditionTypeColumnIndex),
             SurveyQuestionShowConditionOperator: source.GetSqlBoolean(surveyQuestionShowConditionOperatorColumnIndex));
@@ -4181,8 +4181,8 @@ public class SqlSurveyQuestionShowConditionReader(
 public class SqlSurveyQuestionShowConditionsRefArgReader(
     SqlDataReader source,
     int surveyIdColumnIndex,
-    int affectedSurveyPageIndexColumnIndex,
-    int affectedSurveyQuestionIndexColumnIndex,
+    int surveyPageIndexColumnIndex,
+    int surveyQuestionIndexColumnIndex,
     int surveyQuestionShowConditionIndexColumnIndex,
     int surveyQuestionShowConditionArgIndexColumnIndex,
     int referencedSurveyPageIndexColumnIndex,
@@ -4200,8 +4200,8 @@ public class SqlSurveyQuestionShowConditionsRefArgReader(
     {
         get => new(
             SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
-            AffectedSurveyPageIndex: source.GetSqlInt32(affectedSurveyPageIndexColumnIndex),
-            AffectedSurveyQuestionIndex: source.GetSqlInt32(affectedSurveyQuestionIndexColumnIndex),
+            SurveyPageIndex: source.GetSqlInt32(surveyPageIndexColumnIndex),
+            SurveyQuestionIndex: source.GetSqlInt32(surveyQuestionIndexColumnIndex),
             SurveyQuestionShowConditionIndex: source.GetSqlInt32(surveyQuestionShowConditionIndexColumnIndex),
             SurveyQuestionShowConditionArgIndex: source.GetSqlInt32(surveyQuestionShowConditionArgIndexColumnIndex),
             ReferencedSurveyPageIndex: source.GetSqlInt32(referencedSurveyPageIndexColumnIndex),
@@ -4231,8 +4231,8 @@ public class SqlSurveyQuestionShowConditionsRefArgReader(
 public class SqlSurveyQuestionShowConditionsIntegerArgReader(
     SqlDataReader source,
     int surveyIdColumnIndex,
-    int affectedSurveyPageIndexColumnIndex,
-    int affectedSurveyQuestionIndexColumnIndex,
+    int surveyPageIndexColumnIndex,
+    int surveyQuestionIndexColumnIndex,
     int surveyQuestionShowConditionIndexColumnIndex,
     int surveyQuestionShowConditionArgIndexColumnIndex,
     int surveyQuestionShowConditionArgIntegerColumnIndex,
@@ -4249,8 +4249,8 @@ public class SqlSurveyQuestionShowConditionsIntegerArgReader(
     {
         get => new(
             SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
-            AffectedSurveyPageIndex: source.GetSqlInt32(affectedSurveyPageIndexColumnIndex),
-            AffectedSurveyQuestionIndex: source.GetSqlInt32(affectedSurveyQuestionIndexColumnIndex),
+            SurveyPageIndex: source.GetSqlInt32(surveyPageIndexColumnIndex),
+            SurveyQuestionIndex: source.GetSqlInt32(surveyQuestionIndexColumnIndex),
             SurveyQuestionShowConditionIndex: source.GetSqlInt32(surveyQuestionShowConditionIndexColumnIndex),
             SurveyQuestionShowConditionArgIndex: source.GetSqlInt32(surveyQuestionShowConditionArgIndexColumnIndex),
             SurveyQuestionShowConditionArgInteger: source.GetSqlInt32(surveyQuestionShowConditionArgIntegerColumnIndex));
@@ -4279,8 +4279,8 @@ public class SqlSurveyQuestionShowConditionsIntegerArgReader(
 public class SqlSurveyQuestionShowConditionsTextArgReader(
     SqlDataReader source,
     int surveyIdColumnIndex,
-    int affectedSurveyPageIndexColumnIndex,
-    int affectedSurveyQuestionIndexColumnIndex,
+    int surveyPageIndexColumnIndex,
+    int surveyQuestionIndexColumnIndex,
     int surveyQuestionShowConditionIndexColumnIndex,
     int surveyQuestionShowConditionArgIndexColumnIndex,
     int surveyQuestionShowConditionArgTextColumnIndex,
@@ -4297,8 +4297,8 @@ public class SqlSurveyQuestionShowConditionsTextArgReader(
     {
         get => new(
             SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
-            AffectedSurveyPageIndex: source.GetSqlInt32(affectedSurveyPageIndexColumnIndex),
-            AffectedSurveyQuestionIndex: source.GetSqlInt32(affectedSurveyQuestionIndexColumnIndex),
+            SurveyPageIndex: source.GetSqlInt32(surveyPageIndexColumnIndex),
+            SurveyQuestionIndex: source.GetSqlInt32(surveyQuestionIndexColumnIndex),
             SurveyQuestionShowConditionIndex: source.GetSqlInt32(surveyQuestionShowConditionIndexColumnIndex),
             SurveyQuestionShowConditionArgIndex: source.GetSqlInt32(surveyQuestionShowConditionArgIndexColumnIndex),
             SurveyQuestionShowConditionArgText: source.GetSqlString(surveyQuestionShowConditionArgTextColumnIndex));
@@ -4367,8 +4367,8 @@ public class SqlSurveyQuestionValidationConditionTypeReader(
 public class SqlSurveyQuestionValidationConditionReader(
     SqlDataReader source,
     int surveyIdColumnIndex,
-    int affectedSurveyPageIndexColumnIndex,
-    int affectedSurveyQuestionIndexColumnIndex,
+    int surveyPageIndexColumnIndex,
+    int surveyQuestionIndexColumnIndex,
     int surveyQuestionValidationConditionIndexColumnIndex,
     int surveyQuestionValidationConditionTypeColumnIndex,
     int surveyQuestionValidationConditionOperatorColumnIndex,
@@ -4385,8 +4385,8 @@ public class SqlSurveyQuestionValidationConditionReader(
     {
         get => new(
             SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
-            AffectedSurveyPageIndex: source.GetSqlInt32(affectedSurveyPageIndexColumnIndex),
-            AffectedSurveyQuestionIndex: source.GetSqlInt32(affectedSurveyQuestionIndexColumnIndex),
+            SurveyPageIndex: source.GetSqlInt32(surveyPageIndexColumnIndex),
+            SurveyQuestionIndex: source.GetSqlInt32(surveyQuestionIndexColumnIndex),
             SurveyQuestionValidationConditionIndex: source.GetSqlInt32(surveyQuestionValidationConditionIndexColumnIndex),
             SurveyQuestionValidationConditionType: source.GetSqlByte(surveyQuestionValidationConditionTypeColumnIndex),
             SurveyQuestionValidationConditionOperator: source.GetSqlBoolean(surveyQuestionValidationConditionOperatorColumnIndex));
@@ -4415,8 +4415,8 @@ public class SqlSurveyQuestionValidationConditionReader(
 public class SqlSurveyQuestionValidationConditionsRefArgReader(
     SqlDataReader source,
     int surveyIdColumnIndex,
-    int affectedSurveyPageIndexColumnIndex,
-    int affectedSurveyQuestionIndexColumnIndex,
+    int surveyPageIndexColumnIndex,
+    int surveyQuestionIndexColumnIndex,
     int surveyQuestionValidationConditionIndexColumnIndex,
     int surveyQuestionValidationConditionArgIndexColumnIndex,
     int referencedSurveyPageIndexColumnIndex,
@@ -4434,8 +4434,8 @@ public class SqlSurveyQuestionValidationConditionsRefArgReader(
     {
         get => new(
             SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
-            AffectedSurveyPageIndex: source.GetSqlInt32(affectedSurveyPageIndexColumnIndex),
-            AffectedSurveyQuestionIndex: source.GetSqlInt32(affectedSurveyQuestionIndexColumnIndex),
+            SurveyPageIndex: source.GetSqlInt32(surveyPageIndexColumnIndex),
+            SurveyQuestionIndex: source.GetSqlInt32(surveyQuestionIndexColumnIndex),
             SurveyQuestionValidationConditionIndex: source.GetSqlInt32(surveyQuestionValidationConditionIndexColumnIndex),
             SurveyQuestionValidationConditionArgIndex: source.GetSqlInt32(surveyQuestionValidationConditionArgIndexColumnIndex),
             ReferencedSurveyPageIndex: source.GetSqlInt32(referencedSurveyPageIndexColumnIndex),
@@ -4465,8 +4465,8 @@ public class SqlSurveyQuestionValidationConditionsRefArgReader(
 public class SqlSurveyQuestionValidationConditionsIntegerArgReader(
     SqlDataReader source,
     int surveyIdColumnIndex,
-    int affectedSurveyPageIndexColumnIndex,
-    int affectedSurveyQuestionIndexColumnIndex,
+    int surveyPageIndexColumnIndex,
+    int surveyQuestionIndexColumnIndex,
     int surveyQuestionValidationConditionIndexColumnIndex,
     int surveyQuestionValidationConditionArgIndexColumnIndex,
     int surveyQuestionValidationConditionArgIntegerColumnIndex,
@@ -4483,8 +4483,8 @@ public class SqlSurveyQuestionValidationConditionsIntegerArgReader(
     {
         get => new(
             SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
-            AffectedSurveyPageIndex: source.GetSqlInt32(affectedSurveyPageIndexColumnIndex),
-            AffectedSurveyQuestionIndex: source.GetSqlInt32(affectedSurveyQuestionIndexColumnIndex),
+            SurveyPageIndex: source.GetSqlInt32(surveyPageIndexColumnIndex),
+            SurveyQuestionIndex: source.GetSqlInt32(surveyQuestionIndexColumnIndex),
             SurveyQuestionValidationConditionIndex: source.GetSqlInt32(surveyQuestionValidationConditionIndexColumnIndex),
             SurveyQuestionValidationConditionArgIndex: source.GetSqlInt32(surveyQuestionValidationConditionArgIndexColumnIndex),
             SurveyQuestionValidationConditionArgInteger: source.GetSqlInt32(surveyQuestionValidationConditionArgIntegerColumnIndex));
@@ -4513,8 +4513,8 @@ public class SqlSurveyQuestionValidationConditionsIntegerArgReader(
 public class SqlSurveyQuestionValidationConditionsTextArgReader(
     SqlDataReader source,
     int surveyIdColumnIndex,
-    int affectedSurveyPageIndexColumnIndex,
-    int affectedSurveyQuestionIndexColumnIndex,
+    int surveyPageIndexColumnIndex,
+    int surveyQuestionIndexColumnIndex,
     int surveyQuestionValidationConditionIndexColumnIndex,
     int surveyQuestionValidationConditionArgIndexColumnIndex,
     int surveyQuestionValidationConditionArgTextColumnIndex,
@@ -4531,8 +4531,8 @@ public class SqlSurveyQuestionValidationConditionsTextArgReader(
     {
         get => new(
             SurveyId: source.GetSqlInt32(surveyIdColumnIndex),
-            AffectedSurveyPageIndex: source.GetSqlInt32(affectedSurveyPageIndexColumnIndex),
-            AffectedSurveyQuestionIndex: source.GetSqlInt32(affectedSurveyQuestionIndexColumnIndex),
+            SurveyPageIndex: source.GetSqlInt32(surveyPageIndexColumnIndex),
+            SurveyQuestionIndex: source.GetSqlInt32(surveyQuestionIndexColumnIndex),
             SurveyQuestionValidationConditionIndex: source.GetSqlInt32(surveyQuestionValidationConditionIndexColumnIndex),
             SurveyQuestionValidationConditionArgIndex: source.GetSqlInt32(surveyQuestionValidationConditionArgIndexColumnIndex),
             SurveyQuestionValidationConditionArgText: source.GetSqlString(surveyQuestionValidationConditionArgTextColumnIndex));

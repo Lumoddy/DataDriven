@@ -1,0 +1,8 @@
+@using DataDriven.Controllers
+@foreach (
+    SurveyQuestionViewFields question
+    in (IEnumerable<SurveyQuestionViewFields>)ViewData["questions"]!)
+{
+    <p>@question.Title</p>
+    <p>Type = @question.Type</p>
+}

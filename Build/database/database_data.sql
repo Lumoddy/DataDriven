@@ -9,7 +9,7 @@ INSERT INTO [answer_types] ([answer_type_id], [answer_type_name]) VALUES
     (4, 'MultiSelect');
 
 INSERT INTO [survey_question_show_condition_types] ([survey_question_show_condition_type_id], [survey_question_show_condition_type_name]) VALUES
-    (0, 'ShowIfAnswered'),
+    (0, 'IsAnswered'),
     (1, 'IsNotAnswered');
 
 INSERT INTO [survey_question_validation_condition_types] ([survey_question_validation_condition_type_id], [survey_question_validation_condition_type_name]) VALUES
@@ -67,16 +67,16 @@ INSERT INTO [survey_question_answer_options] ([survey_id], [survey_page_index], 
     (1, 1, 1, 5, 'Travel'),
     (1, 1, 1, 6, 'Politics');
 
-INSERT INTO [survey_question_show_conditions] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_type], [survey_question_show_condition_operator]) VALUES
+INSERT INTO [survey_question_show_conditions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_type], [survey_question_show_condition_operator]) VALUES
     (1, 1, 1, 0, 0, 0);
 
-INSERT INTO [survey_question_show_conditions_ref_args] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index]) VALUES
+INSERT INTO [survey_question_show_conditions_ref_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index]) VALUES
     (1, 1, 1, 0, 0, 1, 0);
 
-INSERT INTO [survey_question_validation_conditions] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_type], [survey_question_validation_condition_operator]) VALUES
+INSERT INTO [survey_question_validation_conditions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_type], [survey_question_validation_condition_operator]) VALUES
     (1, 1, 1, 0, 1, 0);
 
-INSERT INTO [survey_question_validation_conditions_integer_args] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer]) VALUES
+INSERT INTO [survey_question_validation_conditions_integer_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer]) VALUES
     (1, 1, 1, 0, 0, 1);
 
 INSERT INTO [survey_questions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_prompt], [survey_question_answer_type]) VALUES
@@ -94,16 +94,16 @@ INSERT INTO [survey_question_answer_options] ([survey_id], [survey_page_index], 
     (1, 1, 3, 5, 'Basketball'),
     (1, 1, 3, 6, 'Tennis');
 
-INSERT INTO [survey_question_show_conditions] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_type], [survey_question_show_condition_operator]) VALUES
+INSERT INTO [survey_question_show_conditions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_type], [survey_question_show_condition_operator]) VALUES
     (1, 1, 3, 0, 0, 0);
 
-INSERT INTO [survey_question_show_conditions_ref_args] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index]) VALUES
+INSERT INTO [survey_question_show_conditions_ref_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index]) VALUES
     (1, 1, 3, 0, 0, 1, 0);
 
-INSERT INTO [survey_question_validation_conditions] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_type], [survey_question_validation_condition_operator]) VALUES
+INSERT INTO [survey_question_validation_conditions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_type], [survey_question_validation_condition_operator]) VALUES
     (1, 1, 3, 0, 0, 0);
 
-INSERT INTO [survey_question_validation_conditions_integer_args] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer]) VALUES
+INSERT INTO [survey_question_validation_conditions_integer_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer]) VALUES
     (1, 1, 3, 0, 0, 0);
 
 INSERT INTO [survey_pages] ([survey_id], [survey_page_index], [survey_page_title], [survey_page_description]) VALUES
@@ -125,16 +125,16 @@ INSERT INTO [survey_question_answer_options] ([survey_id], [survey_page_index], 
     (1, 2, 1, 6, 'Middle East'),
     (1, 2, 1, 7, 'Africa');
 
-INSERT INTO [survey_question_show_conditions] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_type], [survey_question_show_condition_operator]) VALUES
+INSERT INTO [survey_question_show_conditions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_type], [survey_question_show_condition_operator]) VALUES
     (1, 2, 1, 0, 0, 0);
 
-INSERT INTO [survey_question_show_conditions_ref_args] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index]) VALUES
+INSERT INTO [survey_question_show_conditions_ref_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index]) VALUES
     (1, 2, 1, 0, 0, 1, 0);
 
-INSERT INTO [survey_question_validation_conditions] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_type], [survey_question_validation_condition_operator]) VALUES
+INSERT INTO [survey_question_validation_conditions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_type], [survey_question_validation_condition_operator]) VALUES
     (1, 2, 1, 0, 0, 0);
 
-INSERT INTO [survey_question_validation_conditions_integer_args] ([survey_id], [affected_survey_page_index], [affected_survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer]) VALUES
+INSERT INTO [survey_question_validation_conditions_integer_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer]) VALUES
     (1, 2, 1, 0, 0, 2);
 
 INSERT INTO [survey_questions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_prompt], [survey_question_answer_type]) VALUES

@@ -85,9 +85,11 @@ public record Sql`;
 
     public const string TABLE_`;
             cs += column.blockShortenedSingle;
-            cs += ` = $"{TABLE}.{`;
-            cs += column.blockShortenedSingle;
-            cs += `}";
+            cs += ` = $"[`;
+            cs += tableName;
+            cs += `].[`;
+            cs += columnName;
+            cs += `]";
 `;
         }
 

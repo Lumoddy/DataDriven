@@ -64,46 +64,45 @@ export type DatabaseTable =
 
 export type DatabaseStructure = { tables: Map<string, DatabaseTable> };
 
-export function snakeCaseToPascalCase(string: string): string
+export function* wordsFromCasedIdentifier(string: string): Generator<RegExpExecArray, undefined>
+{
+    string = String(string);
+    const pattern = /[A-Z](?:[A-Z](?![a-z]))*(?:[a-z]+|[0-9]+)?|[a-z]+|\d+/g;
+    let match;
+    while ((match = pattern.exec(string)) !== null)
+        yield match;
+}
+
+export function toPascalCase(string: string): string
 {
     let buffer = "";
-    let startOfWord = true;
-    for (const char of String(string))
+    for (const [match] of wordsFromCasedIdentifier(string))
     {
-        if (/^[a-zA-Z]$/.test(char))
+        if (match.length > 0)
         {
-            buffer += startOfWord ? char.toUpperCase() : char;
-            startOfWord = false;
-        }
-        else
-        {
-            if (/^[0-9]$/.test(char))
-                buffer += char;
-
-            startOfWord = true;
+            buffer += match[0].toUpperCase();
+            buffer += match.substring(1).toLowerCase();
         }
     }
 
     return buffer;
 }
 
-export function pascalCaseToBlockCase(string: string): string
+export function toBlockCase(string: string): string
 {
-    let buffer = null;
-    const pattern = /(?:[A-Z](?:[A-Z](?=[A-Z]))*[a-z]*|[a-z]+|\d+)/gy;
-
-    let match;
-    while ((match = pattern.exec(string)) !== null)
+    let buffer = "";
+    let first = true;
+    for (const [match] of wordsFromCasedIdentifier(string))
     {
-        if (buffer === null)
-            buffer = "";
+        if (first)
+            first = false;
         else
             buffer += "_";
 
-        buffer += match[0].toUpperCase();
+        buffer += match.toUpperCase();
     }
 
-    return buffer ?? "";
+    return buffer;
 }
 
 export function preprocessObject(source: any): DatabaseStructure
@@ -121,18 +120,18 @@ export function preprocessObject(source: any): DatabaseStructure
     {
         const sourceTable = sourceTables[name];
 
-        const pascalPlural = String(sourceTable["C# Plural"] ?? snakeCaseToPascalCase(name));
+        const pascalPlural = String(sourceTable["C# Plural"] ?? toPascalCase(name));
         const pascalSingle = String(sourceTable["C# Single"] ?? pascalPlural.substring(0, pascalPlural.length - 1));
         const camelPlural = pascalPlural.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
         const camelSingle = pascalSingle.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
-        const blockPlural = pascalCaseToBlockCase(pascalPlural);
-        const blockSingle = pascalCaseToBlockCase(pascalSingle);
+        const blockPlural = toBlockCase(pascalPlural);
+        const blockSingle = toBlockCase(pascalSingle);
         const pascalShortenedPlural = String(sourceTable["C# Short Plural"] ?? pascalPlural);
         const pascalShortenedSingle = String(sourceTable["C# Short Single"] ?? pascalSingle);
         const camelShortenedPlural = pascalShortenedPlural.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
         const camelShortenedSingle = pascalShortenedSingle.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
-        const blockShortenedPlural = pascalCaseToBlockCase(pascalShortenedPlural);
-        const blockShortenedSingle = pascalCaseToBlockCase(pascalShortenedSingle);
+        const blockShortenedPlural = toBlockCase(pascalShortenedPlural);
+        const blockShortenedSingle = toBlockCase(pascalShortenedSingle);
 
         const sourceColumns = sourceTable["columns"];
         const columns = new Map<string, DatabaseColumn>();
@@ -153,12 +152,12 @@ export function preprocessObject(source: any): DatabaseStructure
                 }
             }
 
-            const pascalSingle = String(sourceColumn["C# Single"] ?? snakeCaseToPascalCase(name));
+            const pascalSingle = String(sourceColumn["C# Single"] ?? toPascalCase(name));
             const camelSingle = pascalSingle.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
-            const blockSingle = pascalCaseToBlockCase(pascalSingle);
+            const blockSingle = toBlockCase(pascalSingle);
             const pascalShortenedSingle = String(sourceColumn["C# Short Single"] ?? pascalSingle);
             const camelShortenedSingle = pascalShortenedSingle.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
-            const blockShortenedSingle = pascalCaseToBlockCase(pascalShortenedSingle);
+            const blockShortenedSingle = toBlockCase(pascalShortenedSingle);
 
             const type = String.prototype.toUpperCase.call(sourceColumn["type"]);
             const nullable = Boolean(sourceColumn["nullable"]);
