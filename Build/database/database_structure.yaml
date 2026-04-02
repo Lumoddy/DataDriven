@@ -74,7 +74,7 @@ tables:
       survey_page_index: { short_single: page_index, type: INDEX }
       survey_question_index: { short_single: index, type: INDEX }
       survey_question_prompt: { short_single: title, type: TITLE }
-      survey_question_survey_question_answer_type: { short_single: type, type: ENUM }
+      survey_question_answer_type: { short_single: type, type: ENUM }
     constraints:
     - primary:
       - survey_id
@@ -86,6 +86,10 @@ tables:
       - survey_pages:
         - survey_id
         - survey_page_index
+    - foreign:
+      - - survey_question_answer_type
+      - survey_question_answer_types:
+        - survey_question_answer_type_id
 
   registered_members:
     columns:

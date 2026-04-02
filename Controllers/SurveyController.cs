@@ -291,7 +291,9 @@ public class SurveyController(
 
             questions[questionIndex].ShowConditions.Add(new SurveyQuestionShowConditionViewFields(
                 enumService.SurveyQuestionShowConditionTypeMap[reader.GetSqlByte(2).StrictValue()],
-                (SurveyQuestionConditionOperator)reader.GetSqlByte(3).StrictValue(),
+                reader.GetSqlBoolean(3).StrictValue()
+                    ? SurveyQuestionConditionOperator.Or
+                    : SurveyQuestionConditionOperator.And,
                 reader.IsDBNull(5)
                     ? null
                     : (reader.GetSqlInt32(5).StrictValue(), reader.GetSqlInt32(6).StrictValue()),
@@ -316,7 +318,9 @@ public class SurveyController(
 
             questions[questionIndex].ValidationConditions.Add(new SurveyQuestionValidationConditionViewFields(
                 enumService.SurveyQuestionValidationConditionTypeMap[reader.GetSqlByte(2).StrictValue()],
-                (SurveyQuestionConditionOperator)reader.GetSqlByte(3).StrictValue(),
+                reader.GetSqlBoolean(3).StrictValue()
+                    ? SurveyQuestionConditionOperator.Or
+                    : SurveyQuestionConditionOperator.And,
                 reader.IsDBNull(5)
                     ? null
                     : (reader.GetSqlInt32(5).StrictValue(), reader.GetSqlInt32(6).StrictValue()),

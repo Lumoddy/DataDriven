@@ -1,65 +1,65 @@
 
 BEGIN TRANSACTION;
 
-DECLARE @SmallText TINYINT = SELECT [answer_type_id]
-FROM [answer_types]
-WHERE [answer_type_name] = 'SmallText';
+DECLARE @SmallText TINYINT = (SELECT [survey_question_answer_type_id]
+FROM [survey_question_answer_types]
+WHERE [survey_question_answer_type_name] = 'SmallText');
 
 IF (@SmallText IS NULL)
     THROW 50000, 'SmallText answer type not found in answer_types table.', 1;
 
-DECLARE @Checkbox TINYINT = SELECT [answer_type_id]
-FROM [answer_types]
-WHERE [answer_type_name] = 'Checkbox';
+DECLARE @Checkbox TINYINT = (SELECT [survey_question_answer_type_id]
+FROM [survey_question_answer_types]
+WHERE [survey_question_answer_type_name] = 'Checkbox');
 
 IF (@Checkbox IS NULL)
     THROW 50000, 'Checkbox answer type not found in answer_types table.', 1;
 
-DECLARE @Radio TINYINT = SELECT [answer_type_id]
-FROM [answer_types]
-WHERE [answer_type_name] = 'Radio';
+DECLARE @Radio TINYINT = (SELECT [survey_question_answer_type_id]
+FROM [survey_question_answer_types]
+WHERE [survey_question_answer_type_name] = 'Radio');
 
 IF (@Radio IS NULL)
     THROW 50000, 'Radio answer type not found in answer_types table.', 1;
 
-DECLARE @RadioAndOther TINYINT = SELECT [answer_type_id]
-FROM [answer_types]
-WHERE [answer_type_name] = 'RadioAndOther';
+DECLARE @RadioAndOther TINYINT = (SELECT [survey_question_answer_type_id]
+FROM [survey_question_answer_types]
+WHERE [survey_question_answer_type_name] = 'RadioAndOther');
 
 IF (@RadioAndOther IS NULL)
     THROW 50000, 'RadioAndOther answer type not found in answer_types table.', 1;
 
-DECLARE @MultiSelect TINYINT = SELECT [answer_type_id]
-FROM [answer_types]
-WHERE [answer_type_name] = 'MultiSelect';
+DECLARE @MultiSelect TINYINT = (SELECT [survey_question_answer_type_id]
+FROM [survey_question_answer_types]
+WHERE [survey_question_answer_type_name] = 'MultiSelect');
 
 IF (@MultiSelect IS NULL)
     THROW 50000, 'MultiSelect answer type not found in answer_types table.', 1;
 
-DECLARE @HasAnswered TINYINT = SELECT [survey_question_show_condition_type_id]
+DECLARE @HasAnswered TINYINT = (SELECT [survey_question_show_condition_type_id]
 FROM [survey_question_show_condition_types]
-WHERE [survey_question_show_condition_type_name] = 'HasAnswered';
+WHERE [survey_question_show_condition_type_name] = 'HasAnswered');
 
 IF (@HasAnswered IS NULL)
     THROW 50000, 'HasAnswered show condition type not found in survey_question_show_condition_types table.', 1;
 
-DECLARE @HasNotAnswered TINYINT = SELECT [survey_question_show_condition_type_id]
+DECLARE @HasNotAnswered TINYINT = (SELECT [survey_question_show_condition_type_id]
 FROM [survey_question_show_condition_types]
-WHERE [survey_question_show_condition_type_name] = 'HasNotAnswered';
+WHERE [survey_question_show_condition_type_name] = 'HasNotAnswered');
 
 IF (@HasNotAnswered IS NULL)
     THROW 50000, 'HasNotAnswered show condition type not found in survey_question_show_condition_types table.', 1;
 
-DECLARE @Min TINYINT = SELECT [survey_question_validation_condition_type_id]
+DECLARE @Min TINYINT = (SELECT [survey_question_validation_condition_type_id]
 FROM [survey_question_validation_condition_types]
-WHERE [survey_question_validation_condition_type_name] = 'Min';
+WHERE [survey_question_validation_condition_type_name] = 'Min');
 
 IF (@Min IS NULL)
     THROW 50000, 'Min validation condition type not found in survey_question_validation_condition_types table.', 1;
 
-DECLARE @Max TINYINT = SELECT [survey_question_validation_condition_type_id]
+DECLARE @Max TINYINT = (SELECT [survey_question_validation_condition_type_id]
 FROM [survey_question_validation_condition_types]
-WHERE [survey_question_validation_condition_type_name] = 'Max';
+WHERE [survey_question_validation_condition_type_name] = 'Max');
 
 IF (@Max IS NULL)
     THROW 50000, 'Max validation condition type not found in survey_question_validation_condition_types table.', 1;

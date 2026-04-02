@@ -457,7 +457,7 @@ export function preprocessObject(source: any): DatabaseStructure
                     const column = table.columns.get(columnName);
                     if (column === undefined)
                         throw new SyntaxError(
-                            `Unknown column in ${tableName}: ${columnName}`);
+                            `Unknown column in ${constraint.other} referenced by ${tableName}: ${columnName}`);
 
                     constraint.otherColumns.set(columnName, column);
                 }

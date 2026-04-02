@@ -1,9 +1,7 @@
 // This file was auto-generated based on ./Build/database/database_structure.yaml
 
 using System.Collections;
-using System.Data.SqlTypes;
 using Microsoft.Data.SqlClient;
-using DataDriven.Data;
 
 namespace DataDriven.Data;
 
@@ -34,8 +32,8 @@ public class SurveyQuestionAnswerTypeMap(
     byte radioIndex,
     byte radioAndOtherIndex,
     byte multiSelectIndex)
-        : IReadOnlyDictionary<byte, SurveyQuestionAnswerType>,
-        IReadOnlyDictionary<SurveyQuestionAnswerType, byte>
+    : IReadOnlyDictionary<byte, SurveyQuestionAnswerType>,
+    IReadOnlyDictionary<SurveyQuestionAnswerType, byte>
 {
     public SurveyQuestionAnswerType this[byte key] => key switch
     {
@@ -138,8 +136,8 @@ public class SurveyQuestionAnswerTypeMap(
 public class SurveyQuestionShowConditionTypeMap(
     byte hasAnsweredIndex,
     byte hasNotAnsweredIndex)
-        : IReadOnlyDictionary<byte, SurveyQuestionShowConditionType>,
-        IReadOnlyDictionary<SurveyQuestionShowConditionType, byte>
+    : IReadOnlyDictionary<byte, SurveyQuestionShowConditionType>,
+    IReadOnlyDictionary<SurveyQuestionShowConditionType, byte>
 {
     public SurveyQuestionShowConditionType this[byte key] => key switch
     {
@@ -224,8 +222,8 @@ public class SurveyQuestionShowConditionTypeMap(
 public class SurveyQuestionValidationConditionTypeMap(
     byte minIndex,
     byte maxIndex)
-        : IReadOnlyDictionary<byte, SurveyQuestionValidationConditionType>,
-        IReadOnlyDictionary<SurveyQuestionValidationConditionType, byte>
+    : IReadOnlyDictionary<byte, SurveyQuestionValidationConditionType>,
+    IReadOnlyDictionary<SurveyQuestionValidationConditionType, byte>
 {
     public SurveyQuestionValidationConditionType this[byte key] => key switch
     {

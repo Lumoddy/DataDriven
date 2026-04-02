@@ -9,7 +9,7 @@
         @foreach (SurveyQuestionShowConditionViewFields constraint in question.ShowConditions)
         {
             <li>
-                @constraint.Type: (@constraint.ReferencedQuestion, @constraint.TextValue, @constraint.IntegerValue)
+                @constraint.Operator @constraint.Type: (@constraint.ReferencedQuestion, @constraint.TextValue, @constraint.IntegerValue)
             </li>
         }
     </ul>

@@ -217,7 +217,7 @@ ALTER TABLE [`;
 INSERT INTO [`;
         sql += enumName;
         sql += `] (`;
-        
+
         let firstColumn = true;
         for (const [columnName, ] of (tables.get(enumName) as DatabaseTable).columns)
         {

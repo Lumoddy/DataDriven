@@ -31,7 +31,7 @@ CREATE TABLE [survey_questions] (
     [survey_page_index] INT NOT NULL,
     [survey_question_index] INT NOT NULL,
     [survey_question_prompt] VARCHAR(1023) NOT NULL,
-    [survey_question_survey_question_answer_type] TINYINT NOT NULL);
+    [survey_question_answer_type] TINYINT NOT NULL);
 
 CREATE TABLE [registered_members] (
     [registered_member_id] INT NOT NULL,
@@ -287,6 +287,13 @@ ALTER TABLE [survey_questions]
         REFERENCES [survey_pages] (
             [survey_id],
             [survey_page_index]);
+
+ALTER TABLE [survey_questions]
+    ADD CONSTRAINT [fk_survey_questions_to_survey_question_answer_types_2]
+        FOREIGN KEY (
+            [survey_question_answer_type])
+        REFERENCES [survey_question_answer_types] (
+            [survey_question_answer_type_id]);
 
 ALTER TABLE [submissions]
     ADD CONSTRAINT [fk_submissions_to_surveys_1]

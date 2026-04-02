@@ -88,7 +88,7 @@ public record SqlSurveyQuestion(
 
     public const string TITLE = $"[survey_questions].[survey_question_prompt]";
 
-    public const string TYPE = $"[survey_questions].[survey_question_survey_question_answer_type]";
+    public const string TYPE = $"[survey_questions].[survey_question_answer_type]";
 }
 
 public record SqlRegisteredMember(

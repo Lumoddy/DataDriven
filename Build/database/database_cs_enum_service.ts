@@ -7,9 +7,7 @@ export function csEnumServiceFileFrom(structure: DatabaseStructure): string
 
     let cs = `
 using System.Collections;
-using System.Data.SqlTypes;
 using Microsoft.Data.SqlClient;
-using DataDriven.Data;
 
 namespace DataDriven.Data;
 `;
@@ -60,10 +58,10 @@ public class `;
         }
 
         cs += `)
-        : IReadOnlyDictionary<byte, `;
+    : IReadOnlyDictionary<byte, `;
         cs += table.pascalShortenedSingle;
         cs += `>,
-        IReadOnlyDictionary<`;
+    IReadOnlyDictionary<`;
         cs += table.pascalShortenedSingle;
         cs += `, byte>
 {
