@@ -1,8 +1,9 @@
-import type { DatabaseStructure } from "./preprocess.ts";
+import type { DatabaseStructure, DatabaseTable } from "./preprocess.ts";
 
 export function sqlFileFrom(structure: DatabaseStructure): string
 {
     const tables = structure.tables;
+    const enums = structure.enums;
 
     let sql = `
 BEGIN TRANSACTION;
@@ -208,6 +209,46 @@ ALTER TABLE [`;
                 }
             }
         }
+    }
+
+    for (const [enumName, table] of enums)
+    {
+        sql += `
+INSERT INTO [`;
+        sql += enumName;
+        sql += `] (`;
+        
+        let firstColumn = true;
+        for (const [columnName, ] of (tables.get(enumName) as DatabaseTable).columns)
+        {
+            if (firstColumn)
+                firstColumn = false;
+            else
+                sql += `, `;
+
+            sql += `[`;
+            sql += columnName;
+            sql += `]`;
+        }
+
+        sql += `) VALUES
+`;
+
+        for (const [i, [fieldName, field]] of table.fields.entries().map((x, i) => [i, x] as const))
+        {
+            if (i !== 0)
+                sql += `,
+`;
+
+            sql += `    (`;
+            sql += i;
+            sql += `, '`;
+            sql += fieldName;
+            sql += `')`;
+        }
+
+        sql += `;
+`;
     }
 
     sql += `

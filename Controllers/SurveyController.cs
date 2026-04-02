@@ -1,26 +1,34 @@
 using System.Data;
-using System.Data.SqlTypes;
 using DataDriven.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 
 namespace DataDriven.Controllers;
 
-public enum SurveyQuestionAnswerType
-{
-    SmallText,
-    Checkbox,
-    Radio,
-    RadioAndOther,
-    MultiSelect,
-}
+public record SurveyQuestionShowConditionViewFields(
+    SurveyQuestionShowConditionType Type,
+    SurveyQuestionConditionOperator Operator,
+    (int PageIndex, int Index)? ReferencedQuestion,
+    int? IntegerValue,
+    string? TextValue);
+
+public record SurveyQuestionValidationConditionViewFields(
+    SurveyQuestionValidationConditionType Type,
+    SurveyQuestionConditionOperator Operator,
+    (int PageIndex, int Index)? ReferencedQuestion,
+    int? IntegerValue,
+    string? TextValue);
 
 public record SurveyQuestionViewFields(
     string Title,
-    SurveyQuestionAnswerType Type);
+    SurveyQuestionAnswerType Type,
+    List<SurveyQuestionShowConditionViewFields> ShowConditions,
+    List<SurveyQuestionValidationConditionViewFields> ValidationConditions);
 
 [Route("survey")]
-public class SurveyController(IConfiguration configuration) : Controller
+public class SurveyController(
+    IConfiguration configuration,
+    IDatabaseEnumService enumService) : Controller
 {
     [Route("{surveyId}")]
     public async Task<IActionResult> StartPage(string surveyId)
@@ -35,22 +43,22 @@ public class SurveyController(IConfiguration configuration) : Controller
         await using SqlCommand command = new(
             $"""
             SELECT
-                {SqlSurvey.TABLE_TITLE},
-                {SqlSurvey.TABLE_AUTHOR},
-                {SqlSurvey.TABLE_DESCRIPTION},
-                MAX({SqlSurveyPage.TABLE_INDEX}) + 1
+                {SqlSurvey.TITLE},
+                {SqlSurvey.AUTHOR},
+                {SqlSurvey.DESCRIPTION},
+                MAX({SqlSurveyPage.INDEX}) + 1
             FROM
                 {SqlSurvey.TABLE}
             LEFT JOIN
                 {SqlSurveyPage.TABLE} ON
-                {SqlSurveyPage.TABLE_SURVEY_ID} = {SqlSurvey.TABLE_ID}
+                {SqlSurveyPage.SURVEY_ID} = {SqlSurvey.ID}
             WHERE
-                {SqlSurvey.TABLE_ID} = @surveyId
+                {SqlSurvey.ID} = @surveyId
             GROUP BY
-                {SqlSurvey.TABLE_ID},
-                {SqlSurvey.TABLE_TITLE},
-                {SqlSurvey.TABLE_AUTHOR},
-                {SqlSurvey.TABLE_DESCRIPTION};
+                {SqlSurvey.ID},
+                {SqlSurvey.TITLE},
+                {SqlSurvey.AUTHOR},
+                {SqlSurvey.DESCRIPTION};
             """,
             connection);
 
@@ -92,170 +100,148 @@ public class SurveyController(IConfiguration configuration) : Controller
         await using SqlCommand command = new(
             $"""
             SELECT
-                {SqlSurveyPage.TABLE_TITLE},
-                {SqlSurveyPage.TABLE_DESCRIPTION},
-                MAX({SqlSurveyQuestion.TABLE_INDEX}) + 1
+                {SqlSurveyPage.TITLE},
+                {SqlSurveyPage.DESCRIPTION},
+                MAX({SqlSurveyQuestion.INDEX}) + 1
             FROM
                 {SqlSurveyPage.TABLE}
             LEFT JOIN
                 {SqlSurveyQuestion.TABLE} ON
-                {SqlSurveyQuestion.TABLE_SURVEY_ID} = {SqlSurveyPage.TABLE_SURVEY_ID}
-                AND {SqlSurveyQuestion.TABLE_PAGE_INDEX} = {SqlSurveyPage.TABLE_INDEX}
+                {SqlSurveyQuestion.SURVEY_ID} = {SqlSurveyPage.SURVEY_ID}
+                AND {SqlSurveyQuestion.PAGE_INDEX} = {SqlSurveyPage.INDEX}
             WHERE
-                {SqlSurveyPage.TABLE_SURVEY_ID} = @surveyId
-                AND {SqlSurveyPage.TABLE_INDEX} = @surveyPageIndex
+                {SqlSurveyPage.SURVEY_ID} = @surveyId
+                AND {SqlSurveyPage.INDEX} = @surveyPageIndex
             GROUP BY
-                {SqlSurveyPage.TABLE_SURVEY_ID},
-                {SqlSurveyPage.TABLE_INDEX},
-                {SqlSurveyPage.TABLE_TITLE},
-                {SqlSurveyPage.TABLE_DESCRIPTION};
+                {SqlSurveyPage.SURVEY_ID},
+                {SqlSurveyPage.INDEX},
+                {SqlSurveyPage.TITLE},
+                {SqlSurveyPage.DESCRIPTION};
 
-            IF @@ROWCOUNT > 0
-            BEGIN
-                SELECT {SqlAnswerType.TABLE_ID}
-                FROM {SqlAnswerType.TABLE}
-                WHERE {SqlAnswerType.TABLE_NAME} = 'SmallText';
+            IF (@@ROWCOUNT = 0)
+                RETURN;
 
-                SELECT {SqlAnswerType.TABLE_ID}
-                FROM {SqlAnswerType.TABLE}
-                WHERE {SqlAnswerType.TABLE_NAME} = 'Checkbox';
+            SELECT
+                {SqlSurveyQuestion.INDEX},
+                {SqlSurveyQuestion.TITLE},
+                {SqlSurveyQuestion.TYPE}
+            FROM
+                {SqlSurveyQuestion.TABLE}
+            WHERE
+                {SqlSurveyQuestion.SURVEY_ID} = @surveyId
+                AND {SqlSurveyQuestion.PAGE_INDEX} = @surveyPageIndex
+            ORDER BY
+                {SqlSurveyQuestion.INDEX};
 
-                SELECT {SqlAnswerType.TABLE_ID}
-                FROM {SqlAnswerType.TABLE}
-                WHERE {SqlAnswerType.TABLE_NAME} = 'Radio';
+            SELECT
+                {SqlSurveyQuestionShowCondition.QUESTION_INDEX},
+                {SqlSurveyQuestionShowCondition.INDEX},
+                {SqlSurveyQuestionShowCondition.TYPE},
+                {SqlSurveyQuestionShowCondition.IS_OR_OPERATOR},
+                COALESCE(
+                    {SqlSurveyQuestionShowConditionsRefArg.ARG_INDEX},
+                    {SqlSurveyQuestionShowConditionsIntegerArg.ARG_INDEX},
+                    {SqlSurveyQuestionShowConditionsTextArg.ARG_INDEX}),
+                {SqlSurveyQuestionShowConditionsRefArg.REFERENCED_PAGE_INDEX},
+                {SqlSurveyQuestionShowConditionsRefArg.REFERENCED_QUESTION_INDEX},
+                {SqlSurveyQuestionShowConditionsIntegerArg.ARG_VALUE},
+                {SqlSurveyQuestionShowConditionsTextArg.ARG_VALUE}
+            FROM
+                {SqlSurveyQuestionShowCondition.TABLE}
+            LEFT JOIN
+                {SqlSurveyQuestionShowConditionsRefArg.TABLE} ON
+                {SqlSurveyQuestionShowConditionsRefArg.SURVEY_ID}
+                    = {SqlSurveyQuestionShowCondition.SURVEY_ID}
+                AND {SqlSurveyQuestionShowConditionsRefArg.PAGE_INDEX}
+                    = {SqlSurveyQuestionShowCondition.PAGE_INDEX}
+                AND {SqlSurveyQuestionShowConditionsRefArg.QUESTION_INDEX}
+                    = {SqlSurveyQuestionShowCondition.QUESTION_INDEX}
+                AND {SqlSurveyQuestionShowConditionsRefArg.INDEX}
+                    = {SqlSurveyQuestionShowCondition.INDEX}
+            LEFT JOIN
+                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE} ON
+                {SqlSurveyQuestionShowConditionsIntegerArg.SURVEY_ID}
+                    = {SqlSurveyQuestionShowCondition.SURVEY_ID}
+                AND {SqlSurveyQuestionShowConditionsIntegerArg.PAGE_INDEX}
+                    = {SqlSurveyQuestionShowCondition.PAGE_INDEX}
+                AND {SqlSurveyQuestionShowConditionsIntegerArg.QUESTION_INDEX}
+                    = {SqlSurveyQuestionShowCondition.QUESTION_INDEX}
+                AND {SqlSurveyQuestionShowConditionsIntegerArg.INDEX}
+                    = {SqlSurveyQuestionShowCondition.INDEX}
+            LEFT JOIN
+                {SqlSurveyQuestionShowConditionsTextArg.TABLE} ON
+                {SqlSurveyQuestionShowConditionsTextArg.SURVEY_ID}
+                    = {SqlSurveyQuestionShowCondition.SURVEY_ID}
+                AND {SqlSurveyQuestionShowConditionsTextArg.PAGE_INDEX}
+                    = {SqlSurveyQuestionShowCondition.PAGE_INDEX}
+                AND {SqlSurveyQuestionShowConditionsTextArg.QUESTION_INDEX}
+                    = {SqlSurveyQuestionShowCondition.QUESTION_INDEX}
+                AND {SqlSurveyQuestionShowConditionsTextArg.INDEX}
+                    = {SqlSurveyQuestionShowCondition.INDEX}
+            WHERE
+                {SqlSurveyQuestionShowCondition.SURVEY_ID} = @surveyId
+                AND {SqlSurveyQuestionShowCondition.PAGE_INDEX} = @surveyPageIndex
+            ORDER BY
+                {SqlSurveyQuestionShowCondition.QUESTION_INDEX},
+                COALESCE(
+                    {SqlSurveyQuestionShowConditionsRefArg.ARG_INDEX},
+                    {SqlSurveyQuestionShowConditionsIntegerArg.ARG_INDEX},
+                    {SqlSurveyQuestionShowConditionsTextArg.ARG_INDEX});
 
-                SELECT {SqlAnswerType.TABLE_ID}
-                FROM {SqlAnswerType.TABLE}
-                WHERE {SqlAnswerType.TABLE_NAME} = 'RadioAndOther';
-
-                SELECT {SqlAnswerType.TABLE_ID}
-                FROM {SqlAnswerType.TABLE}
-                WHERE {SqlAnswerType.TABLE_NAME} = 'MultiSelect';
-
-                SELECT {SqlSurveyQuestionShowConditionType.TABLE_ID}
-                FROM {SqlSurveyQuestionShowConditionType.TABLE}
-                WHERE {SqlSurveyQuestionShowConditionType.TABLE_NAME} = 'IsAnswered';
-
-                SELECT {SqlSurveyQuestionShowConditionType.TABLE_ID}
-                FROM {SqlSurveyQuestionShowConditionType.TABLE}
-                WHERE {SqlSurveyQuestionShowConditionType.TABLE_NAME} = 'IsNotAnswered';
-
-                SELECT {SqlSurveyQuestionValidationConditionType.TABLE_ID}
-                FROM {SqlSurveyQuestionValidationConditionType.TABLE}
-                WHERE {SqlSurveyQuestionValidationConditionType.TABLE_NAME} = 'Min';
-
-                SELECT {SqlSurveyQuestionValidationConditionType.TABLE_ID}
-                FROM {SqlSurveyQuestionValidationConditionType.TABLE}
-                WHERE {SqlSurveyQuestionValidationConditionType.TABLE_NAME} = 'Max';
-
-                SELECT
-                    {SqlSurveyQuestion.TABLE_INDEX},
-                    {SqlSurveyQuestion.TABLE_TITLE},
-                    {SqlSurveyQuestion.TABLE_TYPE}
-                FROM
-                    {SqlSurveyQuestion.TABLE}
-                WHERE
-                    {SqlSurveyQuestion.TABLE_SURVEY_ID} = @surveyId
-                    AND {SqlSurveyQuestion.TABLE_PAGE_INDEX} = @surveyPageIndex
-                ORDER BY
-                    {SqlSurveyQuestion.TABLE_INDEX};
-
-                SELECT
-                    {SqlSurveyQuestionShowCondition.TABLE_QUESTION_INDEX},
-                    {SqlSurveyQuestionShowCondition.TABLE_INDEX},
-                    {SqlSurveyQuestionShowCondition.TABLE_TYPE},
-                    COALESCE(
-                        {SqlSurveyQuestionShowConditionsRefArg.TABLE_ARG_INDEX},
-                        {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_ARG_INDEX},
-                        {SqlSurveyQuestionShowConditionsTextArg.TABLE_ARG_INDEX}),
-                    {SqlSurveyQuestionShowConditionsRefArg.TABLE_REFERENCED_PAGE_INDEX},
-                    {SqlSurveyQuestionShowConditionsRefArg.TABLE_REFERENCED_QUESTION_INDEX},
-                    {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_ARG_VALUE},
-                    {SqlSurveyQuestionShowConditionsTextArg.TABLE_ARG_VALUE}
-                FROM
-                    {SqlSurveyQuestionShowCondition.TABLE}
-                LEFT JOIN
-                    {SqlSurveyQuestionShowConditionsRefArg.TABLE} ON
-                    {SqlSurveyQuestionShowConditionsRefArg.TABLE_SURVEY_ID} = {SqlSurveyQuestionShowCondition.TABLE_SURVEY_ID}
-                    AND {SqlSurveyQuestionShowConditionsRefArg.TABLE_PAGE_INDEX} = {SqlSurveyQuestionShowCondition.TABLE_PAGE_INDEX}
-                    AND {SqlSurveyQuestionShowConditionsRefArg.TABLE_QUESTION_INDEX} = {SqlSurveyQuestionShowCondition.TABLE_QUESTION_INDEX}
-                    AND {SqlSurveyQuestionShowConditionsRefArg.TABLE_INDEX} = {SqlSurveyQuestionShowCondition.TABLE_INDEX}
-                LEFT JOIN
-                    {SqlSurveyQuestionShowConditionsIntegerArg.TABLE} ON
-                    {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_SURVEY_ID} = {SqlSurveyQuestionShowCondition.TABLE_SURVEY_ID}
-                    AND {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_PAGE_INDEX} = {SqlSurveyQuestionShowCondition.TABLE_PAGE_INDEX}
-                    AND {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_QUESTION_INDEX} = {SqlSurveyQuestionShowCondition.TABLE_QUESTION_INDEX}
-                    AND {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_INDEX} = {SqlSurveyQuestionShowCondition.TABLE_INDEX}
-                LEFT JOIN
-                    {SqlSurveyQuestionShowConditionsTextArg.TABLE} ON
-                    {SqlSurveyQuestionShowConditionsTextArg.TABLE_SURVEY_ID} = {SqlSurveyQuestionShowCondition.TABLE_SURVEY_ID}
-                    AND {SqlSurveyQuestionShowConditionsTextArg.TABLE_PAGE_INDEX} = {SqlSurveyQuestionShowCondition.TABLE_PAGE_INDEX}
-                    AND {SqlSurveyQuestionShowConditionsTextArg.TABLE_QUESTION_INDEX} = {SqlSurveyQuestionShowCondition.TABLE_QUESTION_INDEX}
-                    AND {SqlSurveyQuestionShowConditionsTextArg.TABLE_INDEX} = {SqlSurveyQuestionShowCondition.TABLE_INDEX}
-                WHERE
-                    {SqlSurveyQuestionShowCondition.TABLE_SURVEY_ID} = @surveyId
-                    AND {SqlSurveyQuestionShowCondition.TABLE_PAGE_INDEX} = @surveyPageIndex
-                ORDER BY
-                    {SqlSurveyQuestionShowCondition.TABLE_QUESTION_INDEX},
-                    COALESCE(
-                        {SqlSurveyQuestionShowConditionsRefArg.TABLE_ARG_INDEX},
-                        {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_ARG_INDEX},
-                        {SqlSurveyQuestionShowConditionsTextArg.TABLE_ARG_INDEX});
-
-                SELECT
-                    {SqlSurveyQuestion.TABLE_INDEX},
-                    {SqlSurveyQuestion.TABLE_TITLE},
-                    {SqlSurveyQuestion.TABLE_TYPE}
-                FROM
-                    {SqlSurveyQuestion.TABLE}
-                WHERE
-                    {SqlSurveyQuestion.TABLE_SURVEY_ID} = @surveyId
-                    AND {SqlSurveyQuestion.TABLE_PAGE_INDEX} = @surveyPageIndex
-                ORDER BY
-                    {SqlSurveyQuestion.TABLE_INDEX};
-
-                SELECT
-                    {SqlSurveyQuestionValidationCondition.TABLE_QUESTION_INDEX},
-                    {SqlSurveyQuestionValidationCondition.TABLE_INDEX},
-                    {SqlSurveyQuestionValidationCondition.TABLE_TYPE},
-                    COALESCE(
-                        {SqlSurveyQuestionValidationConditionsRefArg.TABLE_ARG_INDEX},
-                        {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_ARG_INDEX},
-                        {SqlSurveyQuestionValidationConditionsTextArg.TABLE_ARG_INDEX}),
-                    {SqlSurveyQuestionValidationConditionsRefArg.TABLE_REFERENCED_PAGE_INDEX},
-                    {SqlSurveyQuestionValidationConditionsRefArg.TABLE_REFERENCED_QUESTION_INDEX},
-                    {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_ARG_VALUE},
-                    {SqlSurveyQuestionValidationConditionsTextArg.TABLE_ARG_VALUE}
-                FROM
-                    {SqlSurveyQuestionValidationCondition.TABLE}
-                LEFT JOIN
-                    {SqlSurveyQuestionValidationConditionsRefArg.TABLE} ON
-                    {SqlSurveyQuestionValidationConditionsRefArg.TABLE_SURVEY_ID} = {SqlSurveyQuestionValidationCondition.TABLE_SURVEY_ID}
-                    AND {SqlSurveyQuestionValidationConditionsRefArg.TABLE_PAGE_INDEX} = {SqlSurveyQuestionValidationCondition.TABLE_PAGE_INDEX}
-                    AND {SqlSurveyQuestionValidationConditionsRefArg.TABLE_QUESTION_INDEX} = {SqlSurveyQuestionValidationCondition.TABLE_QUESTION_INDEX}
-                    AND {SqlSurveyQuestionValidationConditionsRefArg.TABLE_INDEX} = {SqlSurveyQuestionValidationCondition.TABLE_INDEX}
-                LEFT JOIN
-                    {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE} ON
-                    {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_SURVEY_ID} = {SqlSurveyQuestionValidationCondition.TABLE_SURVEY_ID}
-                    AND {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_PAGE_INDEX} = {SqlSurveyQuestionValidationCondition.TABLE_PAGE_INDEX}
-                    AND {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_QUESTION_INDEX} = {SqlSurveyQuestionValidationCondition.TABLE_QUESTION_INDEX}
-                    AND {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_INDEX} = {SqlSurveyQuestionValidationCondition.TABLE_INDEX}
-                LEFT JOIN
-                    {SqlSurveyQuestionValidationConditionsTextArg.TABLE} ON
-                    {SqlSurveyQuestionValidationConditionsTextArg.TABLE_SURVEY_ID} = {SqlSurveyQuestionValidationCondition.TABLE_SURVEY_ID}
-                    AND {SqlSurveyQuestionValidationConditionsTextArg.TABLE_PAGE_INDEX} = {SqlSurveyQuestionValidationCondition.TABLE_PAGE_INDEX}
-                    AND {SqlSurveyQuestionValidationConditionsTextArg.TABLE_QUESTION_INDEX} = {SqlSurveyQuestionValidationCondition.TABLE_QUESTION_INDEX}
-                    AND {SqlSurveyQuestionValidationConditionsTextArg.TABLE_INDEX} = {SqlSurveyQuestionValidationCondition.TABLE_INDEX}
-                WHERE
-                    {SqlSurveyQuestionValidationCondition.TABLE_SURVEY_ID} = @surveyId
-                    AND {SqlSurveyQuestionValidationCondition.TABLE_PAGE_INDEX} = @surveyPageIndex
-                ORDER BY
-                    {SqlSurveyQuestionValidationCondition.TABLE_QUESTION_INDEX},
-                    COALESCE(
-                        {SqlSurveyQuestionValidationConditionsRefArg.TABLE_ARG_INDEX},
-                        {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_ARG_INDEX},
-                        {SqlSurveyQuestionValidationConditionsTextArg.TABLE_ARG_INDEX});
-            END
+            SELECT
+                {SqlSurveyQuestionValidationCondition.QUESTION_INDEX},
+                {SqlSurveyQuestionValidationCondition.INDEX},
+                {SqlSurveyQuestionValidationCondition.TYPE},
+                {SqlSurveyQuestionValidationCondition.IS_OR_OPERATOR},
+                COALESCE(
+                    {SqlSurveyQuestionValidationConditionsRefArg.ARG_INDEX},
+                    {SqlSurveyQuestionValidationConditionsIntegerArg.ARG_INDEX},
+                    {SqlSurveyQuestionValidationConditionsTextArg.ARG_INDEX}),
+                {SqlSurveyQuestionValidationConditionsRefArg.REFERENCED_PAGE_INDEX},
+                {SqlSurveyQuestionValidationConditionsRefArg.REFERENCED_QUESTION_INDEX},
+                {SqlSurveyQuestionValidationConditionsIntegerArg.ARG_VALUE},
+                {SqlSurveyQuestionValidationConditionsTextArg.ARG_VALUE}
+            FROM
+                {SqlSurveyQuestionValidationCondition.TABLE}
+            LEFT JOIN
+                {SqlSurveyQuestionValidationConditionsRefArg.TABLE} ON
+                {SqlSurveyQuestionValidationConditionsRefArg.SURVEY_ID}
+                    = {SqlSurveyQuestionValidationCondition.SURVEY_ID}
+                AND {SqlSurveyQuestionValidationConditionsRefArg.PAGE_INDEX}
+                    = {SqlSurveyQuestionValidationCondition.PAGE_INDEX}
+                AND {SqlSurveyQuestionValidationConditionsRefArg.QUESTION_INDEX}
+                    = {SqlSurveyQuestionValidationCondition.QUESTION_INDEX}
+                AND {SqlSurveyQuestionValidationConditionsRefArg.INDEX}
+                    = {SqlSurveyQuestionValidationCondition.INDEX}
+            LEFT JOIN
+                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE} ON
+                {SqlSurveyQuestionValidationConditionsIntegerArg.SURVEY_ID}
+                    = {SqlSurveyQuestionValidationCondition.SURVEY_ID}
+                AND {SqlSurveyQuestionValidationConditionsIntegerArg.PAGE_INDEX}
+                    = {SqlSurveyQuestionValidationCondition.PAGE_INDEX}
+                AND {SqlSurveyQuestionValidationConditionsIntegerArg.QUESTION_INDEX}
+                    = {SqlSurveyQuestionValidationCondition.QUESTION_INDEX}
+                AND {SqlSurveyQuestionValidationConditionsIntegerArg.INDEX}
+                    = {SqlSurveyQuestionValidationCondition.INDEX}
+            LEFT JOIN
+                {SqlSurveyQuestionValidationConditionsTextArg.TABLE} ON
+                {SqlSurveyQuestionValidationConditionsTextArg.SURVEY_ID}
+                    = {SqlSurveyQuestionValidationCondition.SURVEY_ID}
+                AND {SqlSurveyQuestionValidationConditionsTextArg.PAGE_INDEX}
+                    = {SqlSurveyQuestionValidationCondition.PAGE_INDEX}
+                AND {SqlSurveyQuestionValidationConditionsTextArg.QUESTION_INDEX}
+                    = {SqlSurveyQuestionValidationCondition.QUESTION_INDEX}
+                AND {SqlSurveyQuestionValidationConditionsTextArg.INDEX}
+                    = {SqlSurveyQuestionValidationCondition.INDEX}
+            WHERE
+                {SqlSurveyQuestionValidationCondition.SURVEY_ID} = @surveyId
+                AND {SqlSurveyQuestionValidationCondition.PAGE_INDEX} = @surveyPageIndex
+            ORDER BY
+                {SqlSurveyQuestionValidationCondition.QUESTION_INDEX},
+                COALESCE(
+                    {SqlSurveyQuestionValidationConditionsRefArg.ARG_INDEX},
+                    {SqlSurveyQuestionValidationConditionsIntegerArg.ARG_INDEX},
+                    {SqlSurveyQuestionValidationConditionsTextArg.ARG_INDEX});
             """,
             connection);
 
@@ -272,69 +258,6 @@ public class SurveyController(IConfiguration configuration) : Controller
         int questionCount = reader.GetSqlInt32(2).StrictValue();
 
         await reader.NextResultAsync();
-        if (!await reader.ReadAsync())
-            throw new MissingFieldException(
-                "Missing answer type 'SmallText' in database.");
-
-        byte answerTypeSmallText = reader.GetSqlByte(0).StrictValue();
-
-        await reader.NextResultAsync();
-        if (!await reader.ReadAsync())
-            throw new MissingFieldException(
-                "Missing answer type 'Checkbox' in database.");
-
-        byte answerTypeCheckbox = reader.GetSqlByte(0).StrictValue();
-
-        await reader.NextResultAsync();
-        if (!await reader.ReadAsync())
-            throw new MissingFieldException(
-                "Missing answer type 'Radio' in database.");
-
-        byte answerTypeRadio = reader.GetSqlByte(0).StrictValue();
-
-        await reader.NextResultAsync();
-        if (!await reader.ReadAsync())
-            throw new MissingFieldException(
-                "Missing answer type 'RadioAndOther' in database.");
-
-        byte answerTypeRadioAndOther = reader.GetSqlByte(0).StrictValue();
-
-        await reader.NextResultAsync();
-        if (!await reader.ReadAsync())
-            throw new MissingFieldException(
-                "Missing answer type 'MultiSelect' in database.");
-
-        byte answerTypeMultiSelect = reader.GetSqlByte(0).StrictValue();
-
-        await reader.NextResultAsync();
-        if (!await reader.ReadAsync())
-            throw new MissingFieldException(
-                "Missing show condition type 'IsAnswered' in database.");
-
-        byte showConditionIsAnsweredId = reader.GetSqlByte(0).StrictValue();
-
-        await reader.NextResultAsync();
-        if (!await reader.ReadAsync())
-            throw new MissingFieldException(
-                "Missing show condition type 'IsNotAnswered' in database.");
-
-        byte showConditionIsNotAnsweredId = reader.GetSqlByte(0).StrictValue();
-
-        await reader.NextResultAsync();
-        if (!await reader.ReadAsync())
-            throw new MissingFieldException(
-                "Missing validation condition type 'Min' in database.");
-
-        byte validationConditionMinId = reader.GetSqlByte(0).StrictValue();
-
-        await reader.NextResultAsync();
-        if (!await reader.ReadAsync())
-            throw new MissingFieldException(
-                "Missing validation condition type 'Max' in database.");
-
-        byte validationConditionMaxId = reader.GetSqlByte(0).StrictValue();
-
-        await reader.NextResultAsync();
 
         List<SurveyQuestionViewFields> questions = [];
 
@@ -346,22 +269,60 @@ public class SurveyController(IConfiguration configuration) : Controller
 
             questions.Add(new SurveyQuestionViewFields(
                 reader.GetSqlString(1).StrictValue(),
-                reader.GetSqlByte(2).StrictValue() is var type &&
-                type == answerTypeSmallText ? SurveyQuestionAnswerType.SmallText :
-                type == answerTypeCheckbox ? SurveyQuestionAnswerType.Checkbox :
-                type == answerTypeRadio ? SurveyQuestionAnswerType.Radio :
-                type == answerTypeRadioAndOther ? SurveyQuestionAnswerType.RadioAndOther :
-                type == answerTypeMultiSelect ? SurveyQuestionAnswerType.MultiSelect :
-                throw new InvalidDataException($"Unknown answer type '{type}'.")));
+                enumService.SurveyQuestionAnswerTypeMap[reader.GetSqlByte(2).StrictValue()],
+                [],
+                []));
         }
 
         await reader.NextResultAsync();
 
-        // TODO: Show conditions.
+        while (await reader.ReadAsync())
+        {
+            int questionIndex = reader.GetSqlInt32(0).StrictValue();
+            if (questionIndex < 0 || questionIndex >= questions.Count)
+                throw new InvalidDataException(
+                    "Show condition question index out of range.");
+
+            SurveyQuestionViewFields question = questions[questionIndex];
+
+            if (reader.GetSqlInt32(1).StrictValue() != question.ShowConditions.Count)
+                throw new InvalidDataException(
+                    "Show condition indexes must be sequential starting from 0 for each question.");
+
+            questions[questionIndex].ShowConditions.Add(new SurveyQuestionShowConditionViewFields(
+                enumService.SurveyQuestionShowConditionTypeMap[reader.GetSqlByte(2).StrictValue()],
+                (SurveyQuestionConditionOperator)reader.GetSqlByte(3).StrictValue(),
+                reader.IsDBNull(5)
+                    ? null
+                    : (reader.GetSqlInt32(5).StrictValue(), reader.GetSqlInt32(6).StrictValue()),
+                reader.GetSqlInt32(7).CheckedValue(),
+                reader.GetSqlString(8).CheckedValue()));
+        }
 
         await reader.NextResultAsync();
 
-        // TODO: Validation conditions.
+        while (await reader.ReadAsync())
+        {
+            int questionIndex = reader.GetSqlInt32(0).StrictValue();
+            if (questionIndex < 0 || questionIndex >= questions.Count)
+                throw new InvalidDataException(
+                    "Validation condition question index out of range.");
+
+            SurveyQuestionViewFields question = questions[questionIndex];
+
+            if (reader.GetSqlInt32(1).StrictValue() != question.ValidationConditions.Count)
+                throw new InvalidDataException(
+                    "Validation condition indexes must be sequential starting from 0 for each question.");
+
+            questions[questionIndex].ValidationConditions.Add(new SurveyQuestionValidationConditionViewFields(
+                enumService.SurveyQuestionValidationConditionTypeMap[reader.GetSqlByte(2).StrictValue()],
+                (SurveyQuestionConditionOperator)reader.GetSqlByte(3).StrictValue(),
+                reader.IsDBNull(5)
+                    ? null
+                    : (reader.GetSqlInt32(5).StrictValue(), reader.GetSqlInt32(6).StrictValue()),
+                reader.GetSqlInt32(7).CheckedValue(),
+                reader.GetSqlString(8).CheckedValue()));
+        }
 
         ViewData["questions"] = questions;
 

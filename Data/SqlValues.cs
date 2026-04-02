@@ -1,6 +1,6 @@
 using System.Data.SqlTypes;
 
-namespace DataDriven;
+namespace DataDriven.Data;
 
 public static class SqlValueExtensions
 {

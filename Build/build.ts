@@ -4,7 +4,8 @@ import * as YAML from "yaml";
 import { sqlFileFrom } from "./database/database_sql.ts";
 import { preprocessObject } from "./database/preprocess.ts";
 import { exec } from "node:child_process";
-import { csFileFrom } from "./database/database_cs.ts";
+import { csShapeFileFrom } from "./database/database_cs_shape.ts";
+import { csEnumServiceFileFrom } from "./database/database_cs_enum_service.ts";
 
 // ASP.NET has custom build options that are capable of running this but it
 // shows its own errors that I don't want to deal with.
@@ -38,11 +39,18 @@ log("success", "Build Started.");
                 .then(() => log("success", "Converted database structure to SQL file.")),
 
             fs.writeFile(
-                "./Models/DatabaseStructure.cs",
+                "./Data/DatabaseTables.cs",
                 `// This file was auto-generated based on ./Build/database/database_structure.yaml
-` + csFileFrom(databaseStructure),
+` + csShapeFileFrom(databaseStructure),
                 "utf-8")
-                .then(() => log("success", "Converted database structure to C# accessors.")),
+                .then(() => log("success", "Converted database tables to C# records.")),
+
+            fs.writeFile(
+                "./Data/DatabaseEnums.cs",
+                `// This file was auto-generated based on ./Build/database/database_structure.yaml
+` + csEnumServiceFileFrom(databaseStructure),
+                "utf-8")
+                .then(() => log("success", "Converted database enums to ASP.NET enum service.")),
 
             new Promise<void>((resolve, reject) => exec("npx tsc", {}, (error) =>
             {

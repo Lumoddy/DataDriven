@@ -21,24 +21,44 @@ replacements:
   - - { type: DATE }
     - { type: DATETIME }
 
+enums:
+
+  survey_question_answer_types:
+    values:
+      SmallText:
+      Checkbox:
+      Radio:
+      RadioAndOther:
+      MultiSelect:
+
+  survey_question_show_condition_types:
+    values:
+      HasAnswered:
+      HasNotAnswered:
+
+  survey_question_validation_condition_types:
+    values:
+      Min:
+      Max:
+
 tables:
 
   surveys:
     columns:
-      survey_id: { C# Short Single: Id, type: ID }
-      survey_title: { C# Short Single: Title, type: NAME }
-      survey_author: { C# Short Single: Author, type: NAME }
-      survey_description: { C# Short Single: Description, type: DESCRIPTION }
+      survey_id: { short_single: id, type: ID }
+      survey_title: { short_single: title, type: NAME }
+      survey_author: { short_single: author, type: NAME }
+      survey_description: { short_single: description, type: DESCRIPTION }
     constraints:
     - primary:
       - survey_id
 
   survey_pages:
     columns:
-      survey_id: { C# Short Single: SurveyId, type: ID }
-      survey_page_index: { C# Short Single: Index, type: INDEX }
-      survey_page_title: { C# Short Single: Title, type: TITLE }
-      survey_page_description: { C# Short Single: Description, type: DESCRIPTION }
+      survey_id: { short_single: survey_id, type: ID }
+      survey_page_index: { short_single: index, type: INDEX }
+      survey_page_title: { short_single: title, type: TITLE }
+      survey_page_description: { short_single: description, type: DESCRIPTION }
     constraints:
     - primary:
       - survey_id
@@ -48,21 +68,13 @@ tables:
       - surveys:
         - survey_id
 
-  answer_types:
-    columns:
-      answer_type_id: { C# Short Single: Id, type: ENUM }
-      answer_type_name: { C# Short Single: Name, type: NAME }
-    constraints:
-    - primary:
-      - answer_type_id
-
   survey_questions:
     columns:
-      survey_id: { C# Short Single: SurveyId, type: ID }
-      survey_page_index: { C# Short Single: PageIndex, type: INDEX }
-      survey_question_index: { C# Short Single: Index, type: INDEX }
-      survey_question_prompt: { C# Short Single: Title, type: TITLE }
-      survey_question_answer_type: { C# Short Single: Type, type: ENUM }
+      survey_id: { short_single: survey_id, type: ID }
+      survey_page_index: { short_single: page_index, type: INDEX }
+      survey_question_index: { short_single: index, type: INDEX }
+      survey_question_prompt: { short_single: title, type: TITLE }
+      survey_question_survey_question_answer_type: { short_single: type, type: ENUM }
     constraints:
     - primary:
       - survey_id
@@ -77,21 +89,21 @@ tables:
 
   registered_members:
     columns:
-      registered_member_id: { C# Short Single: Id, type: ID }
-      registered_member_password_hash: { C# Short Single: PasswordHash, type: HASH }
-      registered_member_phone_number: { C# Short Single: PhoneNumber, type: VARCHAR, size: 13 }
-      registered_member_birth_date: { C# Short Single: BirthDate, type: DATE }
-      registered_member_first_name: { C# Short Single: FirstName, type: NAME }
-      registered_member_last_name: { C# Short Single: LastName, type: NAME }
+      registered_member_id: { short_single: id, type: ID }
+      registered_member_password_hash: { short_single: password_hash, type: HASH }
+      registered_member_phone_number: { short_single: phone_number, type: VARCHAR, size: 13 }
+      registered_member_birth_date: { short_single: birth_date, type: DATE }
+      registered_member_first_name: { short_single: first_name, type: NAME }
+      registered_member_last_name: { short_single: last_name, type: NAME }
     constraints:
     - primary:
       - registered_member_id
 
   submissions:
     columns:
-      survey_id: { C# Short Single: SurveyId, type: ID }
-      submission_index: { C# Short Single: Index, type: INDEX }
-      registered_member_id: { C# Short Single: RegisteredMemberId, type: ID, nullable: true }
+      survey_id: { short_single: survey_id, type: ID }
+      submission_index: { short_single: index, type: INDEX }
+      registered_member_id: { short_single: registered_member_id, type: ID, nullable: true }
     constraints:
     - primary:
       - survey_id
@@ -107,12 +119,12 @@ tables:
 
   submission_text_answers:
     columns:
-      survey_id: { C# Short Single: SurveyId, type: ID }
-      survey_page_index: { C# Short Single: PageIndex, type: INDEX }
-      survey_question_index: { C# Short Single: QuestionIndex, type: INDEX }
-      submission_index: { C# Short Single: SubmissionIndex, type: INDEX }
-      submission_answer_index: { C# Short Single: AnswerIndex, type: INDEX }
-      submission_answer_text: { C# Short Single: Value, type: VARCHAR, size: MAX }
+      survey_id: { short_single: survey_id, type: ID }
+      survey_page_index: { short_single: page_index, type: INDEX }
+      survey_question_index: { short_single: question_index, type: INDEX }
+      submission_index: { short_single: submission_index, type: INDEX }
+      submission_answer_index: { short_single: answer_index, type: INDEX }
+      submission_answer_text: { short_single: value, type: VARCHAR, size: MAX }
     constraints:
     - primary:
       - survey_id
@@ -137,12 +149,12 @@ tables:
 
   submission_integer_answers:
     columns:
-      survey_id: { C# Short Single: SurveyId, type: ID }
-      survey_page_index: { C# Short Single: PageIndex, type: INDEX }
-      survey_question_index: { C# Short Single: QuestionIndex, type: INDEX }
-      submission_index: { C# Short Single: SubmissionIndex, type: INDEX }
-      submission_answer_index: { C# Short Single: AnswerIndex, type: INDEX }
-      submission_answer_integer: { C# Short Single: Value, type: INT }
+      survey_id: { short_single: survey_id, type: ID }
+      survey_page_index: { short_single: page_index, type: INDEX }
+      survey_question_index: { short_single: question_index, type: INDEX }
+      submission_index: { short_single: submission_index, type: INDEX }
+      submission_answer_index: { short_single: answer_index, type: INDEX }
+      submission_answer_integer: { short_single: value, type: INT }
     constraints:
     - primary:
       - survey_id
@@ -167,12 +179,12 @@ tables:
 
   submission_bool_answers:
     columns:
-      survey_id: { C# Short Single: SurveyId, type: ID }
-      survey_page_index: { C# Short Single: PageIndex, type: INDEX }
-      survey_question_index: { C# Short Single: QuestionIndex, type: INDEX }
-      submission_index: { C# Short Single: SubmissionIndex, type: INDEX }
-      submission_answer_index: { C# Short Single: Index, type: INDEX }
-      submission_answer_bool: { C# Short Single: Value, type: BOOL }
+      survey_id: { short_single: survey_id, type: ID }
+      survey_page_index: { short_single: page_index, type: INDEX }
+      survey_question_index: { short_single: question_index, type: INDEX }
+      submission_index: { short_single: submission_index, type: INDEX }
+      submission_answer_index: { short_single: index, type: INDEX }
+      submission_answer_bool: { short_single: value, type: BOOL }
     constraints:
     - primary:
       - survey_id
@@ -197,11 +209,11 @@ tables:
 
   survey_question_answer_options:
     columns:
-      survey_id: { C# Short Single: SurveyId, type: ID }
-      survey_page_index: { C# Short Single: PageIndex, type: INDEX }
-      survey_question_index: { C# Short Single: QuestionIndex, type: INDEX }
-      survey_answer_option_index: { C# Short Single: Index, type: INDEX }
-      survey_answer_option_text: { C# Short Single: Text, type: TITLE }
+      survey_id: { short_single: survey_id, type: ID }
+      survey_page_index: { short_single: page_index, type: INDEX }
+      survey_question_index: { short_single: question_index, type: INDEX }
+      survey_answer_option_index: { short_single: index, type: INDEX }
+      survey_answer_option_text: { short_single: text, type: TITLE }
     constraints:
     - primary:
       - survey_id
@@ -217,22 +229,14 @@ tables:
         - survey_page_index
         - survey_question_index
 
-  survey_question_show_condition_types:
-    columns:
-      survey_question_show_condition_type_id: { C# Short Single: Id, type: ENUM }
-      survey_question_show_condition_type_name: { C# Short Single: Name, type: NAME }
-    constraints:
-    - primary:
-      - survey_question_show_condition_type_id
-
   survey_question_show_conditions:
     columns:
-      survey_id: { C# Short Single: SurveyId, type: ID }
-      survey_page_index: { C# Short Single: PageIndex, type: INDEX }
-      survey_question_index: { C# Short Single: QuestionIndex, type: INDEX }
-      survey_question_show_condition_index: { C# Short Single: Index, type: INDEX }
-      survey_question_show_condition_type: { C# Short Single: Type, type: ENUM }
-      survey_question_show_condition_operator: { C# Short Single: IsOrOperator, type: BOOL }
+      survey_id: { short_single: survey_id, type: ID }
+      survey_page_index: { short_single: page_index, type: INDEX }
+      survey_question_index: { short_single: question_index, type: INDEX }
+      survey_question_show_condition_index: { short_single: index, type: INDEX }
+      survey_question_show_condition_type: { short_single: type, type: ENUM }
+      survey_question_show_condition_operator: { short_single: is_or_operator, type: BOOL }
     constraints:
     - primary:
       - survey_id
@@ -254,13 +258,13 @@ tables:
 
   survey_question_show_conditions_ref_args:
     columns:
-      survey_id: { C# Short Single: SurveyId, type: ID }
-      survey_page_index: { C# Short Single: PageIndex, type: INDEX }
-      survey_question_index: { C# Short Single: QuestionIndex, type: INDEX }
-      survey_question_show_condition_index: { C# Short Single: Index, type: INDEX }
-      survey_question_show_condition_arg_index: { C# Short Single: ArgIndex, type: INDEX }
-      referenced_survey_page_index: { C# Short Single: ReferencedPageIndex, type: INDEX }
-      referenced_survey_question_index: { C# Short Single: ReferencedQuestionIndex, type: INDEX }
+      survey_id: { short_single: survey_id, type: ID }
+      survey_page_index: { short_single: page_index, type: INDEX }
+      survey_question_index: { short_single: question_index, type: INDEX }
+      survey_question_show_condition_index: { short_single: index, type: INDEX }
+      survey_question_show_condition_arg_index: { short_single: arg_index, type: INDEX }
+      referenced_survey_page_index: { short_single: referenced_page_index, type: INDEX }
+      referenced_survey_question_index: { short_single: referenced_question_index, type: INDEX }
     constraints:
     - primary:
       - survey_id
@@ -297,12 +301,12 @@ tables:
 
   survey_question_show_conditions_integer_args:
     columns:
-      survey_id: { C# Short Single: SurveyId, type: ID }
-      survey_page_index: { C# Short Single: PageIndex, type: INDEX }
-      survey_question_index: { C# Short Single: QuestionIndex, type: INDEX }
-      survey_question_show_condition_index: { C# Short Single: Index, type: INDEX }
-      survey_question_show_condition_arg_index: { C# Short Single: ArgIndex, type: INDEX }
-      survey_question_show_condition_arg_integer: { C# Short Single: ArgValue, type: INT }
+      survey_id: { short_single: survey_id, type: ID }
+      survey_page_index: { short_single: page_index, type: INDEX }
+      survey_question_index: { short_single: question_index, type: INDEX }
+      survey_question_show_condition_index: { short_single: index, type: INDEX }
+      survey_question_show_condition_arg_index: { short_single: arg_index, type: INDEX }
+      survey_question_show_condition_arg_integer: { short_single: arg_value, type: INT }
     constraints:
     - primary:
       - survey_id
@@ -331,12 +335,12 @@ tables:
 
   survey_question_show_conditions_text_args:
     columns:
-      survey_id: { C# Short Single: SurveyId, type: ID }
-      survey_page_index: { C# Short Single: PageIndex, type: INDEX }
-      survey_question_index: { C# Short Single: QuestionIndex, type: INDEX }
-      survey_question_show_condition_index: { C# Short Single: Index, type: INDEX }
-      survey_question_show_condition_arg_index: { C# Short Single: ArgIndex, type: INDEX }
-      survey_question_show_condition_arg_text: { C# Short Single: ArgValue, type: VARCHAR, size: MAX }
+      survey_id: { short_single: survey_id, type: ID }
+      survey_page_index: { short_single: page_index, type: INDEX }
+      survey_question_index: { short_single: question_index, type: INDEX }
+      survey_question_show_condition_index: { short_single: index, type: INDEX }
+      survey_question_show_condition_arg_index: { short_single: arg_index, type: INDEX }
+      survey_question_show_condition_arg_text: { short_single: arg_value, type: VARCHAR, size: MAX }
     constraints:
     - primary:
       - survey_id
@@ -363,22 +367,14 @@ tables:
         - survey_page_index
         - survey_question_index
 
-  survey_question_validation_condition_types:
-    columns:
-      survey_question_validation_condition_type_id: { C# Short Single: Id, type: ENUM }
-      survey_question_validation_condition_type_name: { C# Short Single: Name, type: NAME }
-    constraints:
-    - primary:
-      - survey_question_validation_condition_type_id
-
   survey_question_validation_conditions:
     columns:
-      survey_id: { C# Short Single: SurveyId, type: ID }
-      survey_page_index: { C# Short Single: PageIndex, type: INDEX }
-      survey_question_index: { C# Short Single: QuestionIndex, type: INDEX }
-      survey_question_validation_condition_index: { C# Short Single: Index, type: INDEX }
-      survey_question_validation_condition_type: { C# Short Single: Type, type: ENUM }
-      survey_question_validation_condition_operator: { C# Short Single: IsOrOperator, type: BOOL }
+      survey_id: { short_single: survey_id, type: ID }
+      survey_page_index: { short_single: page_index, type: INDEX }
+      survey_question_index: { short_single: question_index, type: INDEX }
+      survey_question_validation_condition_index: { short_single: index, type: INDEX }
+      survey_question_validation_condition_type: { short_single: type, type: ENUM }
+      survey_question_validation_condition_operator: { short_single: is_or_operator, type: BOOL }
     constraints:
     - primary:
       - survey_id
@@ -400,13 +396,13 @@ tables:
 
   survey_question_validation_conditions_ref_args:
     columns:
-      survey_id: { C# Short Single: SurveyId, type: ID }
-      survey_page_index: { C# Short Single: PageIndex, type: INDEX }
-      survey_question_index: { C# Short Single: QuestionIndex, type: INDEX }
-      survey_question_validation_condition_index: { C# Short Single: Index, type: INDEX }
-      survey_question_validation_condition_arg_index: { C# Short Single: ArgIndex, type: INDEX }
-      referenced_survey_page_index: { C# Short Single: ReferencedPageIndex, type: INDEX }
-      referenced_survey_question_index: { C# Short Single: ReferencedQuestionIndex, type: INDEX }
+      survey_id: { short_single: survey_id, type: ID }
+      survey_page_index: { short_single: page_index, type: INDEX }
+      survey_question_index: { short_single: question_index, type: INDEX }
+      survey_question_validation_condition_index: { short_single: index, type: INDEX }
+      survey_question_validation_condition_arg_index: { short_single: arg_index, type: INDEX }
+      referenced_survey_page_index: { short_single: referenced_page_index, type: INDEX }
+      referenced_survey_question_index: { short_single: referenced_question_index, type: INDEX }
     constraints:
     - primary:
       - survey_id
@@ -443,12 +439,12 @@ tables:
 
   survey_question_validation_conditions_integer_args:
     columns:
-      survey_id: { C# Short Single: SurveyId, type: ID }
-      survey_page_index: { C# Short Single: PageIndex, type: INDEX }
-      survey_question_index: { C# Short Single: QuestionIndex, type: INDEX }
-      survey_question_validation_condition_index: { C# Short Single: Index, type: INDEX }
-      survey_question_validation_condition_arg_index: { C# Short Single: ArgIndex, type: INDEX }
-      survey_question_validation_condition_arg_integer: { C# Short Single: ArgValue, type: INT }
+      survey_id: { short_single: survey_id, type: ID }
+      survey_page_index: { short_single: page_index, type: INDEX }
+      survey_question_index: { short_single: question_index, type: INDEX }
+      survey_question_validation_condition_index: { short_single: index, type: INDEX }
+      survey_question_validation_condition_arg_index: { short_single: arg_index, type: INDEX }
+      survey_question_validation_condition_arg_integer: { short_single: arg_value, type: INT }
     constraints:
     - primary:
       - survey_id
@@ -477,12 +473,12 @@ tables:
 
   survey_question_validation_conditions_text_args:
     columns:
-      survey_id: { C# Short Single: SurveyId, type: ID }
-      survey_page_index: { C# Short Single: PageIndex, type: INDEX }
-      survey_question_index: { C# Short Single: QuestionIndex, type: INDEX }
-      survey_question_validation_condition_index: { C# Short Single: Index, type: INDEX }
-      survey_question_validation_condition_arg_index: { C# Short Single: ArgIndex, type: INDEX }
-      survey_question_validation_condition_arg_text: { C# Short Single: ArgValue, type: VARCHAR, size: MAX }
+      survey_id: { short_single: survey_id, type: ID }
+      survey_page_index: { short_single: page_index, type: INDEX }
+      survey_question_index: { short_single: question_index, type: INDEX }
+      survey_question_validation_condition_index: { short_single: index, type: INDEX }
+      survey_question_validation_condition_arg_index: { short_single: arg_index, type: INDEX }
+      survey_question_validation_condition_arg_text: { short_single: arg_value, type: VARCHAR, size: MAX }
     constraints:
     - primary:
       - survey_id

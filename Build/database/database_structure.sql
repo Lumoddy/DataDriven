@@ -2,6 +2,18 @@
 
 BEGIN TRANSACTION;
 
+CREATE TABLE [survey_question_answer_types] (
+    [survey_question_answer_type_id] TINYINT NOT NULL,
+    [survey_question_answer_type_name] VARCHAR(255) NOT NULL);
+
+CREATE TABLE [survey_question_show_condition_types] (
+    [survey_question_show_condition_type_id] TINYINT NOT NULL,
+    [survey_question_show_condition_type_name] VARCHAR(255) NOT NULL);
+
+CREATE TABLE [survey_question_validation_condition_types] (
+    [survey_question_validation_condition_type_id] TINYINT NOT NULL,
+    [survey_question_validation_condition_type_name] VARCHAR(255) NOT NULL);
+
 CREATE TABLE [surveys] (
     [survey_id] INT NOT NULL,
     [survey_title] VARCHAR(255) NOT NULL,
@@ -14,16 +26,12 @@ CREATE TABLE [survey_pages] (
     [survey_page_title] VARCHAR(1023) NOT NULL,
     [survey_page_description] VARCHAR(MAX) NOT NULL);
 
-CREATE TABLE [answer_types] (
-    [answer_type_id] TINYINT NOT NULL,
-    [answer_type_name] VARCHAR(255) NOT NULL);
-
 CREATE TABLE [survey_questions] (
     [survey_id] INT NOT NULL,
     [survey_page_index] INT NOT NULL,
     [survey_question_index] INT NOT NULL,
     [survey_question_prompt] VARCHAR(1023) NOT NULL,
-    [survey_question_answer_type] TINYINT NOT NULL);
+    [survey_question_survey_question_answer_type] TINYINT NOT NULL);
 
 CREATE TABLE [registered_members] (
     [registered_member_id] INT NOT NULL,
@@ -69,10 +77,6 @@ CREATE TABLE [survey_question_answer_options] (
     [survey_answer_option_index] INT NOT NULL,
     [survey_answer_option_text] VARCHAR(1023) NOT NULL);
 
-CREATE TABLE [survey_question_show_condition_types] (
-    [survey_question_show_condition_type_id] TINYINT NOT NULL,
-    [survey_question_show_condition_type_name] VARCHAR(255) NOT NULL);
-
 CREATE TABLE [survey_question_show_conditions] (
     [survey_id] INT NOT NULL,
     [survey_page_index] INT NOT NULL,
@@ -105,10 +109,6 @@ CREATE TABLE [survey_question_show_conditions_text_args] (
     [survey_question_show_condition_index] INT NOT NULL,
     [survey_question_show_condition_arg_index] INT NOT NULL,
     [survey_question_show_condition_arg_text] VARCHAR(MAX) NOT NULL);
-
-CREATE TABLE [survey_question_validation_condition_types] (
-    [survey_question_validation_condition_type_id] TINYINT NOT NULL,
-    [survey_question_validation_condition_type_name] VARCHAR(255) NOT NULL);
 
 CREATE TABLE [survey_question_validation_conditions] (
     [survey_id] INT NOT NULL,
@@ -143,6 +143,18 @@ CREATE TABLE [survey_question_validation_conditions_text_args] (
     [survey_question_validation_condition_arg_index] INT NOT NULL,
     [survey_question_validation_condition_arg_text] VARCHAR(MAX) NOT NULL);
 
+ALTER TABLE [survey_question_answer_types]
+    ADD CONSTRAINT [unique_survey_question_answer_types_1] PRIMARY KEY (
+        [survey_question_answer_type_id]);
+
+ALTER TABLE [survey_question_show_condition_types]
+    ADD CONSTRAINT [unique_survey_question_show_condition_types_1] PRIMARY KEY (
+        [survey_question_show_condition_type_id]);
+
+ALTER TABLE [survey_question_validation_condition_types]
+    ADD CONSTRAINT [unique_survey_question_validation_condition_types_1] PRIMARY KEY (
+        [survey_question_validation_condition_type_id]);
+
 ALTER TABLE [surveys]
     ADD CONSTRAINT [unique_surveys_1] PRIMARY KEY (
         [survey_id]);
@@ -151,10 +163,6 @@ ALTER TABLE [survey_pages]
     ADD CONSTRAINT [unique_survey_pages_1] PRIMARY KEY (
         [survey_id],
         [survey_page_index]);
-
-ALTER TABLE [answer_types]
-    ADD CONSTRAINT [unique_answer_types_1] PRIMARY KEY (
-        [answer_type_id]);
 
 ALTER TABLE [survey_questions]
     ADD CONSTRAINT [unique_survey_questions_1] PRIMARY KEY (
@@ -202,10 +210,6 @@ ALTER TABLE [survey_question_answer_options]
         [survey_answer_option_index],
         [survey_question_index]);
 
-ALTER TABLE [survey_question_show_condition_types]
-    ADD CONSTRAINT [unique_survey_question_show_condition_types_1] PRIMARY KEY (
-        [survey_question_show_condition_type_id]);
-
 ALTER TABLE [survey_question_show_conditions]
     ADD CONSTRAINT [unique_survey_question_show_conditions_1] PRIMARY KEY (
         [survey_id],
@@ -236,10 +240,6 @@ ALTER TABLE [survey_question_show_conditions_text_args]
         [survey_question_index],
         [survey_question_show_condition_index],
         [survey_question_show_condition_arg_index]);
-
-ALTER TABLE [survey_question_validation_condition_types]
-    ADD CONSTRAINT [unique_survey_question_validation_condition_types_1] PRIMARY KEY (
-        [survey_question_validation_condition_type_id]);
 
 ALTER TABLE [survey_question_validation_conditions]
     ADD CONSTRAINT [unique_survey_question_validation_conditions_1] PRIMARY KEY (
@@ -574,5 +574,20 @@ ALTER TABLE [survey_question_validation_conditions_text_args]
             [survey_id],
             [survey_page_index],
             [survey_question_index]);
+
+INSERT INTO [survey_question_answer_types] ([survey_question_answer_type_id], [survey_question_answer_type_name]) VALUES
+    (0, 'SmallText'),
+    (1, 'Checkbox'),
+    (2, 'Radio'),
+    (3, 'RadioAndOther'),
+    (4, 'MultiSelect');
+
+INSERT INTO [survey_question_show_condition_types] ([survey_question_show_condition_type_id], [survey_question_show_condition_type_name]) VALUES
+    (0, 'HasAnswered'),
+    (1, 'HasNotAnswered');
+
+INSERT INTO [survey_question_validation_condition_types] ([survey_question_validation_condition_type_id], [survey_question_validation_condition_type_name]) VALUES
+    (0, 'Min'),
+    (1, 'Max');
 
 COMMIT TRANSACTION;

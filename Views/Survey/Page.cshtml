@@ -5,4 +5,12 @@
 {
     <p>@question.Title</p>
     <p>Type = @question.Type</p>
+    <ul>
+        @foreach (SurveyQuestionShowConditionViewFields constraint in question.ShowConditions)
+        {
+            <li>
+                @constraint.Type: (@constraint.ReferencedQuestion, @constraint.TextValue, @constraint.IntegerValue)
+            </li>
+        }
+    </ul>
 }

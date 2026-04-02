@@ -1,6 +1,6 @@
 import type { DatabaseColumn, DatabaseStructure } from "./preprocess.ts";
 
-export function csFileFrom(structure: DatabaseStructure): string
+export function csAccessFileFrom(structure: DatabaseStructure): string
 {
     const tables = structure.tables;
 

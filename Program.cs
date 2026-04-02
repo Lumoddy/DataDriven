@@ -1,8 +1,11 @@
 
+using DataDriven.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSingleton<IDatabaseEnumService, DatabaseEnumService>();
 
 var app = builder.Build();
 

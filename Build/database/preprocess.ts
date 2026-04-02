@@ -1,12 +1,11 @@
 
+export type VariousNames = Record<
+    `${"pascal" | "camel" | "snake" | "block"}${"Shortened" | ""}${"Single" | "Plural"}`,
+    string>;
+
 export type DatabaseColumn =
+    & VariousNames
     & {
-        pascalSingle: string,
-        camelSingle: string,
-        blockSingle: string,
-        pascalShortenedSingle: string,
-        camelShortenedSingle: string,
-        blockShortenedSingle: string,
         nullable: boolean,
     }
     & (
@@ -45,24 +44,26 @@ export const typenameMap = Object.freeze(
 });
 
 export type DatabaseTable =
-{
-    pascalSingle: string,
-    pascalPlural: string,
-    camelSingle: string,
-    camelPlural: string,
-    blockSingle: string,
-    blockPlural: string,
-    pascalShortenedSingle: string,
-    pascalShortenedPlural: string,
-    camelShortenedSingle: string,
-    camelShortenedPlural: string,
-    blockShortenedSingle: string,
-    blockShortenedPlural: string,
-    columns: Map<string, DatabaseColumn>,
-    constraints: DatabaseConstraint[],
-};
+    & VariousNames
+    & {
+        columns: Map<string, DatabaseColumn>,
+        constraints: DatabaseConstraint[],
+    };
 
-export type DatabaseStructure = { tables: Map<string, DatabaseTable> };
+export type DatabaseEnum =
+    & VariousNames
+    & {
+        fields: Map<string, DatabaseEnumField>,
+    };
+
+export type DatabaseEnumField =
+    & VariousNames;
+
+export type DatabaseStructure =
+{
+    tables: Map<string, DatabaseTable>,
+    enums: Map<string, DatabaseEnum>,
+};
 
 export function* wordsFromCasedIdentifier(string: string): Generator<RegExpExecArray, undefined>
 {
@@ -71,6 +72,88 @@ export function* wordsFromCasedIdentifier(string: string): Generator<RegExpExecA
     let match;
     while ((match = pattern.exec(string)) !== null)
         yield match;
+}
+
+export function guessPluralOfSingle(single: string)
+{
+    return String(single)
+        .replace(/(?<=[A-Z])S$/, "SES")
+        .replace(/(?<=\w)s$/i, "ses")
+        .replace(/(?<=[A-Z])(?<!REG)EX$/, "ICIES")
+        .replace(/(?<=\w)(?<!reg)ex$/i, "icies");
+}
+
+export function guessSingleOfPlural(plural: string)
+{
+    return String(plural)
+        .replace(/(?<=\w)(?:(?<=\Bs)e)?s$/i, "")
+        .replace(/(?<=[A-Z])ICIES$/, "EX")
+        .replace(/(?<=\w)icies$/i, "ex");
+}
+
+export function getVariousNamesFromPair(
+    single: string,
+    plural: string,
+    overrides?: Partial<Record<
+        `${"short_" | ""}${"single" | "plural"}` | `C#${" Short" | ""} ${"Single" | "Plural"}`,
+        string | null | undefined>> | null | undefined): VariousNames
+{
+    const sourceSingle = String(overrides?.["single"] ?? single);
+    const sourcePlural = String(overrides?.["plural"] ?? plural);
+
+    const pascalSingle = String(overrides?.["C# Single"] ?? toPascalCase(sourceSingle));
+    const pascalPlural = String(overrides?.["C# Plural"] ?? toPascalCase(sourcePlural));
+    const camelSingle = pascalSingle.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
+    const camelPlural = pascalPlural.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
+    const snakeSingle = toSnakeCase(pascalSingle);
+    const snakePlural = toSnakeCase(pascalPlural);
+    const blockSingle = snakeSingle.toUpperCase();
+    const blockPlural = snakePlural.toUpperCase();
+
+    const overridesShortSingle = overrides?.["short_single"];
+    const overridesShortPlural = overrides?.["short_plural"];
+
+    const
+    [
+        sourceShortSingle,
+        sourceShortPlural,
+    ]
+    = overridesShortSingle != null
+        ? overridesShortPlural != null
+            ? [String(overridesShortSingle), String(overridesShortPlural)]
+            : [String(overridesShortSingle), guessPluralOfSingle(overridesShortSingle)]
+        : overridesShortPlural != null
+            ? [guessSingleOfPlural(overridesShortPlural), String(overridesShortPlural)]
+            : [pascalSingle, sourcePlural];
+
+    const pascalShortenedSingle = String(overrides?.["C# Short Single"] ?? toPascalCase(sourceShortSingle));
+    const pascalShortenedPlural = String(overrides?.["C# Short Plural"] ?? toPascalCase(sourceShortPlural));
+    const camelShortenedSingle = pascalShortenedSingle.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
+    const camelShortenedPlural = pascalShortenedPlural.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
+    const snakeShortenedSingle = toSnakeCase(pascalShortenedSingle);
+    const snakeShortenedPlural = toSnakeCase(pascalShortenedPlural);
+    const blockShortenedSingle = snakeShortenedSingle.toUpperCase();
+    const blockShortenedPlural = snakeShortenedPlural.toUpperCase();
+
+    return (
+    {
+        pascalSingle,
+        pascalPlural,
+        camelSingle,
+        camelPlural,
+        snakeSingle,
+        snakePlural,
+        blockSingle,
+        blockPlural,
+        pascalShortenedSingle,
+        pascalShortenedPlural,
+        camelShortenedSingle,
+        camelShortenedPlural,
+        snakeShortenedSingle,
+        snakeShortenedPlural,
+        blockShortenedSingle,
+        blockShortenedPlural,
+    });
 }
 
 export function toPascalCase(string: string): string
@@ -88,7 +171,7 @@ export function toPascalCase(string: string): string
     return buffer;
 }
 
-export function toBlockCase(string: string): string
+export function toSnakeCase(string: string): string
 {
     let buffer = "";
     let first = true;
@@ -99,7 +182,7 @@ export function toBlockCase(string: string): string
         else
             buffer += "_";
 
-        buffer += match.toUpperCase();
+        buffer += match.toLowerCase();
     }
 
     return buffer;
@@ -110,35 +193,92 @@ export function preprocessObject(source: any): DatabaseStructure
     const
     {
         ["replacements"]: { ["column"]: replacementColumns },
+        ["enums"]: sourceEnums,
         ["tables"]: sourceTables,
     }
     = source;
 
+    const enums = new Map<string, DatabaseEnum>();
+
     const tables = new Map<string, DatabaseTable>();
 
-    for (const name in sourceTables)
+    for (const enumName in sourceEnums)
     {
-        const sourceTable = sourceTables[name];
+        const sourceEnum = sourceEnums[enumName];
 
-        const pascalPlural = String(sourceTable["C# Plural"] ?? toPascalCase(name));
-        const pascalSingle = String(sourceTable["C# Single"] ?? pascalPlural.substring(0, pascalPlural.length - 1));
-        const camelPlural = pascalPlural.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
-        const camelSingle = pascalSingle.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
-        const blockPlural = toBlockCase(pascalPlural);
-        const blockSingle = toBlockCase(pascalSingle);
-        const pascalShortenedPlural = String(sourceTable["C# Short Plural"] ?? pascalPlural);
-        const pascalShortenedSingle = String(sourceTable["C# Short Single"] ?? pascalSingle);
-        const camelShortenedPlural = pascalShortenedPlural.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
-        const camelShortenedSingle = pascalShortenedSingle.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
-        const blockShortenedPlural = toBlockCase(pascalShortenedPlural);
-        const blockShortenedSingle = toBlockCase(pascalShortenedSingle);
+        const sourceFields = sourceEnum["values"];
+        const fields = new Map<string, DatabaseEnumField>()
+
+        for (const field in sourceFields)
+        {
+            const sourceField = sourceFields[field];
+
+            const names = getVariousNamesFromPair(field, guessPluralOfSingle(field), sourceField);
+
+            fields.set(field, names);
+        }
+
+        const names = getVariousNamesFromPair(guessSingleOfPlural(enumName), enumName, sourceEnum);
+
+        enums.set(enumName, { ...names, fields });
+
+        const idColumnName = `${guessSingleOfPlural(enumName)}_id`;
+        const idColumn: DatabaseColumn =
+        {
+            ...getVariousNamesFromPair(idColumnName, idColumnName + "s", { "short_single": "id" }),
+            csType: typenameMap["TINYINT"].csType,
+            csSqlType: typenameMap["TINYINT"].csSqlType,
+            csSqlTypeEnum: typenameMap["TINYINT"].csSqlTypeEnum,
+            type: "TINYINT",
+            size: undefined,
+            precision: undefined,
+            nullable: false,
+        };
+
+        const nameColumnName = `${guessSingleOfPlural(enumName)}_name`;
+        const nameColumn: DatabaseColumn =
+        {
+            ...getVariousNamesFromPair(nameColumnName, nameColumnName + "s", { "short_single": "name" }),
+            csType: typenameMap["VARCHAR"].csType,
+            csSqlType: typenameMap["VARCHAR"].csSqlType,
+            csSqlTypeEnum: typenameMap["VARCHAR"].csSqlTypeEnum,
+            type: "VARCHAR",
+            size: 255,
+            precision: undefined,
+            nullable: false,
+        };
+
+        tables.set(
+            enumName,
+            {
+                ...names,
+                columns: new Map<string, DatabaseColumn>(
+                [
+                    [idColumnName, idColumn],
+                    [nameColumnName, nameColumn],
+                ]),
+                constraints:
+                [
+                    {
+                        type: "primary",
+                        columns: new Map([[idColumnName, idColumn]]),
+                        other: undefined,
+                        otherColumns: undefined,
+                    },
+                ],
+            });
+    }
+
+    for (const tableName in sourceTables)
+    {
+        const sourceTable = sourceTables[tableName];
 
         const sourceColumns = sourceTable["columns"];
         const columns = new Map<string, DatabaseColumn>();
 
-        for (const name in sourceColumns)
+        for (const columnName in sourceColumns)
         {
-            let sourceColumn = sourceColumns[name];
+            let sourceColumn = sourceColumns[columnName];
 
             for (const [from, to] of replacementColumns)
             {
@@ -151,13 +291,6 @@ export function preprocessObject(source: any): DatabaseStructure
                     }
                 }
             }
-
-            const pascalSingle = String(sourceColumn["C# Single"] ?? toPascalCase(name));
-            const camelSingle = pascalSingle.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
-            const blockSingle = toBlockCase(pascalSingle);
-            const pascalShortenedSingle = String(sourceColumn["C# Short Single"] ?? pascalSingle);
-            const camelShortenedSingle = pascalShortenedSingle.replace(/^[A-Z](?![a-z])|[A-Z]/, (x) => x.toLowerCase());
-            const blockShortenedSingle = toBlockCase(pascalShortenedSingle);
 
             const type = String.prototype.toUpperCase.call(sourceColumn["type"]);
             const nullable = Boolean(sourceColumn["nullable"]);
@@ -209,14 +342,9 @@ export function preprocessObject(source: any): DatabaseStructure
             }
 
             columns.set(
-                name,
+                columnName,
                 {
-                    pascalSingle,
-                    camelSingle,
-                    blockSingle,
-                    pascalShortenedSingle,
-                    camelShortenedSingle,
-                    blockShortenedSingle,
+                    ...getVariousNamesFromPair(columnName, guessPluralOfSingle(columnName), sourceColumn),
                     csType: typenameMap[type].csType as any,
                     csSqlType: typenameMap[type].csSqlType as any,
                     csSqlTypeEnum: typenameMap[type].csSqlTypeEnum as any,
@@ -245,7 +373,7 @@ export function preprocessObject(source: any): DatabaseStructure
                             type,
                             columns: new Map(
                                 (Iterator.prototype.map<[string, DatabaseColumn]>).call(
-                                    sourceConstraint[sourceType][Symbol.iterator](),
+                                    Iterator.from(sourceConstraint[sourceType]),
                                     (x) => [String(x), null as any])),
                             other: undefined,
                             otherColumns: undefined,
@@ -273,12 +401,12 @@ export function preprocessObject(source: any): DatabaseStructure
                             type,
                             columns: new Map(
                                 (Iterator.prototype.map<[string, DatabaseColumn]>).call(
-                                    first[Symbol.iterator](),
+                                    Iterator.from(first),
                                     (x) => [String(x), null as any])),
                             other,
                             otherColumns: new Map(
                                 (Iterator.prototype.map<[string, DatabaseColumn]>).call(
-                                    second[Symbol.iterator](),
+                                    Iterator.from(second),
                                     (x) => [String(x), null as any])),
                         });
 
@@ -294,20 +422,9 @@ export function preprocessObject(source: any): DatabaseStructure
         }
 
         tables.set(
-            name,
+            tableName,
             {
-                pascalPlural,
-                pascalSingle,
-                camelSingle,
-                camelPlural,
-                blockSingle,
-                blockPlural,
-                pascalShortenedPlural,
-                pascalShortenedSingle,
-                camelShortenedSingle,
-                camelShortenedPlural,
-                blockShortenedSingle,
-                blockShortenedPlural,
+                ...getVariousNamesFromPair(guessSingleOfPlural(tableName), tableName, sourceTable),
                 columns,
                 constraints,
             });
@@ -348,5 +465,5 @@ export function preprocessObject(source: any): DatabaseStructure
         }
     }
 
-    return { tables };
+    return { tables, enums };
 }
