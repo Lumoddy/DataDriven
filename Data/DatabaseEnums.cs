@@ -12,6 +12,7 @@ public enum SurveyQuestionAnswerType
     Radio,
     RadioAndOther,
     MultiSelect,
+    MultiSelectOrOther,
 }
 
 public enum SurveyQuestionShowConditionType
@@ -31,7 +32,8 @@ public class SurveyQuestionAnswerTypeMap(
     byte checkboxIndex,
     byte radioIndex,
     byte radioAndOtherIndex,
-    byte multiSelectIndex)
+    byte multiSelectIndex,
+    byte multiSelectOrOtherIndex)
     : IReadOnlyDictionary<byte, SurveyQuestionAnswerType>,
     IReadOnlyDictionary<SurveyQuestionAnswerType, byte>
 {
@@ -42,6 +44,7 @@ public class SurveyQuestionAnswerTypeMap(
         var x when x == radioIndex => SurveyQuestionAnswerType.Radio,
         var x when x == radioAndOtherIndex => SurveyQuestionAnswerType.RadioAndOther,
         var x when x == multiSelectIndex => SurveyQuestionAnswerType.MultiSelect,
+        var x when x == multiSelectOrOtherIndex => SurveyQuestionAnswerType.MultiSelectOrOther,
         var x => throw new KeyNotFoundException($"Key {x} not found in SurveyQuestionAnswerTypeMap.")
     };
 
@@ -52,6 +55,7 @@ public class SurveyQuestionAnswerTypeMap(
         SurveyQuestionAnswerType.Radio => radioIndex,
         SurveyQuestionAnswerType.RadioAndOther => radioAndOtherIndex,
         SurveyQuestionAnswerType.MultiSelect => multiSelectIndex,
+        SurveyQuestionAnswerType.MultiSelectOrOther => multiSelectOrOtherIndex,
         _ => throw new KeyNotFoundException($"Invalid key given to SurveyQuestionAnswerTypeMap.")
     };
 
@@ -64,6 +68,7 @@ public class SurveyQuestionAnswerTypeMap(
             yield return radioIndex;
             yield return radioAndOtherIndex;
             yield return multiSelectIndex;
+            yield return multiSelectOrOtherIndex;
         }
     }
 
@@ -73,14 +78,15 @@ public class SurveyQuestionAnswerTypeMap(
 
     IEnumerable<byte> IReadOnlyDictionary<SurveyQuestionAnswerType, byte>.Values => Keys;
 
-    public int Count => 5;
+    public int Count => 6;
 
     public bool ContainsKey(byte key)
         => key == smallTextIndex ||
             key == checkboxIndex ||
             key == radioIndex ||
             key == radioAndOtherIndex ||
-            key == multiSelectIndex;
+            key == multiSelectIndex ||
+            key == multiSelectOrOtherIndex;
 
     bool IReadOnlyDictionary<SurveyQuestionAnswerType, byte>.ContainsKey(SurveyQuestionAnswerType key) => Enum.IsDefined(key);
 
@@ -91,6 +97,7 @@ public class SurveyQuestionAnswerTypeMap(
         yield return new(radioIndex, SurveyQuestionAnswerType.Radio);
         yield return new(radioAndOtherIndex, SurveyQuestionAnswerType.RadioAndOther);
         yield return new(multiSelectIndex, SurveyQuestionAnswerType.MultiSelect);
+        yield return new(multiSelectOrOtherIndex, SurveyQuestionAnswerType.MultiSelectOrOther);
     }
 
     IEnumerator<KeyValuePair<SurveyQuestionAnswerType, byte>> IEnumerable<KeyValuePair<SurveyQuestionAnswerType, byte>>.GetEnumerator()
@@ -100,6 +107,7 @@ public class SurveyQuestionAnswerTypeMap(
         yield return new(SurveyQuestionAnswerType.Radio, radioIndex);
         yield return new(SurveyQuestionAnswerType.RadioAndOther, radioAndOtherIndex);
         yield return new(SurveyQuestionAnswerType.MultiSelect, multiSelectIndex);
+        yield return new(SurveyQuestionAnswerType.MultiSelectOrOther, multiSelectOrOtherIndex);
     }
 
     public bool TryGetValue(byte key, out SurveyQuestionAnswerType value)
@@ -365,6 +373,13 @@ public class DatabaseEnumService : IDatabaseEnumService
             IF @@ROWCOUNT = 0
                 RETURN;
 
+            SELECT [survey_question_answer_type_id]
+            FROM [survey_question_answer_types]
+            WHERE [survey_question_answer_type_name] = 'MultiSelectOrOther';
+
+            IF @@ROWCOUNT = 0
+                RETURN;
+
             SELECT [survey_question_show_condition_type_id]
             FROM [survey_question_show_condition_types]
             WHERE [survey_question_show_condition_type_name] = 'HasAnswered';
@@ -432,12 +447,21 @@ public class DatabaseEnumService : IDatabaseEnumService
 
         byte surveyQuestionAnswerTypeMultiSelect = reader.GetSqlByte(0).StrictValue();
 
+        reader.NextResult();
+
+        if (!reader.Read())
+            throw new InvalidOperationException(
+                "Database does not contain an entry for 'MultiSelectOrOther' in the 'survey_question_answer_types' enum.");
+
+        byte surveyQuestionAnswerTypeMultiSelectOrOther = reader.GetSqlByte(0).StrictValue();
+
         surveyQuestionAnswerTypeMap = new(
             surveyQuestionAnswerTypeSmallText,
             surveyQuestionAnswerTypeCheckbox,
             surveyQuestionAnswerTypeRadio,
             surveyQuestionAnswerTypeRadioAndOther,
-            surveyQuestionAnswerTypeMultiSelect);
+            surveyQuestionAnswerTypeMultiSelect,
+            surveyQuestionAnswerTypeMultiSelectOrOther);
 
         reader.NextResult();
 

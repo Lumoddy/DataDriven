@@ -1,0 +1,11 @@
+@using DataDriven.Controllers
+@model TestController
+@{
+    Model.HttpContext.Session.SetString("TestKey", "TestValue");
+}
+<ul>
+    @foreach (string key in Model.HttpContext.Session.Keys)
+    {
+        <li>@key = @Model.HttpContext.Session.GetString("test")</li>
+    }
+</ul>

@@ -1,4 +1,6 @@
-Test on @foreach (var entry in ViewData)
-{
-    <text>@entry.Key: @entry.Value, </text>
-}
+@model ISurveyModel
+<header>
+    <h1>@Model.SurveyTitle (@Model.SurveyId)</h1>
+    <p>By @Model.SurveyAuthor</p>
+</header>
+<p>@Model.SurveyDescription</p>

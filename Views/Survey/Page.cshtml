@@ -1,16 +1,26 @@
 @using DataDriven.Controllers
-@foreach (
-    SurveyQuestionViewFields question
-    in (IEnumerable<SurveyQuestionViewFields>)ViewData["questions"]!)
-{
-    <p>@question.Title</p>
-    <p>Type = @question.Type</p>
-    <ul>
-        @foreach (SurveyQuestionShowConditionViewFields constraint in question.ShowConditions)
+<form method="post">
+    @{
+        int index = 0;
+        foreach (
+            SurveyQuestionViewFields question
+            in (IEnumerable<SurveyQuestionViewFields>)ViewData["questions"]!)
         {
-            <li>
-                @constraint.Operator @constraint.Type: (@constraint.ReferencedQuestion, @constraint.TextValue, @constraint.IntegerValue)
-            </li>
+            <p>@question.Title</p>
+            <input name="question_@index" type="text">
+            <p>Type = @question.Type</p>
+            <ul>
+                @foreach (SurveyQuestionShowConditionViewFields constraint in question.ShowConditions)
+                {
+                    <li>
+                        @((object)Model)
+                        @constraint.Operator @constraint.Type: (@constraint.ReferencedQuestion, @constraint.TextValue, @constraint.IntegerValue)
+                    </li>
+                }
+            </ul>
+
+            index += 1;
         }
-    </ul>
-}
+    }
+    <button type="submit">Submit</button>
+</form>

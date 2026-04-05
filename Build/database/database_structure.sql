@@ -46,14 +46,6 @@ CREATE TABLE [submissions] (
     [submission_index] INT NOT NULL,
     [registered_member_id] INT NULL);
 
-CREATE TABLE [submission_text_answers] (
-    [survey_id] INT NOT NULL,
-    [survey_page_index] INT NOT NULL,
-    [survey_question_index] INT NOT NULL,
-    [submission_index] INT NOT NULL,
-    [submission_answer_index] INT NOT NULL,
-    [submission_answer_text] VARCHAR(MAX) NOT NULL);
-
 CREATE TABLE [submission_integer_answers] (
     [survey_id] INT NOT NULL,
     [survey_page_index] INT NOT NULL,
@@ -69,6 +61,14 @@ CREATE TABLE [submission_bool_answers] (
     [submission_index] INT NOT NULL,
     [submission_answer_index] INT NOT NULL,
     [submission_answer_bool] BIT NOT NULL);
+
+CREATE TABLE [submission_text_answers] (
+    [survey_id] INT NOT NULL,
+    [survey_page_index] INT NOT NULL,
+    [survey_question_index] INT NOT NULL,
+    [submission_index] INT NOT NULL,
+    [submission_answer_index] INT NOT NULL,
+    [submission_answer_text] VARCHAR(MAX) NOT NULL);
 
 CREATE TABLE [survey_question_answer_options] (
     [survey_id] INT NOT NULL,
@@ -143,6 +143,40 @@ CREATE TABLE [survey_question_validation_conditions_text_args] (
     [survey_question_validation_condition_arg_index] INT NOT NULL,
     [survey_question_validation_condition_arg_text] VARCHAR(MAX) NOT NULL);
 
+CREATE TABLE [registered_member_sessions] (
+    [registered_member_session_token] BINARY(32) NOT NULL CONSTRAINT [default_registered_member_sessions_1] DEFAULT CRYPT_GEN_RANDOM(32),
+    [registered_member_session_expiry] DATETIME NOT NULL CONSTRAINT [default_registered_member_sessions_2] DEFAULT DATEADD(HOUR, 2, GETDATE()),
+    [registered_member_id] INT NOT NULL);
+
+CREATE TABLE [survey_sessions] (
+    [survey_session_token] BINARY(32) NOT NULL CONSTRAINT [default_survey_sessions_1] DEFAULT CRYPT_GEN_RANDOM(32),
+    [survey_session_expiry] DATETIME NOT NULL CONSTRAINT [default_survey_sessions_2] DEFAULT DATEADD(HOUR, 2, GETDATE()),
+    [survey_id] INT NOT NULL);
+
+CREATE TABLE [survey_session_text_answers] (
+    [survey_id] INT NOT NULL,
+    [survey_page_index] INT NOT NULL,
+    [survey_question_index] INT NOT NULL,
+    [survey_session_token] BINARY(32) NOT NULL,
+    [survey_session_answer_index] INT NOT NULL,
+    [survey_session_answer_text] VARCHAR(MAX) NOT NULL);
+
+CREATE TABLE [survey_session_integer_answers] (
+    [survey_id] INT NOT NULL,
+    [survey_page_index] INT NOT NULL,
+    [survey_question_index] INT NOT NULL,
+    [survey_session_token] BINARY(32) NOT NULL,
+    [survey_session_answer_index] INT NOT NULL,
+    [survey_session_answer_integer] INT NOT NULL);
+
+CREATE TABLE [survey_session_bool_answers] (
+    [survey_id] INT NOT NULL,
+    [survey_page_index] INT NOT NULL,
+    [survey_question_index] INT NOT NULL,
+    [survey_session_token] BINARY(32) NOT NULL,
+    [survey_session_answer_index] INT NOT NULL,
+    [survey_session_answer_bool] BIT NOT NULL);
+
 ALTER TABLE [survey_question_answer_types]
     ADD CONSTRAINT [unique_survey_question_answer_types_1] PRIMARY KEY (
         [survey_question_answer_type_id]);
@@ -179,14 +213,6 @@ ALTER TABLE [submissions]
         [survey_id],
         [submission_index]);
 
-ALTER TABLE [submission_text_answers]
-    ADD CONSTRAINT [unique_submission_text_answers_1] PRIMARY KEY (
-        [survey_id],
-        [survey_page_index],
-        [survey_question_index],
-        [submission_index],
-        [submission_answer_index]);
-
 ALTER TABLE [submission_integer_answers]
     ADD CONSTRAINT [unique_submission_integer_answers_1] PRIMARY KEY (
         [survey_id],
@@ -197,6 +223,14 @@ ALTER TABLE [submission_integer_answers]
 
 ALTER TABLE [submission_bool_answers]
     ADD CONSTRAINT [unique_submission_bool_answers_1] PRIMARY KEY (
+        [survey_id],
+        [survey_page_index],
+        [survey_question_index],
+        [submission_index],
+        [submission_answer_index]);
+
+ALTER TABLE [submission_text_answers]
+    ADD CONSTRAINT [unique_submission_text_answers_1] PRIMARY KEY (
         [survey_id],
         [survey_page_index],
         [survey_question_index],
@@ -272,6 +306,40 @@ ALTER TABLE [survey_question_validation_conditions_text_args]
         [survey_question_validation_condition_index],
         [survey_question_validation_condition_arg_index]);
 
+ALTER TABLE [registered_member_sessions]
+    ADD CONSTRAINT [unique_registered_member_sessions_1] PRIMARY KEY (
+        [registered_member_id],
+        [registered_member_session_token]);
+
+ALTER TABLE [survey_sessions]
+    ADD CONSTRAINT [unique_survey_sessions_1] PRIMARY KEY (
+        [survey_id],
+        [survey_session_token]);
+
+ALTER TABLE [survey_session_text_answers]
+    ADD CONSTRAINT [unique_survey_session_text_answers_1] PRIMARY KEY (
+        [survey_id],
+        [survey_page_index],
+        [survey_question_index],
+        [survey_session_token],
+        [survey_session_answer_index]);
+
+ALTER TABLE [survey_session_integer_answers]
+    ADD CONSTRAINT [unique_survey_session_integer_answers_1] PRIMARY KEY (
+        [survey_id],
+        [survey_page_index],
+        [survey_question_index],
+        [survey_session_token],
+        [survey_session_answer_index]);
+
+ALTER TABLE [survey_session_bool_answers]
+    ADD CONSTRAINT [unique_survey_session_bool_answers_1] PRIMARY KEY (
+        [survey_id],
+        [survey_page_index],
+        [survey_question_index],
+        [survey_session_token],
+        [survey_session_answer_index]);
+
 ALTER TABLE [survey_pages]
     ADD CONSTRAINT [fk_survey_pages_to_surveys_1]
         FOREIGN KEY (
@@ -309,26 +377,6 @@ ALTER TABLE [submissions]
         REFERENCES [registered_members] (
             [registered_member_id]);
 
-ALTER TABLE [submission_text_answers]
-    ADD CONSTRAINT [fk_submission_text_answers_to_survey_questions_1]
-        FOREIGN KEY (
-            [survey_id],
-            [survey_page_index],
-            [survey_question_index])
-        REFERENCES [survey_questions] (
-            [survey_id],
-            [survey_page_index],
-            [survey_question_index]);
-
-ALTER TABLE [submission_text_answers]
-    ADD CONSTRAINT [fk_submission_text_answers_to_submissions_2]
-        FOREIGN KEY (
-            [survey_id],
-            [submission_index])
-        REFERENCES [submissions] (
-            [survey_id],
-            [submission_index]);
-
 ALTER TABLE [submission_integer_answers]
     ADD CONSTRAINT [fk_submission_integer_answers_to_survey_questions_1]
         FOREIGN KEY (
@@ -362,6 +410,26 @@ ALTER TABLE [submission_bool_answers]
 
 ALTER TABLE [submission_bool_answers]
     ADD CONSTRAINT [fk_submission_bool_answers_to_submissions_2]
+        FOREIGN KEY (
+            [survey_id],
+            [submission_index])
+        REFERENCES [submissions] (
+            [survey_id],
+            [submission_index]);
+
+ALTER TABLE [submission_text_answers]
+    ADD CONSTRAINT [fk_submission_text_answers_to_survey_questions_1]
+        FOREIGN KEY (
+            [survey_id],
+            [survey_page_index],
+            [survey_question_index])
+        REFERENCES [survey_questions] (
+            [survey_id],
+            [survey_page_index],
+            [survey_question_index]);
+
+ALTER TABLE [submission_text_answers]
+    ADD CONSTRAINT [fk_submission_text_answers_to_submissions_2]
         FOREIGN KEY (
             [survey_id],
             [submission_index])
@@ -582,12 +650,87 @@ ALTER TABLE [survey_question_validation_conditions_text_args]
             [survey_page_index],
             [survey_question_index]);
 
+ALTER TABLE [registered_member_sessions]
+    ADD CONSTRAINT [fk_registered_member_sessions_to_registered_members_1]
+        FOREIGN KEY (
+            [registered_member_id])
+        REFERENCES [registered_members] (
+            [registered_member_id]);
+
+ALTER TABLE [survey_sessions]
+    ADD CONSTRAINT [fk_survey_sessions_to_surveys_1]
+        FOREIGN KEY (
+            [survey_id])
+        REFERENCES [surveys] (
+            [survey_id]);
+
+ALTER TABLE [survey_session_text_answers]
+    ADD CONSTRAINT [fk_survey_session_text_answers_to_survey_questions_1]
+        FOREIGN KEY (
+            [survey_id],
+            [survey_page_index],
+            [survey_question_index])
+        REFERENCES [survey_questions] (
+            [survey_id],
+            [survey_page_index],
+            [survey_question_index]);
+
+ALTER TABLE [survey_session_text_answers]
+    ADD CONSTRAINT [fk_survey_session_text_answers_to_survey_sessions_2]
+        FOREIGN KEY (
+            [survey_id],
+            [survey_session_token])
+        REFERENCES [survey_sessions] (
+            [survey_id],
+            [survey_session_token]);
+
+ALTER TABLE [survey_session_integer_answers]
+    ADD CONSTRAINT [fk_survey_session_integer_answers_to_survey_questions_1]
+        FOREIGN KEY (
+            [survey_id],
+            [survey_page_index],
+            [survey_question_index])
+        REFERENCES [survey_questions] (
+            [survey_id],
+            [survey_page_index],
+            [survey_question_index]);
+
+ALTER TABLE [survey_session_integer_answers]
+    ADD CONSTRAINT [fk_survey_session_integer_answers_to_survey_sessions_2]
+        FOREIGN KEY (
+            [survey_id],
+            [survey_session_token])
+        REFERENCES [survey_sessions] (
+            [survey_id],
+            [survey_session_token]);
+
+ALTER TABLE [survey_session_bool_answers]
+    ADD CONSTRAINT [fk_survey_session_bool_answers_to_survey_questions_1]
+        FOREIGN KEY (
+            [survey_id],
+            [survey_page_index],
+            [survey_question_index])
+        REFERENCES [survey_questions] (
+            [survey_id],
+            [survey_page_index],
+            [survey_question_index]);
+
+ALTER TABLE [survey_session_bool_answers]
+    ADD CONSTRAINT [fk_survey_session_bool_answers_to_survey_sessions_2]
+        FOREIGN KEY (
+            [survey_id],
+            [survey_session_token])
+        REFERENCES [survey_sessions] (
+            [survey_id],
+            [survey_session_token]);
+
 INSERT INTO [survey_question_answer_types] ([survey_question_answer_type_id], [survey_question_answer_type_name]) VALUES
     (0, 'SmallText'),
     (1, 'Checkbox'),
     (2, 'Radio'),
     (3, 'RadioAndOther'),
-    (4, 'MultiSelect');
+    (4, 'MultiSelect'),
+    (5, 'MultiSelectOrOther');
 
 INSERT INTO [survey_question_show_condition_types] ([survey_question_show_condition_type_id], [survey_question_show_condition_type_name]) VALUES
     (0, 'HasAnswered'),

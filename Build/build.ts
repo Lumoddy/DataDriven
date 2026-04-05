@@ -17,41 +17,10 @@ log("success", "Build Started.");
 
 (async () =>
 {
-    let file;
-    try { file = YAML.parse(await fs.readFile("./Build/database/database_structure.yaml", "utf-8")) }
-    catch (e)
-    {
-        log("error", e instanceof Error ? e.stack : e);
-        return;
-    }
-
-    const databaseStructure = preprocessObject(file);
-
     try
     {
         await Promise.all(
         [
-            fs.writeFile(
-                "./Build/database/database_structure.sql",
-                `--- This file was auto-generated based on ./Build/database/database_structure.yaml
-` + sqlFileFrom(databaseStructure),
-                "utf-8")
-                .then(() => log("success", "Converted database structure to SQL file.")),
-
-            fs.writeFile(
-                "./Data/DatabaseTables.cs",
-                `// This file was auto-generated based on ./Build/database/database_structure.yaml
-` + csShapeFileFrom(databaseStructure),
-                "utf-8")
-                .then(() => log("success", "Converted database tables to C# records.")),
-
-            fs.writeFile(
-                "./Data/DatabaseEnums.cs",
-                `// This file was auto-generated based on ./Build/database/database_structure.yaml
-` + csEnumServiceFileFrom(databaseStructure),
-                "utf-8")
-                .then(() => log("success", "Converted database enums to ASP.NET enum service.")),
-
             new Promise<void>((resolve, reject) => exec("npx tsc", {}, (error) =>
             {
                 if (error !== null)
@@ -60,6 +29,43 @@ log("success", "Build Started.");
                 log("success", "Transpiled TypeScript.");
                 resolve();
             })),
+
+            (async () =>
+            {
+                let file;
+                try { file = YAML.parse(await fs.readFile("./Build/database/database_structure.yaml", "utf-8")) }
+                catch (e)
+                {
+                    log("error", e instanceof Error ? e.stack : e);
+                    return;
+                }
+
+                const databaseStructure = preprocessObject(file);
+
+                await Promise.all(
+                [
+                    fs.writeFile(
+                        "./Build/database/database_structure.sql",
+                        `--- This file was auto-generated based on ./Build/database/database_structure.yaml
+` + sqlFileFrom(databaseStructure),
+                        "utf-8")
+                        .then(() => log("success", "Converted database structure to SQL file.")),
+
+                    fs.writeFile(
+                        "./Data/DatabaseTables.cs",
+                        `// This file was auto-generated based on ./Build/database/database_structure.yaml
+` + csShapeFileFrom(databaseStructure),
+                        "utf-8")
+                        .then(() => log("success", "Converted database tables to C# records.")),
+
+                    fs.writeFile(
+                        "./Data/DatabaseEnums.cs",
+                        `// This file was auto-generated based on ./Build/database/database_structure.yaml
+` + csEnumServiceFileFrom(databaseStructure),
+                        "utf-8")
+                        .then(() => log("success", "Converted database enums to ASP.NET enum service.")),
+                ]);
+            })(),
         ]);
 
         log("success", "Build Completed.");

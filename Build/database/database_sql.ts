@@ -11,48 +11,57 @@ BEGIN TRANSACTION;
 
     for (const [tableName, table] of tables)
     {
-        if (table.columns.size !== 0)
-        {
-            sql += `
+        sql += `
 CREATE TABLE [`;
-            sql += tableName;
-            sql += `] (
+        sql += tableName;
+        sql += `] (
 `;
 
-            let firstColumn = true;
-            for (const [columnName, column] of table.columns)
+        let firstColumn = true;
+        let constraintCounter = 0;
+        for (const [columnName, column] of table.columns)
+        {
+            if (firstColumn)
+                firstColumn = false;
+            else
+                sql += `,
+`;
+
+            sql += `    [`;
+            sql += columnName;
+            sql += `] `;
+            sql += column.type;
+
+            if (column.size !== undefined)
             {
-                if (firstColumn)
-                    firstColumn = false;
-                else
-                    sql += `,
-`;
+                sql += `(`;
+                sql += column.size;
 
-                sql += `    [`;
-                sql += columnName;
-                sql += `] `;
-                sql += column.type;
-
-                if (column.size !== undefined)
+                if (column.precision !== undefined)
                 {
-                    sql += `(`;
-                    sql += column.size;
-
-                    if (column.precision !== undefined)
-                    {
-                        sql += `, `;
-                        sql += column.precision;
-                    }
-
-                    sql += `)`;
+                    sql += `, `;
+                    sql += column.precision;
                 }
 
-                sql += column.nullable ? ` NULL` : ` NOT NULL`;
+                sql += `)`;
             }
 
-            sql += `);
-`;
+            sql += column.nullable ? ` NULL` : ` NOT NULL`;
+
+            if (column.defaultSql !== undefined)
+            {
+                sql += ` CONSTRAINT [default_`;
+                sql += tableName;
+                sql += `_`;
+                constraintCounter += 1;
+                sql += constraintCounter;
+                sql += `] DEFAULT `;
+                sql += column.defaultSql;
+            }
         }
+
+        sql += `);
+`;
     }
 
     for (const [tableName, table] of tables)

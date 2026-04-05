@@ -7,6 +7,7 @@ export type DatabaseColumn =
     & VariousNames
     & {
         nullable: boolean,
+        defaultSql: string | undefined,
     }
     & (
         | ({ type: "BIGINT", size: undefined, precision: undefined } & typeof typenameMap["BIGINT"])
@@ -233,6 +234,7 @@ export function preprocessObject(source: any): DatabaseStructure
             size: undefined,
             precision: undefined,
             nullable: false,
+            defaultSql: undefined,
         };
 
         const nameColumnName = `${guessSingleOfPlural(enumName)}_name`;
@@ -246,6 +248,7 @@ export function preprocessObject(source: any): DatabaseStructure
             size: 255,
             precision: undefined,
             nullable: false,
+            defaultSql: undefined,
         };
 
         tables.set(
@@ -278,7 +281,8 @@ export function preprocessObject(source: any): DatabaseStructure
 
         for (const columnName in sourceColumns)
         {
-            let sourceColumn = sourceColumns[columnName];
+            const unalteredSourceColumn = sourceColumns[columnName];
+            let sourceColumn = unalteredSourceColumn;
 
             for (const [from, to] of replacementColumns)
             {
@@ -292,8 +296,26 @@ export function preprocessObject(source: any): DatabaseStructure
                 }
             }
 
-            const type = String.prototype.toUpperCase.call(sourceColumn["type"]);
-            const nullable = Boolean(sourceColumn["nullable"]);
+            let source, match;
+
+            source = sourceColumn["type"];
+            if ((match = /(?<=^\s*=\s*)\S.*$/s.exec(source)) !== null)
+                source = new Function("column", "return " + match[0])(
+                    structuredClone(unalteredSourceColumn));
+            const type = String(source);
+
+            source = sourceColumn["nullable"];
+            if ((match = /(?<=^\s*=\s*)\S.*$/s.exec(source)) !== null)
+                source = new Function("column", "return " + match[0])(
+                    structuredClone(unalteredSourceColumn));
+            const nullable = Boolean(source ?? false);
+
+            source = sourceColumn["default"];
+            if ((match = /(?<=^\s*=\s*)\S.*$/s.exec(source)) !== null)
+                source = new Function("column", "return " + match[0])(
+                    structuredClone(unalteredSourceColumn));
+            const defaultSql = source == null ? undefined : String(source);
+
             let size: any;
             let precision: any;
 
@@ -310,8 +332,17 @@ export function preprocessObject(source: any): DatabaseStructure
                 }
                 case "DECIMAL":
                 {
-                    size = Math.max(0, eval(sourceColumn["size"]) | 0);
-                    precision = Math.max(0, eval(sourceColumn["precision"]) | 0);
+                    source = sourceColumn["size"];
+                    if ((match = /(?<=^\s*=\s*)\S.*$/s.exec(source)) !== null)
+                        source = new Function("column", "return " + match[0])(
+                            structuredClone(unalteredSourceColumn));
+                    size = Math.max(0, source | 0);
+
+                    source = sourceColumn["precision"];
+                    if ((match = /(?<=^\s*=\s*)\S.*$/s.exec(source)) !== null)
+                        source = new Function("column", "return " + match[0])(
+                            structuredClone(unalteredSourceColumn));
+                    precision = Math.max(0, source | 0);
 
                     break;
                 }
@@ -320,16 +351,15 @@ export function preprocessObject(source: any): DatabaseStructure
                 case "VARBINARY":
                 case "BINARY":
                 {
-                    const sourceSize = String(sourceColumn["size"]);
+                    source = sourceColumn["size"];
+                    if ((match = /(?<=^\s*=\s*)\S.*$/s.exec(source)) !== null)
+                        source = new Function("column", "return " + match[0])(
+                            structuredClone(unalteredSourceColumn));
 
-                    switch (sourceSize.toUpperCase())
+                    switch (String(source).toUpperCase())
                     {
-                        case "MAX":
-                            size = "MAX";
-                            break;
-                        default:
-                            size = Math.max(0, eval(sourceSize) | 0);
-                            break;
+                        case "MAX": size = "MAX"; break;
+                        default: size = Math.max(0, source | 0); break;
                     }
 
                     break;
@@ -352,6 +382,7 @@ export function preprocessObject(source: any): DatabaseStructure
                     size,
                     precision,
                     nullable,
+                    defaultSql,
                 });
         }
 
@@ -450,7 +481,7 @@ export function preprocessObject(source: any): DatabaseStructure
 
                 if (table === undefined)
                     throw new SyntaxError(
-                        `Unknown table: ${constraint.other}`);
+                        `Unknown table referenced by ${tableName}: ${constraint.other}`);
 
                 for (const columnName of constraint.otherColumns.keys())
                 {

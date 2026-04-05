@@ -1,7 +1,14 @@
+using System.Buffers.Text;
 using System.Data;
+using System.Text;
 using DataDriven.Data;
+using DataDriven.Models;
+using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Primitives;
 
 namespace DataDriven.Controllers;
 
@@ -30,306 +37,301 @@ public class SurveyController(
     IConfiguration configuration,
     IDatabaseEnumService enumService) : Controller
 {
-    [Route("{surveyId}")]
-    public async Task<IActionResult> StartPage(string surveyId)
+    [NonAction]
+    public SqlConnection DefaultSqlConnection()
+        => new(configuration.GetConnectionString("Default"));
+
+    [NonAction]
+    public async Task<(SurveyModel, SubmissionModel?)?> QuerySurveyPageModel(
+        SqlConnection connection,
+        int surveyId,
+        byte[] surveySessionToken)
     {
-        if (!int.TryParse(surveyId, out int surveyIdValue))
-            return base.NotFound();
-
-        await using SqlConnection connection = new(configuration.GetConnectionString("Default"));
-
-        await connection.OpenAsync();
+        const string SURVEY_ID = "@surveyId";
+        const string SURVEY_SESSION_TOKEN = "@survey_session_token";
 
         await using SqlCommand command = new(
             $"""
             SELECT
-                {SqlSurvey.TITLE},
-                {SqlSurvey.AUTHOR},
-                {SqlSurvey.DESCRIPTION},
-                MAX({SqlSurveyPage.INDEX}) + 1
+                {SqlSurvey.TABLE_TITLE},
+                {SqlSurvey.TABLE_AUTHOR},
+                {SqlSurvey.TABLE_DESCRIPTION}
             FROM
                 {SqlSurvey.TABLE}
-            LEFT JOIN
-                {SqlSurveyPage.TABLE} ON
-                {SqlSurveyPage.SURVEY_ID} = {SqlSurvey.ID}
             WHERE
-                {SqlSurvey.ID} = @surveyId
-            GROUP BY
-                {SqlSurvey.ID},
-                {SqlSurvey.TITLE},
-                {SqlSurvey.AUTHOR},
-                {SqlSurvey.DESCRIPTION};
-            """,
-            connection);
+                {SqlSurvey.TABLE_ID} = {SURVEY_ID};
 
-        command.Parameters.Add("@surveyId", SqlDbType.Int).Value = surveyIdValue;
-
-        await using SqlDataReader reader = await command.ExecuteReaderAsync();
-
-        if (!await reader.ReadAsync())
-            return NotFound();
-
-        string surveyTitle = reader.GetSqlString(0).StrictValue();
-        string surveyAuthor = reader.GetSqlString(1).StrictValue();
-        string surveyDescription = reader.GetSqlString(2).StrictValue();
-        int surveyPageCount = reader.GetSqlInt32(3).StrictValue();
-
-        ViewData["surveyId"] = surveyIdValue;
-        ViewData["surveyTitle"] = surveyTitle;
-        ViewData["surveyAuthor"] = surveyAuthor;
-        ViewData["surveyDescription"] = surveyDescription;
-        ViewData["surveyPageCount"] = surveyPageCount;
-
-        return View();
-    }
-
-    [Route("{surveyId}/{surveyPageIndex}")]
-    public async Task<IActionResult> Page(string surveyId, string surveyPageIndex)
-    {
-        if (!int.TryParse(surveyId, out int surveyIdValue)
-            || !int.TryParse(surveyPageIndex, out int surveyPageIndexValue))
-            return base.NotFound();
-
-        ViewData["surveyId"] = surveyIdValue;
-        ViewData["surveyPageIndex"] = surveyPageIndexValue;
-
-        await using SqlConnection connection = new(configuration.GetConnectionString("Default"));
-
-        await connection.OpenAsync();
-
-        await using SqlCommand command = new(
-            $"""
             SELECT
-                {SqlSurveyPage.TITLE},
-                {SqlSurveyPage.DESCRIPTION},
-                MAX({SqlSurveyQuestion.INDEX}) + 1
+                {SqlSurveyPage.TABLE_INDEX},
+                {SqlSurveyPage.TABLE_TITLE},
+                {SqlSurveyPage.TABLE_DESCRIPTION}
             FROM
                 {SqlSurveyPage.TABLE}
-            LEFT JOIN
-                {SqlSurveyQuestion.TABLE} ON
-                {SqlSurveyQuestion.SURVEY_ID} = {SqlSurveyPage.SURVEY_ID}
-                AND {SqlSurveyQuestion.PAGE_INDEX} = {SqlSurveyPage.INDEX}
             WHERE
-                {SqlSurveyPage.SURVEY_ID} = @surveyId
-                AND {SqlSurveyPage.INDEX} = @surveyPageIndex
-            GROUP BY
-                {SqlSurveyPage.SURVEY_ID},
-                {SqlSurveyPage.INDEX},
-                {SqlSurveyPage.TITLE},
-                {SqlSurveyPage.DESCRIPTION};
-
-            IF (@@ROWCOUNT = 0)
-                RETURN;
+                {SqlSurveyPage.TABLE_SURVEY_ID} = {SURVEY_ID}
+            ORDER BY
+                {SqlSurveyPage.TABLE_INDEX} ASC;
 
             SELECT
-                {SqlSurveyQuestion.INDEX},
-                {SqlSurveyQuestion.TITLE},
-                {SqlSurveyQuestion.TYPE}
+                {SqlSurveyQuestion.TABLE_PAGE_INDEX},
+                {SqlSurveyQuestion.TABLE_INDEX},
+                {SqlSurveyQuestion.TABLE_TITLE},
+                {SqlSurveyQuestion.TABLE_TYPE}
             FROM
                 {SqlSurveyQuestion.TABLE}
             WHERE
-                {SqlSurveyQuestion.SURVEY_ID} = @surveyId
-                AND {SqlSurveyQuestion.PAGE_INDEX} = @surveyPageIndex
+                {SqlSurveyQuestion.TABLE_SURVEY_ID} = {SURVEY_ID}
             ORDER BY
-                {SqlSurveyQuestion.INDEX};
+                {SqlSurveyQuestion.TABLE_PAGE_INDEX} ASC,
+                {SqlSurveyQuestion.TABLE_INDEX} ASC;
 
             SELECT
-                {SqlSurveyQuestionShowCondition.QUESTION_INDEX},
-                {SqlSurveyQuestionShowCondition.INDEX},
-                {SqlSurveyQuestionShowCondition.TYPE},
-                {SqlSurveyQuestionShowCondition.IS_OR_OPERATOR},
-                COALESCE(
-                    {SqlSurveyQuestionShowConditionsRefArg.ARG_INDEX},
-                    {SqlSurveyQuestionShowConditionsIntegerArg.ARG_INDEX},
-                    {SqlSurveyQuestionShowConditionsTextArg.ARG_INDEX}),
-                {SqlSurveyQuestionShowConditionsRefArg.REFERENCED_PAGE_INDEX},
-                {SqlSurveyQuestionShowConditionsRefArg.REFERENCED_QUESTION_INDEX},
-                {SqlSurveyQuestionShowConditionsIntegerArg.ARG_VALUE},
-                {SqlSurveyQuestionShowConditionsTextArg.ARG_VALUE}
+                {SqlSurveyQuestionAnswerOption.TABLE_PAGE_INDEX},
+                {SqlSurveyQuestionAnswerOption.TABLE_QUESTION_INDEX},
+                {SqlSurveyQuestionAnswerOption.TABLE_INDEX},
+                {SqlSurveyQuestionAnswerOption.TABLE_TEXT}
+            FROM
+                {SqlSurveyQuestionAnswerOption.TABLE}
+            WHERE
+                {SqlSurveyQuestionAnswerOption.TABLE_SURVEY_ID} = {SURVEY_ID}
+            ORDER BY
+                {SqlSurveyQuestionAnswerOption.TABLE_PAGE_INDEX} ASC,
+                {SqlSurveyQuestionAnswerOption.TABLE_QUESTION_INDEX} ASC,
+                {SqlSurveyQuestionAnswerOption.TABLE_INDEX} ASC;
+
+            SELECT
+                {SqlSurveyQuestionShowCondition.TABLE_PAGE_INDEX},
+                {SqlSurveyQuestionShowCondition.TABLE_QUESTION_INDEX},
+                {SqlSurveyQuestionShowCondition.TABLE_INDEX},
+                {SqlSurveyQuestionShowCondition.TABLE_TYPE},
+                {SqlSurveyQuestionShowCondition.TABLE_IS_OR_OPERATOR}
             FROM
                 {SqlSurveyQuestionShowCondition.TABLE}
-            LEFT JOIN
-                {SqlSurveyQuestionShowConditionsRefArg.TABLE} ON
-                {SqlSurveyQuestionShowConditionsRefArg.SURVEY_ID}
-                    = {SqlSurveyQuestionShowCondition.SURVEY_ID}
-                AND {SqlSurveyQuestionShowConditionsRefArg.PAGE_INDEX}
-                    = {SqlSurveyQuestionShowCondition.PAGE_INDEX}
-                AND {SqlSurveyQuestionShowConditionsRefArg.QUESTION_INDEX}
-                    = {SqlSurveyQuestionShowCondition.QUESTION_INDEX}
-                AND {SqlSurveyQuestionShowConditionsRefArg.INDEX}
-                    = {SqlSurveyQuestionShowCondition.INDEX}
-            LEFT JOIN
-                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE} ON
-                {SqlSurveyQuestionShowConditionsIntegerArg.SURVEY_ID}
-                    = {SqlSurveyQuestionShowCondition.SURVEY_ID}
-                AND {SqlSurveyQuestionShowConditionsIntegerArg.PAGE_INDEX}
-                    = {SqlSurveyQuestionShowCondition.PAGE_INDEX}
-                AND {SqlSurveyQuestionShowConditionsIntegerArg.QUESTION_INDEX}
-                    = {SqlSurveyQuestionShowCondition.QUESTION_INDEX}
-                AND {SqlSurveyQuestionShowConditionsIntegerArg.INDEX}
-                    = {SqlSurveyQuestionShowCondition.INDEX}
-            LEFT JOIN
-                {SqlSurveyQuestionShowConditionsTextArg.TABLE} ON
-                {SqlSurveyQuestionShowConditionsTextArg.SURVEY_ID}
-                    = {SqlSurveyQuestionShowCondition.SURVEY_ID}
-                AND {SqlSurveyQuestionShowConditionsTextArg.PAGE_INDEX}
-                    = {SqlSurveyQuestionShowCondition.PAGE_INDEX}
-                AND {SqlSurveyQuestionShowConditionsTextArg.QUESTION_INDEX}
-                    = {SqlSurveyQuestionShowCondition.QUESTION_INDEX}
-                AND {SqlSurveyQuestionShowConditionsTextArg.INDEX}
-                    = {SqlSurveyQuestionShowCondition.INDEX}
             WHERE
-                {SqlSurveyQuestionShowCondition.SURVEY_ID} = @surveyId
-                AND {SqlSurveyQuestionShowCondition.PAGE_INDEX} = @surveyPageIndex
+                {SqlSurveyQuestionShowCondition.TABLE_SURVEY_ID} = {SURVEY_ID}
             ORDER BY
-                {SqlSurveyQuestionShowCondition.QUESTION_INDEX},
-                COALESCE(
-                    {SqlSurveyQuestionShowConditionsRefArg.ARG_INDEX},
-                    {SqlSurveyQuestionShowConditionsIntegerArg.ARG_INDEX},
-                    {SqlSurveyQuestionShowConditionsTextArg.ARG_INDEX});
+                {SqlSurveyQuestionShowCondition.TABLE_PAGE_INDEX} ASC,
+                {SqlSurveyQuestionShowCondition.TABLE_QUESTION_INDEX} ASC,
+                {SqlSurveyQuestionShowCondition.TABLE_INDEX} ASC;
 
             SELECT
-                {SqlSurveyQuestionValidationCondition.QUESTION_INDEX},
-                {SqlSurveyQuestionValidationCondition.INDEX},
-                {SqlSurveyQuestionValidationCondition.TYPE},
-                {SqlSurveyQuestionValidationCondition.IS_OR_OPERATOR},
-                COALESCE(
-                    {SqlSurveyQuestionValidationConditionsRefArg.ARG_INDEX},
-                    {SqlSurveyQuestionValidationConditionsIntegerArg.ARG_INDEX},
-                    {SqlSurveyQuestionValidationConditionsTextArg.ARG_INDEX}),
-                {SqlSurveyQuestionValidationConditionsRefArg.REFERENCED_PAGE_INDEX},
-                {SqlSurveyQuestionValidationConditionsRefArg.REFERENCED_QUESTION_INDEX},
-                {SqlSurveyQuestionValidationConditionsIntegerArg.ARG_VALUE},
-                {SqlSurveyQuestionValidationConditionsTextArg.ARG_VALUE}
+                {SqlSurveyQuestionShowConditionsRefArg.TABLE_PAGE_INDEX},
+                {SqlSurveyQuestionShowConditionsRefArg.TABLE_QUESTION_INDEX},
+                {SqlSurveyQuestionShowConditionsRefArg.TABLE_CONDITION_INDEX},
+                {SqlSurveyQuestionShowConditionsRefArg.TABLE_INDEX},
+                {SqlSurveyQuestionShowConditionsRefArg.TABLE_REFERENCED_PAGE_INDEX},
+                {SqlSurveyQuestionShowConditionsRefArg.TABLE_REFERENCED_QUESTION_INDEX}
+            FROM
+                {SqlSurveyQuestionShowConditionsRefArg.TABLE}
+            WHERE
+                {SqlSurveyQuestionShowConditionsRefArg.TABLE_SURVEY_ID} = {SURVEY_ID}
+            ORDER BY
+                {SqlSurveyQuestionShowConditionsRefArg.TABLE_PAGE_INDEX} ASC,
+                {SqlSurveyQuestionShowConditionsRefArg.TABLE_QUESTION_INDEX} ASC,
+                {SqlSurveyQuestionShowConditionsRefArg.TABLE_INDEX} ASC;
+
+            SELECT
+                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_PAGE_INDEX},
+                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_QUESTION_INDEX},
+                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_CONDITION_INDEX},
+                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_INDEX},
+                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_ARG_VALUE}
+            FROM
+                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE}
+            WHERE
+                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_SURVEY_ID} = {SURVEY_ID}
+            ORDER BY
+                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_PAGE_INDEX} ASC,
+                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_QUESTION_INDEX} ASC,
+                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_INDEX} ASC;
+
+            SELECT
+                {SqlSurveyQuestionShowConditionsTextArg.TABLE_PAGE_INDEX},
+                {SqlSurveyQuestionShowConditionsTextArg.TABLE_QUESTION_INDEX},
+                {SqlSurveyQuestionShowConditionsTextArg.TABLE_CONDITION_INDEX},
+                {SqlSurveyQuestionShowConditionsTextArg.TABLE_INDEX},
+                {SqlSurveyQuestionShowConditionsTextArg.TABLE_ARG_VALUE}
+            FROM
+                {SqlSurveyQuestionShowConditionsTextArg.TABLE}
+            WHERE
+                {SqlSurveyQuestionShowConditionsTextArg.TABLE_SURVEY_ID} = {SURVEY_ID}
+            ORDER BY
+                {SqlSurveyQuestionShowConditionsTextArg.TABLE_PAGE_INDEX} ASC,
+                {SqlSurveyQuestionShowConditionsTextArg.TABLE_QUESTION_INDEX} ASC,
+                {SqlSurveyQuestionShowConditionsTextArg.TABLE_INDEX} ASC;
+
+            SELECT
+                {SqlSurveyQuestionValidationCondition.TABLE_PAGE_INDEX},
+                {SqlSurveyQuestionValidationCondition.TABLE_QUESTION_INDEX},
+                {SqlSurveyQuestionValidationCondition.TABLE_INDEX},
+                {SqlSurveyQuestionValidationCondition.TABLE_TYPE},
+                {SqlSurveyQuestionValidationCondition.TABLE_IS_OR_OPERATOR}
             FROM
                 {SqlSurveyQuestionValidationCondition.TABLE}
-            LEFT JOIN
-                {SqlSurveyQuestionValidationConditionsRefArg.TABLE} ON
-                {SqlSurveyQuestionValidationConditionsRefArg.SURVEY_ID}
-                    = {SqlSurveyQuestionValidationCondition.SURVEY_ID}
-                AND {SqlSurveyQuestionValidationConditionsRefArg.PAGE_INDEX}
-                    = {SqlSurveyQuestionValidationCondition.PAGE_INDEX}
-                AND {SqlSurveyQuestionValidationConditionsRefArg.QUESTION_INDEX}
-                    = {SqlSurveyQuestionValidationCondition.QUESTION_INDEX}
-                AND {SqlSurveyQuestionValidationConditionsRefArg.INDEX}
-                    = {SqlSurveyQuestionValidationCondition.INDEX}
-            LEFT JOIN
-                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE} ON
-                {SqlSurveyQuestionValidationConditionsIntegerArg.SURVEY_ID}
-                    = {SqlSurveyQuestionValidationCondition.SURVEY_ID}
-                AND {SqlSurveyQuestionValidationConditionsIntegerArg.PAGE_INDEX}
-                    = {SqlSurveyQuestionValidationCondition.PAGE_INDEX}
-                AND {SqlSurveyQuestionValidationConditionsIntegerArg.QUESTION_INDEX}
-                    = {SqlSurveyQuestionValidationCondition.QUESTION_INDEX}
-                AND {SqlSurveyQuestionValidationConditionsIntegerArg.INDEX}
-                    = {SqlSurveyQuestionValidationCondition.INDEX}
-            LEFT JOIN
-                {SqlSurveyQuestionValidationConditionsTextArg.TABLE} ON
-                {SqlSurveyQuestionValidationConditionsTextArg.SURVEY_ID}
-                    = {SqlSurveyQuestionValidationCondition.SURVEY_ID}
-                AND {SqlSurveyQuestionValidationConditionsTextArg.PAGE_INDEX}
-                    = {SqlSurveyQuestionValidationCondition.PAGE_INDEX}
-                AND {SqlSurveyQuestionValidationConditionsTextArg.QUESTION_INDEX}
-                    = {SqlSurveyQuestionValidationCondition.QUESTION_INDEX}
-                AND {SqlSurveyQuestionValidationConditionsTextArg.INDEX}
-                    = {SqlSurveyQuestionValidationCondition.INDEX}
             WHERE
-                {SqlSurveyQuestionValidationCondition.SURVEY_ID} = @surveyId
-                AND {SqlSurveyQuestionValidationCondition.PAGE_INDEX} = @surveyPageIndex
+                {SqlSurveyQuestionValidationCondition.TABLE_SURVEY_ID} = {SURVEY_ID}
             ORDER BY
-                {SqlSurveyQuestionValidationCondition.QUESTION_INDEX},
-                COALESCE(
-                    {SqlSurveyQuestionValidationConditionsRefArg.ARG_INDEX},
-                    {SqlSurveyQuestionValidationConditionsIntegerArg.ARG_INDEX},
-                    {SqlSurveyQuestionValidationConditionsTextArg.ARG_INDEX});
+                {SqlSurveyQuestionValidationCondition.TABLE_PAGE_INDEX} ASC,
+                {SqlSurveyQuestionValidationCondition.TABLE_QUESTION_INDEX} ASC,
+                {SqlSurveyQuestionValidationCondition.TABLE_INDEX} ASC;
+
+            SELECT
+                {SqlSurveyQuestionValidationConditionsRefArg.TABLE_PAGE_INDEX},
+                {SqlSurveyQuestionValidationConditionsRefArg.TABLE_QUESTION_INDEX},
+                {SqlSurveyQuestionValidationConditionsRefArg.TABLE_CONDITION_INDEX},
+                {SqlSurveyQuestionValidationConditionsRefArg.TABLE_INDEX},
+                {SqlSurveyQuestionValidationConditionsRefArg.TABLE_REFERENCED_PAGE_INDEX},
+                {SqlSurveyQuestionValidationConditionsRefArg.TABLE_REFERENCED_QUESTION_INDEX}
+            FROM
+                {SqlSurveyQuestionValidationConditionsRefArg.TABLE}
+            WHERE
+                {SqlSurveyQuestionValidationConditionsRefArg.TABLE_SURVEY_ID} = {SURVEY_ID}
+            ORDER BY
+                {SqlSurveyQuestionValidationConditionsRefArg.TABLE_PAGE_INDEX} ASC,
+                {SqlSurveyQuestionValidationConditionsRefArg.TABLE_QUESTION_INDEX} ASC,
+                {SqlSurveyQuestionValidationConditionsRefArg.TABLE_INDEX} ASC;
+
+            SELECT
+                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_PAGE_INDEX},
+                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_QUESTION_INDEX},
+                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_CONDITION_INDEX},
+                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_INDEX},
+                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_ARG_VALUE}
+            FROM
+                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE}
+            WHERE
+                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_SURVEY_ID} = {SURVEY_ID}
+            ORDER BY
+                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_PAGE_INDEX} ASC,
+                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_QUESTION_INDEX} ASC,
+                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_INDEX} ASC;
+
+            SELECT
+                {SqlSurveyQuestionValidationConditionsTextArg.TABLE_PAGE_INDEX},
+                {SqlSurveyQuestionValidationConditionsTextArg.TABLE_QUESTION_INDEX},
+                {SqlSurveyQuestionValidationConditionsTextArg.TABLE_CONDITION_INDEX},
+                {SqlSurveyQuestionValidationConditionsTextArg.TABLE_INDEX},
+                {SqlSurveyQuestionValidationConditionsTextArg.TABLE_ARG_VALUE}
+            FROM
+                {SqlSurveyQuestionValidationConditionsTextArg.TABLE}
+            WHERE
+                {SqlSurveyQuestionValidationConditionsTextArg.TABLE_SURVEY_ID} = {SURVEY_ID}
+            ORDER BY
+                {SqlSurveyQuestionValidationConditionsTextArg.TABLE_PAGE_INDEX} ASC,
+                {SqlSurveyQuestionValidationConditionsTextArg.TABLE_QUESTION_INDEX} ASC,
+                {SqlSurveyQuestionValidationConditionsTextArg.TABLE_INDEX} ASC;
+
+            SELECT
+                {SqlSurveySession.TABLE_TOKEN},
+                {SqlSurveySession.TABLE_EXPIRY},
+                {SqlSurveySession.TABLE_SURVEY_ID}
+            FROM
+                {SqlSurveySession.TABLE}
+            WHERE
+                {SqlSurveySession.TABLE_TOKEN} = {SURVEY_SESSION_TOKEN},
+                {SqlSurveySession.TABLE_SURVEY_ID} = {SURVEY_ID};
             """,
             connection);
 
-        command.Parameters.Add("@surveyId", SqlDbType.Int).Value = surveyIdValue;
-        command.Parameters.Add("@surveyPageIndex", SqlDbType.Int).Value = surveyPageIndexValue;
+        command.Parameters.Add(SURVEY_ID, SqlDbType.Int).Value
+            = surveyId;
+        command.Parameters.Add(SURVEY_SESSION_TOKEN, SqlDbType.Binary, 32).Value
+            = surveySessionToken;
 
         await using SqlDataReader reader = await command.ExecuteReaderAsync();
 
-        if (!await reader.ReadAsync())
-            return NotFound();
+        if (reader.HasRows)
+            return null;
+
+        await reader.ReadAsync();
+
+        string surveyTitle = reader.GetSqlString(1).StrictValue();
+        string surveyAuthor = reader.GetSqlString(2).StrictValue();
+        string surveyDescription = reader.GetSqlString(3).StrictValue();
+        int pageCount = reader.GetSqlInt32(4).StrictValue();
+
+        await reader.ReadAsync();
 
         string pageTitle = reader.GetSqlString(0).StrictValue();
         string pageDescription = reader.GetSqlString(1).StrictValue();
-        int questionCount = reader.GetSqlInt32(2).StrictValue();
 
-        await reader.NextResultAsync();
+        List<ISurveyQuestionModel> questions = [];
 
-        List<SurveyQuestionViewFields> questions = [];
+        await reader.ReadAsync();
 
-        while (await reader.ReadAsync())
+        do
         {
-            if (reader.GetSqlInt32(0).StrictValue() != questions.Count)
-                throw new InvalidDataException(
-                    "Question indexes must be sequential starting from 0.");
+            questions.Add(new SurveyQuestionModel(
+                reader.GetSqlString(1).StrictValue()));
+        }
+        while (reader.Read());
 
-            questions.Add(new SurveyQuestionViewFields(
-                reader.GetSqlString(1).StrictValue(),
-                enumService.SurveyQuestionAnswerTypeMap[reader.GetSqlByte(2).StrictValue()],
-                [],
-                []));
+        return new SurveyPageModel(
+            surveyId,
+            surveyTitle,
+            surveyAuthor,
+            surveyDescription,
+            pageCount,
+            surveyPageIndex,
+            pageTitle,
+            pageDescription,
+            questions);
+    }
+
+    [Route("{surveyId}/{surveyPageIndex}")]
+    public async Task<IActionResult> Page(
+        [FromRoute] string surveyId,
+        [FromRoute] string surveyPageIndex)
+    {
+        if (!int.TryParse(surveyId, out int surveyIdValue)
+            || surveyIdValue < 0
+            || !int.TryParse(surveyPageIndex, out int surveyPageIndexValue)
+            || surveyPageIndexValue < 0)
+            return NotFound();
+
+        await using SqlConnection connection = DefaultSqlConnection();
+
+        await connection.OpenAsync();
+
+        byte[] surveySessionToken = new byte[24];
+
+        if (!Request.Cookies.TryGetValue("session", out string? sessionToken)
+            || Convert.TryFromBase64String(sessionToken, surveySessionToken, out int bytesWritten)
+            || bytesWritten != 24)
+        {
+            if (surveyPageIndexValue > 0)
+                throw new Exception();
+
+            const string SURVEY_ID = "@surveyId";
+
+            await using SqlCommand command = new(
+                $"""
+                INSERT INTO {SqlSurveySession.TABLE} (
+                    {SqlSurveySession.TABLE_SURVEY_ID})
+                OUTPUT
+                    INSERTED.{SqlSurveySession.TOKEN}
+                VALUES
+                    ({SURVEY_ID});
+                """,
+                connection);
+
+            command.Parameters.Add(SURVEY_ID, SqlDbType.Int).Value
+                = surveyIdValue;
+
+            Response.Cookies.Append(
+                "session",
+                sessionToken = Convert.ToBase64String((byte[])command.ExecuteScalar()));
         }
 
-        await reader.NextResultAsync();
+        SurveyPageModel? page = await QuerySurveyPageModel(
+            connection,
+            surveyIdValue,
+            surveyPageIndexValue,
+            surveySessionToken);
 
-        while (await reader.ReadAsync())
-        {
-            int questionIndex = reader.GetSqlInt32(0).StrictValue();
-            if (questionIndex < 0 || questionIndex >= questions.Count)
-                throw new InvalidDataException(
-                    "Show condition question index out of range.");
+        if (page is null)
+            throw new Exception();
 
-            SurveyQuestionViewFields question = questions[questionIndex];
-
-            if (reader.GetSqlInt32(1).StrictValue() != question.ShowConditions.Count)
-                throw new InvalidDataException(
-                    "Show condition indexes must be sequential starting from 0 for each question.");
-
-            questions[questionIndex].ShowConditions.Add(new SurveyQuestionShowConditionViewFields(
-                enumService.SurveyQuestionShowConditionTypeMap[reader.GetSqlByte(2).StrictValue()],
-                reader.GetSqlBoolean(3).StrictValue()
-                    ? SurveyQuestionConditionOperator.Or
-                    : SurveyQuestionConditionOperator.And,
-                reader.IsDBNull(5)
-                    ? null
-                    : (reader.GetSqlInt32(5).StrictValue(), reader.GetSqlInt32(6).StrictValue()),
-                reader.GetSqlInt32(7).CheckedValue(),
-                reader.GetSqlString(8).CheckedValue()));
-        }
-
-        await reader.NextResultAsync();
-
-        while (await reader.ReadAsync())
-        {
-            int questionIndex = reader.GetSqlInt32(0).StrictValue();
-            if (questionIndex < 0 || questionIndex >= questions.Count)
-                throw new InvalidDataException(
-                    "Validation condition question index out of range.");
-
-            SurveyQuestionViewFields question = questions[questionIndex];
-
-            if (reader.GetSqlInt32(1).StrictValue() != question.ValidationConditions.Count)
-                throw new InvalidDataException(
-                    "Validation condition indexes must be sequential starting from 0 for each question.");
-
-            questions[questionIndex].ValidationConditions.Add(new SurveyQuestionValidationConditionViewFields(
-                enumService.SurveyQuestionValidationConditionTypeMap[reader.GetSqlByte(2).StrictValue()],
-                reader.GetSqlBoolean(3).StrictValue()
-                    ? SurveyQuestionConditionOperator.Or
-                    : SurveyQuestionConditionOperator.And,
-                reader.IsDBNull(5)
-                    ? null
-                    : (reader.GetSqlInt32(5).StrictValue(), reader.GetSqlInt32(6).StrictValue()),
-                reader.GetSqlInt32(7).CheckedValue(),
-                reader.GetSqlString(8).CheckedValue()));
-        }
-
-        ViewData["questions"] = questions;
-
-        return View();
+        return View(page);
     }
 }
