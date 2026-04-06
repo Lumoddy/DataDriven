@@ -242,7 +242,7 @@ public record Sql`;
     /// </summary>
     public const string TABLE_`;
             cs += column.blockShortenedSingle;
-            cs += ` = $"[`;
+            cs += ` = "[`;
             cs += tableName;
             cs += `].[`;
             cs += columnName;
@@ -294,7 +294,7 @@ public record Sql`;
     /// </summary>
     public const string `;
             cs += column.blockShortenedSingle;
-            cs += ` = $"[`;
+            cs += ` = "[`;
             cs += columnName;
             cs += `]";
 `;

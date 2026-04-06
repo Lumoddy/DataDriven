@@ -18,7 +18,7 @@ namespace DataDriven.Data;
 public enum `;
 
         cs += table.pascalShortenedSingle;
-        cs += `
+        cs += ` : byte
 {
 `;
 

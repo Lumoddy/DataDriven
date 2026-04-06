@@ -6,6 +6,7 @@ import { preprocessObject } from "./database/preprocess.ts";
 import { exec } from "node:child_process";
 import { csShapeFileFrom } from "./database/database_cs_shape.ts";
 import { csEnumServiceFileFrom } from "./database/database_cs_enum_service.ts";
+import { sqlEnumSetupFileFrom } from "./database/database_sql_enum_setup.ts";
 
 // ASP.NET has custom build options that are capable of running this but it
 // shows its own errors that I don't want to deal with.
@@ -64,6 +65,17 @@ log("success", "Build Started.");
 ` + csEnumServiceFileFrom(databaseStructure),
                         "utf-8")
                         .then(() => log("success", "Converted database enums to ASP.NET enum service.")),
+
+                    Promise.all(
+                        sqlEnumSetupFileFrom(databaseStructure)
+                            .entries()
+                            .map(([name, contents]) => fs.writeFile(
+                                `./Build/database/procedures/enum_setup/${name}.sql`,
+                                `--- This file was auto-generated based on ./Build/database/database_structure.yaml
+` + contents,
+                                "utf-8"))
+                            .toArray())
+                        .then(() => log("success", "Converted database structure to SQL enum setup procedures.")),
                 ]);
             })(),
         ]);

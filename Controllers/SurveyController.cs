@@ -41,202 +41,186 @@ public class SurveyController(
     public SqlConnection DefaultSqlConnection()
         => new(configuration.GetConnectionString("Default"));
 
+    private static class SqlNextVisibleQuestions
+    {
+        public const string TEMP = "[#next_visible_questions]";
+
+        public const string INDEX = "[next_visible_question_index]";
+
+        public const string TEMP_INDEX = "[#next_visible_questions].[next_visible_question_index]";
+    }
+
+    private static class SqlGrouped
+    {
+        public const string TABLE = "[grouped]";
+
+        public const string INDEX = "[group_index]";
+
+        public const string TABLE_INDEX = "[grouped].[group_index]";
+
+        public const string VALUE = "[group_value]";
+
+        public const string TABLE_VALUE = "[grouped].[group_value]";
+    }
+
     [NonAction]
-    public async Task<(SurveyModel, SubmissionModel?)?> QuerySurveyPageModel(
+    public async Task<object?> QuerySurveyPageModel(
         SqlConnection connection,
         int surveyId,
+        int surveyPageIndex,
         byte[] surveySessionToken)
     {
-        const string SURVEY_ID = "@surveyId";
+        const string SURVEY_ID = "@survey_id";
+        const string SURVEY_PAGE_INDEX = "@survey_page_index";
         const string SURVEY_SESSION_TOKEN = "@survey_session_token";
+
+        const string ANSWER_TYPE_SMALL_TEXT = "@answer_text_small_text";
+        const string ANSWER_TYPE_CHECKBOX = "@answer_text_checkbox";
+        const string ANSWER_TYPE_RADIO = "@answer_text_radio";
+        const string ANSWER_TYPE_RADIO_OR_OTHER = "@answer_text_radio_or_other";
+        const string ANSWER_TYPE_MULTISELECT = "@answer_text_multiselect";
+        const string ANSWER_TYPE_MULTISELECT_AND_OTHER = "@answer_text_multiselect_and_other";
+
+        const string SHOW_CONDITION_HAS_ANSWERED = "@show_condition_has_answered";
+        const string SHOW_CONDITION_HAS_NOT_ANSWERED = "@show_condition_has_not_answered";
+
+        const string OPERATOR_AND = "CAST(0 AS BIT)";
+        const string OPERATOR_OR = "CAST(1 AS BIT)";
+
+        const string QUESTION = "[question]";
+        const string GROUPED = "[grouped]";
+        const string GROUPED_INDEX = "[grouped].[index]";
+
+        Console.WriteLine();
 
         await using SqlCommand command = new(
             $"""
             SELECT
                 {SqlSurvey.TABLE_TITLE},
                 {SqlSurvey.TABLE_AUTHOR},
-                {SqlSurvey.TABLE_DESCRIPTION}
-            FROM
-                {SqlSurvey.TABLE}
-            WHERE
-                {SqlSurvey.TABLE_ID} = {SURVEY_ID};
-
-            SELECT
-                {SqlSurveyPage.TABLE_INDEX},
+                {SqlSurvey.TABLE_DESCRIPTION},
                 {SqlSurveyPage.TABLE_TITLE},
                 {SqlSurveyPage.TABLE_DESCRIPTION}
             FROM
                 {SqlSurveyPage.TABLE}
+            LEFT JOIN
+                {SqlSurvey.TABLE}
+                ON {SqlSurvey.TABLE_ID}
+                    = {SqlSurveyPage.TABLE_SURVEY_ID}
+            LEFT JOIN
+                {SqlSurveySession.TABLE}
+                ON {SqlSurveySession.TABLE_SURVEY_ID}
+                    = {SqlSurveyPage.TABLE_SURVEY_ID}
             WHERE
-                {SqlSurveyPage.TABLE_SURVEY_ID} = {SURVEY_ID}
-            ORDER BY
-                {SqlSurveyPage.TABLE_INDEX} ASC;
+                {SqlSurvey.TABLE_ID} = {SURVEY_ID}
+                AND {SqlSurveyPage.TABLE_INDEX} = {SURVEY_PAGE_INDEX}
+                AND {SqlSurveySession.TABLE_TOKEN} = {SURVEY_SESSION_TOKEN};
+
+            IF (@@ROWCOUNT = 0)
+                RETURN;
 
             SELECT
-                {SqlSurveyQuestion.TABLE_PAGE_INDEX},
-                {SqlSurveyQuestion.TABLE_INDEX},
-                {SqlSurveyQuestion.TABLE_TITLE},
-                {SqlSurveyQuestion.TABLE_TYPE}
+                {SqlSurveyQuestion.TABLE_INDEX}
+            INTO
+                {SqlNextVisibleQuestions.TEMP}
             FROM
-                {SqlSurveyQuestion.TABLE}
+                {SqlSurveyQuestion.TABLE} AS {QUESTION}
             WHERE
                 {SqlSurveyQuestion.TABLE_SURVEY_ID} = {SURVEY_ID}
-            ORDER BY
-                {SqlSurveyQuestion.TABLE_PAGE_INDEX} ASC,
-                {SqlSurveyQuestion.TABLE_INDEX} ASC;
-
-            SELECT
-                {SqlSurveyQuestionAnswerOption.TABLE_PAGE_INDEX},
-                {SqlSurveyQuestionAnswerOption.TABLE_QUESTION_INDEX},
-                {SqlSurveyQuestionAnswerOption.TABLE_INDEX},
-                {SqlSurveyQuestionAnswerOption.TABLE_TEXT}
-            FROM
-                {SqlSurveyQuestionAnswerOption.TABLE}
-            WHERE
-                {SqlSurveyQuestionAnswerOption.TABLE_SURVEY_ID} = {SURVEY_ID}
-            ORDER BY
-                {SqlSurveyQuestionAnswerOption.TABLE_PAGE_INDEX} ASC,
-                {SqlSurveyQuestionAnswerOption.TABLE_QUESTION_INDEX} ASC,
-                {SqlSurveyQuestionAnswerOption.TABLE_INDEX} ASC;
-
-            SELECT
-                {SqlSurveyQuestionShowCondition.TABLE_PAGE_INDEX},
-                {SqlSurveyQuestionShowCondition.TABLE_QUESTION_INDEX},
-                {SqlSurveyQuestionShowCondition.TABLE_INDEX},
-                {SqlSurveyQuestionShowCondition.TABLE_TYPE},
-                {SqlSurveyQuestionShowCondition.TABLE_IS_OR_OPERATOR}
-            FROM
-                {SqlSurveyQuestionShowCondition.TABLE}
-            WHERE
-                {SqlSurveyQuestionShowCondition.TABLE_SURVEY_ID} = {SURVEY_ID}
-            ORDER BY
-                {SqlSurveyQuestionShowCondition.TABLE_PAGE_INDEX} ASC,
-                {SqlSurveyQuestionShowCondition.TABLE_QUESTION_INDEX} ASC,
-                {SqlSurveyQuestionShowCondition.TABLE_INDEX} ASC;
-
-            SELECT
-                {SqlSurveyQuestionShowConditionsRefArg.TABLE_PAGE_INDEX},
-                {SqlSurveyQuestionShowConditionsRefArg.TABLE_QUESTION_INDEX},
-                {SqlSurveyQuestionShowConditionsRefArg.TABLE_CONDITION_INDEX},
-                {SqlSurveyQuestionShowConditionsRefArg.TABLE_INDEX},
-                {SqlSurveyQuestionShowConditionsRefArg.TABLE_REFERENCED_PAGE_INDEX},
-                {SqlSurveyQuestionShowConditionsRefArg.TABLE_REFERENCED_QUESTION_INDEX}
-            FROM
-                {SqlSurveyQuestionShowConditionsRefArg.TABLE}
-            WHERE
-                {SqlSurveyQuestionShowConditionsRefArg.TABLE_SURVEY_ID} = {SURVEY_ID}
-            ORDER BY
-                {SqlSurveyQuestionShowConditionsRefArg.TABLE_PAGE_INDEX} ASC,
-                {SqlSurveyQuestionShowConditionsRefArg.TABLE_QUESTION_INDEX} ASC,
-                {SqlSurveyQuestionShowConditionsRefArg.TABLE_INDEX} ASC;
-
-            SELECT
-                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_PAGE_INDEX},
-                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_QUESTION_INDEX},
-                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_CONDITION_INDEX},
-                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_INDEX},
-                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_ARG_VALUE}
-            FROM
-                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE}
-            WHERE
-                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_SURVEY_ID} = {SURVEY_ID}
-            ORDER BY
-                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_PAGE_INDEX} ASC,
-                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_QUESTION_INDEX} ASC,
-                {SqlSurveyQuestionShowConditionsIntegerArg.TABLE_INDEX} ASC;
-
-            SELECT
-                {SqlSurveyQuestionShowConditionsTextArg.TABLE_PAGE_INDEX},
-                {SqlSurveyQuestionShowConditionsTextArg.TABLE_QUESTION_INDEX},
-                {SqlSurveyQuestionShowConditionsTextArg.TABLE_CONDITION_INDEX},
-                {SqlSurveyQuestionShowConditionsTextArg.TABLE_INDEX},
-                {SqlSurveyQuestionShowConditionsTextArg.TABLE_ARG_VALUE}
-            FROM
-                {SqlSurveyQuestionShowConditionsTextArg.TABLE}
-            WHERE
-                {SqlSurveyQuestionShowConditionsTextArg.TABLE_SURVEY_ID} = {SURVEY_ID}
-            ORDER BY
-                {SqlSurveyQuestionShowConditionsTextArg.TABLE_PAGE_INDEX} ASC,
-                {SqlSurveyQuestionShowConditionsTextArg.TABLE_QUESTION_INDEX} ASC,
-                {SqlSurveyQuestionShowConditionsTextArg.TABLE_INDEX} ASC;
-
-            SELECT
-                {SqlSurveyQuestionValidationCondition.TABLE_PAGE_INDEX},
-                {SqlSurveyQuestionValidationCondition.TABLE_QUESTION_INDEX},
-                {SqlSurveyQuestionValidationCondition.TABLE_INDEX},
-                {SqlSurveyQuestionValidationCondition.TABLE_TYPE},
-                {SqlSurveyQuestionValidationCondition.TABLE_IS_OR_OPERATOR}
-            FROM
-                {SqlSurveyQuestionValidationCondition.TABLE}
-            WHERE
-                {SqlSurveyQuestionValidationCondition.TABLE_SURVEY_ID} = {SURVEY_ID}
-            ORDER BY
-                {SqlSurveyQuestionValidationCondition.TABLE_PAGE_INDEX} ASC,
-                {SqlSurveyQuestionValidationCondition.TABLE_QUESTION_INDEX} ASC,
-                {SqlSurveyQuestionValidationCondition.TABLE_INDEX} ASC;
-
-            SELECT
-                {SqlSurveyQuestionValidationConditionsRefArg.TABLE_PAGE_INDEX},
-                {SqlSurveyQuestionValidationConditionsRefArg.TABLE_QUESTION_INDEX},
-                {SqlSurveyQuestionValidationConditionsRefArg.TABLE_CONDITION_INDEX},
-                {SqlSurveyQuestionValidationConditionsRefArg.TABLE_INDEX},
-                {SqlSurveyQuestionValidationConditionsRefArg.TABLE_REFERENCED_PAGE_INDEX},
-                {SqlSurveyQuestionValidationConditionsRefArg.TABLE_REFERENCED_QUESTION_INDEX}
-            FROM
-                {SqlSurveyQuestionValidationConditionsRefArg.TABLE}
-            WHERE
-                {SqlSurveyQuestionValidationConditionsRefArg.TABLE_SURVEY_ID} = {SURVEY_ID}
-            ORDER BY
-                {SqlSurveyQuestionValidationConditionsRefArg.TABLE_PAGE_INDEX} ASC,
-                {SqlSurveyQuestionValidationConditionsRefArg.TABLE_QUESTION_INDEX} ASC,
-                {SqlSurveyQuestionValidationConditionsRefArg.TABLE_INDEX} ASC;
-
-            SELECT
-                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_PAGE_INDEX},
-                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_QUESTION_INDEX},
-                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_CONDITION_INDEX},
-                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_INDEX},
-                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_ARG_VALUE}
-            FROM
-                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE}
-            WHERE
-                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_SURVEY_ID} = {SURVEY_ID}
-            ORDER BY
-                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_PAGE_INDEX} ASC,
-                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_QUESTION_INDEX} ASC,
-                {SqlSurveyQuestionValidationConditionsIntegerArg.TABLE_INDEX} ASC;
-
-            SELECT
-                {SqlSurveyQuestionValidationConditionsTextArg.TABLE_PAGE_INDEX},
-                {SqlSurveyQuestionValidationConditionsTextArg.TABLE_QUESTION_INDEX},
-                {SqlSurveyQuestionValidationConditionsTextArg.TABLE_CONDITION_INDEX},
-                {SqlSurveyQuestionValidationConditionsTextArg.TABLE_INDEX},
-                {SqlSurveyQuestionValidationConditionsTextArg.TABLE_ARG_VALUE}
-            FROM
-                {SqlSurveyQuestionValidationConditionsTextArg.TABLE}
-            WHERE
-                {SqlSurveyQuestionValidationConditionsTextArg.TABLE_SURVEY_ID} = {SURVEY_ID}
-            ORDER BY
-                {SqlSurveyQuestionValidationConditionsTextArg.TABLE_PAGE_INDEX} ASC,
-                {SqlSurveyQuestionValidationConditionsTextArg.TABLE_QUESTION_INDEX} ASC,
-                {SqlSurveyQuestionValidationConditionsTextArg.TABLE_INDEX} ASC;
-
-            SELECT
-                {SqlSurveySession.TABLE_TOKEN},
-                {SqlSurveySession.TABLE_EXPIRY},
-                {SqlSurveySession.TABLE_SURVEY_ID}
-            FROM
-                {SqlSurveySession.TABLE}
-            WHERE
-                {SqlSurveySession.TABLE_TOKEN} = {SURVEY_SESSION_TOKEN},
-                {SqlSurveySession.TABLE_SURVEY_ID} = {SURVEY_ID};
+                AND {SqlSurveyQuestion.TABLE_PAGE_INDEX} = {SURVEY_PAGE_INDEX}
+                AND EXISTS(
+                    WITH {SqlGrouped.TABLE} AS (
+                        SELECT
+                            *,
+                            SUM(CASE
+                                WHEN
+                                    {SqlSurveyQuestionShowCondition.TABLE_IS_OR_OPERATOR} = {OPERATOR_OR}
+                                    AND {SqlSurveyQuestionShowCondition.TABLE_INDEX} > 0
+                                THEN 1
+                                ELSE 0
+                            END)
+                            OVER (
+                                ORDER BY {SqlSurveyQuestionShowCondition.TABLE_INDEX}
+                                ROWS UNBOUNDED PRECEDING) AS {SqlGrouped.INDEX},
+                            CASE
+                                WHEN
+                                    {SqlSurveyQuestionShowCondition.TABLE_TYPE} = {SHOW_CONDITION_HAS_ANSWERED}
+                                THEN EXISTS(
+                                    SELECT 1 FROM
+                                        {SqlSurveyQuestionShowConditionsRefArg.TABLE}
+                                    INNER JOIN
+                                        {SqlSurveyQuestion.TABLE}
+                                        ON
+                                            {SqlSurveyQuestion.TABLE_SURVEY_ID} = {SURVEY_ID}
+                                            AND {SqlSurveyQuestion.TABLE_PAGE_INDEX} = {SURVEY_PAGE_INDEX}
+                                            AND {SqlSurveyQuestion.TABLE_INDEX} = {QUESTION}.{SqlSurveyQuestion.INDEX}
+                                    LEFT JOIN
+                                        {SqlSurveyQuestionShowConditionsTextArg.TABLE}
+                                        ON
+                                            {SqlSurveyQuestionShowConditionsTextArg.TABLE_SURVEY_ID} = {SURVEY_ID}
+                                            AND {SqlSurveyQuestionShowConditionsTextArg.TABLE_PAGE_INDEX} = {SURVEY_PAGE_INDEX}
+                                            AND {SqlSurveyQuestionShowConditionsTextArg.TABLE_QUESTION_INDEX} = {QUESTION}.{SqlSurveyQuestion.INDEX}
+                                            AND {SqlSurveyQuestionShowConditionsTextArg.TABLE_CONDITION_INDEX} = {SqlSurveyQuestionShowConditionsRefArg.TABLE_CONDITION_INDEX}
+                                    WHERE
+                                        {SqlSurveyQuestionShowConditionsRefArg.TABLE_SURVEY_ID} = {SURVEY_ID}
+                                        AND {SqlSurveyQuestionShowConditionsRefArg.TABLE_PAGE_INDEX} = {SURVEY_PAGE_INDEX}
+                                        AND {SqlSurveyQuestionShowConditionsRefArg.TABLE_QUESTION_INDEX} = {QUESTION}.{SqlSurveyQuestion.INDEX}
+                                        AND {SqlSurveyQuestionShowConditionsRefArg.TABLE_CONDITION_INDEX} = {SqlSurveyQuestionShowCondition.TABLE_INDEX}
+                                        AND {SqlSurveyQuestionShowConditionsRefArg.TABLE_INDEX} = 0
+                                    )
+                            END
+                        FROM {SqlSurveyQuestionShowCondition.TABLE}
+                        WHERE
+                            {SqlSurveyQuestionShowCondition.TABLE_SURVEY_ID} = {SURVEY_ID}
+                            AND {SqlSurveyQuestionShowCondition.TABLE_PAGE_INDEX} = {SURVEY_PAGE_INDEX}
+                            AND {SqlSurveyQuestionShowCondition.TABLE_QUESTION_INDEX} = {QUESTION}.{SqlSurveyQuestion.INDEX})
+                    SELECT 1 FROM
+                        {SqlGrouped.TABLE}
+                    GROUP BY
+                        {SqlGrouped.TABLE_INDEX}
+                    HAVING
+                        MIN(CASE
+                            WHEN
+                                {SqlGrouped.TABLE}.{SqlSurveyQuestionShowCondition.TYPE} = {SHOW_CONDITION_HAS_ANSWERED}
+                            THEN CASE
+                                WHEN EXISTS(
+                                    SELECT 1 FROM
+                                        {SqlSurveyQuestionShowConditionsRefArg.TABLE}
+                                    WHERE
+                                        {SqlSurveyQuestionShowConditionsRefArg.TABLE_SURVEY_ID} = {SURVEY_ID}
+                                        AND {SqlSurveyQuestionShowConditionsRefArg.TABLE_PAGE_INDEX} = {SURVEY_PAGE_INDEX}
+                                        AND {SqlSurveyQuestionShowConditionsRefArg.TABLE_QUESTION_INDEX} = {QUESTION}.{SqlSurveyQuestion.INDEX}
+                                )
+                            END
+                        END) = CAST(1 AS BIT)
+                )
             """,
             connection);
 
         command.Parameters.Add(SURVEY_ID, SqlDbType.Int).Value
             = surveyId;
+        command.Parameters.Add(SURVEY_PAGE_INDEX, SqlDbType.Int).Value
+            = surveyPageIndex;
         command.Parameters.Add(SURVEY_SESSION_TOKEN, SqlDbType.Binary, 32).Value
             = surveySessionToken;
+
+        command.Parameters.Add(ANSWER_TYPE_SMALL_TEXT, SqlDbType.TinyInt).Value
+            = enumService.SurveyQuestionAnswerTypeMap[SurveyQuestionAnswerType.SmallText];
+        command.Parameters.Add(ANSWER_TYPE_CHECKBOX, SqlDbType.TinyInt).Value
+            = enumService.SurveyQuestionAnswerTypeMap[SurveyQuestionAnswerType.Checkbox];
+        command.Parameters.Add(ANSWER_TYPE_RADIO, SqlDbType.TinyInt).Value
+            = enumService.SurveyQuestionAnswerTypeMap[SurveyQuestionAnswerType.Radio];
+        command.Parameters.Add(ANSWER_TYPE_RADIO_OR_OTHER, SqlDbType.TinyInt).Value
+            = enumService.SurveyQuestionAnswerTypeMap[SurveyQuestionAnswerType.RadioOrOther];
+        command.Parameters.Add(ANSWER_TYPE_MULTISELECT, SqlDbType.TinyInt).Value
+            = enumService.SurveyQuestionAnswerTypeMap[SurveyQuestionAnswerType.MultiSelect];
+        command.Parameters.Add(ANSWER_TYPE_MULTISELECT_AND_OTHER, SqlDbType.TinyInt).Value
+            = enumService.SurveyQuestionAnswerTypeMap[SurveyQuestionAnswerType.MultiSelectAndOther];
+
+        command.Parameters.Add(SHOW_CONDITION_HAS_ANSWERED, SqlDbType.TinyInt).Value
+            = enumService.SurveyQuestionShowConditionTypeMap[SurveyQuestionShowConditionType.HasAnswered];
+        command.Parameters.Add(SHOW_CONDITION_HAS_NOT_ANSWERED, SqlDbType.TinyInt).Value
+            = enumService.SurveyQuestionShowConditionTypeMap[SurveyQuestionShowConditionType.HasNotAnswered];
 
         await using SqlDataReader reader = await command.ExecuteReaderAsync();
 
