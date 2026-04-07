@@ -18,10 +18,6 @@ CREATE TABLE [survey_question_validation_condition_types] (
     [survey_question_validation_condition_type_id] TINYINT NOT NULL,
     [survey_question_validation_condition_type_name] VARCHAR(255) NOT NULL);
 
-CREATE TABLE [survey_question_condition_passing] (
-    [survey_question_condition_passing_id] TINYINT NOT NULL,
-    [survey_question_condition_passing_name] VARCHAR(255) NOT NULL);
-
 CREATE TABLE [surveys] (
     [survey_id] INT NOT NULL,
     [survey_title] VARCHAR(255) NOT NULL,
@@ -166,12 +162,12 @@ CREATE TABLE [survey_question_validation_conditions_text_args] (
 
 CREATE TABLE [registered_member_sessions] (
     [registered_member_session_token] BINARY(32) NOT NULL CONSTRAINT [default_registered_member_sessions_1] DEFAULT CRYPT_GEN_RANDOM(32),
-    [registered_member_session_expiry] DATETIME NOT NULL CONSTRAINT [default_registered_member_sessions_2] DEFAULT DATEADD(HOUR, 2, GETDATE()),
+    [registered_member_session_expiry] DATETIME NOT NULL CONSTRAINT [default_registered_member_sessions_2] DEFAULT DATEADD(HOUR, 2, GETUTCDATE()),
     [registered_member_id] INT NOT NULL);
 
 CREATE TABLE [survey_sessions] (
     [survey_session_token] BINARY(32) NOT NULL CONSTRAINT [default_survey_sessions_1] DEFAULT CRYPT_GEN_RANDOM(32),
-    [survey_session_expiry] DATETIME NOT NULL CONSTRAINT [default_survey_sessions_2] DEFAULT DATEADD(HOUR, 2, GETDATE()),
+    [survey_session_expiry] DATETIME NOT NULL CONSTRAINT [default_survey_sessions_2] DEFAULT DATEADD(HOUR, 2, GETUTCDATE()),
     [survey_id] INT NOT NULL);
 
 CREATE TABLE [survey_session_answers] (
@@ -212,10 +208,6 @@ ALTER TABLE [survey_question_show_condition_types]
 ALTER TABLE [survey_question_validation_condition_types]
     ADD CONSTRAINT [unique_survey_question_validation_condition_types_1] PRIMARY KEY (
         [survey_question_validation_condition_type_id]);
-
-ALTER TABLE [survey_question_condition_passing]
-    ADD CONSTRAINT [unique_survey_question_condition_passing_1] PRIMARY KEY (
-        [survey_question_condition_passing_id]);
 
 ALTER TABLE [surveys]
     ADD CONSTRAINT [unique_surveys_1] PRIMARY KEY (
@@ -878,10 +870,5 @@ INSERT INTO [survey_question_show_condition_types] ([survey_question_show_condit
 INSERT INTO [survey_question_validation_condition_types] ([survey_question_validation_condition_type_id], [survey_question_validation_condition_type_name]) VALUES
     (0, 'min'),
     (1, 'max');
-
-INSERT INTO [survey_question_condition_passing] ([survey_question_condition_passing_id], [survey_question_condition_passing_name]) VALUES
-    (0, 'failed'),
-    (1, 'passed'),
-    (2, 'undecided');
 
 COMMIT TRANSACTION;

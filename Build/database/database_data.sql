@@ -37,15 +37,6 @@ EXEC [survey_question_condition_operator_fields]
     @and = @operator_and OUTPUT,
     @or = @operator_or OUTPUT;
 
-DECLARE @condition_failed TINYINT = 0;
-DECLARE @condition_passed TINYINT = 1;
-DECLARE @condition_undecided TINYINT = 2;
-
-EXEC [survey_question_condition_passing_fields]
-    @failed = @condition_failed OUTPUT,
-    @passed = @condition_passed OUTPUT,
-    @undecided = @condition_undecided OUTPUT;
-
 INSERT INTO [surveys] ([survey_id], [survey_title], [survey_author], [survey_description]) VALUES
     (1, 'AITR Research Form', 'AIT Research', '');
 
@@ -134,16 +125,16 @@ INSERT INTO [survey_question_show_conditions] ([survey_id], [survey_page_index],
     (1, 1, 3, 0, @show_condition_has_answered, @operator_and);
 
 INSERT INTO [survey_question_show_conditions_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index]) VALUES
-    (1, 1, 1, 0, 0);
+    (1, 1, 3, 0, 0);
 
 INSERT INTO [survey_question_show_conditions_ref_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index]) VALUES
-    (1, 1, 3, 0, 0, 1, 0);
+    (1, 1, 3, 0, 0, 1, 2);
 
 INSERT INTO [survey_question_validation_conditions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_type], [survey_question_validation_condition_operator]) VALUES
     (1, 1, 3, 0, @validation_condition_min, @operator_and);
 
 INSERT INTO [survey_question_validation_conditions_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index]) VALUES
-    (1, 1, 1, 0, 0);
+    (1, 1, 3, 0, 0);
 
 INSERT INTO [survey_question_validation_conditions_integer_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer]) VALUES
     (1, 1, 3, 0, 0, 0);
@@ -171,16 +162,16 @@ INSERT INTO [survey_question_show_conditions] ([survey_id], [survey_page_index],
     (1, 2, 1, 0, @show_condition_has_answered, @operator_and);
 
 INSERT INTO [survey_question_show_conditions_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index]) VALUES
-    (1, 1, 1, 0, 0);
+    (1, 2, 1, 0, 0);
 
 INSERT INTO [survey_question_show_conditions_ref_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index]) VALUES
-    (1, 2, 1, 0, 0, 1, 0);
+    (1, 2, 1, 0, 0, 2, 0);
 
 INSERT INTO [survey_question_validation_conditions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_type], [survey_question_validation_condition_operator]) VALUES
     (1, 2, 1, 0, @validation_condition_min, @operator_and);
 
 INSERT INTO [survey_question_validation_conditions_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index]) VALUES
-    (1, 1, 1, 0, 0);
+    (1, 2, 1, 0, 0);
 
 INSERT INTO [survey_question_validation_conditions_integer_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer]) VALUES
     (1, 2, 1, 0, 0, 2);

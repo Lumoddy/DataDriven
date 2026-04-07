@@ -116,7 +116,7 @@ namespace DataDriven.Data;
         }
 
         cs += `
-public record Sql`;
+public partial record Sql`;
 
         cs += table.pascalShortenedSingle;
         cs += `(

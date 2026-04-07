@@ -54,7 +54,7 @@ public class `;
 
             cs += `    byte `;
             cs += field.camelShortenedSingle;
-            cs += `Index`;
+            cs += `EnumId`;
         }
 
         cs += `)
@@ -75,7 +75,7 @@ public class `;
         {
             cs += `        var x when x == `;
             cs += field.camelShortenedSingle;
-            cs += `Index => `;
+            cs += `EnumId => `;
             cs += table.pascalShortenedSingle;
             cs += `.`;
             cs += field.pascalShortenedSingle;
@@ -102,7 +102,7 @@ public class `;
             cs += field.pascalShortenedSingle;
             cs += ` => `;
             cs += field.camelShortenedSingle;
-            cs += `Index,
+            cs += `EnumId,
 `;
         }
 
@@ -121,7 +121,7 @@ public class `;
         {
             cs += `            yield return `;
             cs += field.camelShortenedSingle;
-            cs += `Index;
+            cs += `EnumId;
 `;
         }
 
@@ -165,7 +165,7 @@ public class `;
 
             cs += `key == `;
             cs += field.camelShortenedSingle;
-            cs += `Index`;
+            cs += `EnumId`;
         }
 
         cs += `;
@@ -186,7 +186,7 @@ public class `;
         {
             cs += `        yield return new(`;
             cs += field.camelShortenedSingle;
-            cs += `Index, `;
+            cs += `EnumId, `;
             cs += table.pascalShortenedSingle;
             cs += `.`;
             cs += field.pascalShortenedPlural;
@@ -212,7 +212,7 @@ public class `;
             cs += field.pascalShortenedPlural;
             cs += `, `;
             cs += field.camelShortenedSingle;
-            cs += `Index`;
+            cs += `EnumId`;
             cs += `);
 `;
         }

@@ -46,7 +46,7 @@ replacements:
                 /^\s*\d+\s+(\w+?)s?\s*$/.exec(column.duration)[1].toUpperCase() +
                 `, ` +
                 /^\s*(\d+)\s+\w+\s*$/.exec(column.duration)[1] +
-                `, GETDATE())`
+                `, GETUTCDATE())`
             : null;
 
 enums:
@@ -78,13 +78,6 @@ enums:
     values:
       min:
       max:
-
-  survey_question_condition_passing:
-    short_plural: condition_passing
-    values:
-      failed:
-      passed:
-      undecided:
 
 tables:
 

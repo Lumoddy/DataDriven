@@ -33,42 +33,35 @@ public enum ValidationConditionType : byte
     Max,
 }
 
-public enum ConditionPassing : byte
-{
-    Failed,
-    Passed,
-    Undecided,
-}
-
 public class AnswerTypeMap(
-    byte smallTextIndex,
-    byte checkboxIndex,
-    byte radioIndex,
-    byte radioOrOtherIndex,
-    byte multiSelectIndex,
-    byte multiSelectAndOtherIndex)
+    byte smallTextEnumId,
+    byte checkboxEnumId,
+    byte radioEnumId,
+    byte radioOrOtherEnumId,
+    byte multiSelectEnumId,
+    byte multiSelectAndOtherEnumId)
     : IReadOnlyDictionary<byte, AnswerType>,
     IReadOnlyDictionary<AnswerType, byte>
 {
     public AnswerType this[byte key] => key switch
     {
-        var x when x == smallTextIndex => AnswerType.SmallText,
-        var x when x == checkboxIndex => AnswerType.Checkbox,
-        var x when x == radioIndex => AnswerType.Radio,
-        var x when x == radioOrOtherIndex => AnswerType.RadioOrOther,
-        var x when x == multiSelectIndex => AnswerType.MultiSelect,
-        var x when x == multiSelectAndOtherIndex => AnswerType.MultiSelectAndOther,
+        var x when x == smallTextEnumId => AnswerType.SmallText,
+        var x when x == checkboxEnumId => AnswerType.Checkbox,
+        var x when x == radioEnumId => AnswerType.Radio,
+        var x when x == radioOrOtherEnumId => AnswerType.RadioOrOther,
+        var x when x == multiSelectEnumId => AnswerType.MultiSelect,
+        var x when x == multiSelectAndOtherEnumId => AnswerType.MultiSelectAndOther,
         var x => throw new KeyNotFoundException($"Key {x} not found in AnswerTypeMap.")
     };
 
     public byte this[AnswerType key] => key switch
     {
-        AnswerType.SmallText => smallTextIndex,
-        AnswerType.Checkbox => checkboxIndex,
-        AnswerType.Radio => radioIndex,
-        AnswerType.RadioOrOther => radioOrOtherIndex,
-        AnswerType.MultiSelect => multiSelectIndex,
-        AnswerType.MultiSelectAndOther => multiSelectAndOtherIndex,
+        AnswerType.SmallText => smallTextEnumId,
+        AnswerType.Checkbox => checkboxEnumId,
+        AnswerType.Radio => radioEnumId,
+        AnswerType.RadioOrOther => radioOrOtherEnumId,
+        AnswerType.MultiSelect => multiSelectEnumId,
+        AnswerType.MultiSelectAndOther => multiSelectAndOtherEnumId,
         _ => throw new KeyNotFoundException($"Invalid key given to AnswerTypeMap.")
     };
 
@@ -76,12 +69,12 @@ public class AnswerTypeMap(
     {
         get
         {
-            yield return smallTextIndex;
-            yield return checkboxIndex;
-            yield return radioIndex;
-            yield return radioOrOtherIndex;
-            yield return multiSelectIndex;
-            yield return multiSelectAndOtherIndex;
+            yield return smallTextEnumId;
+            yield return checkboxEnumId;
+            yield return radioEnumId;
+            yield return radioOrOtherEnumId;
+            yield return multiSelectEnumId;
+            yield return multiSelectAndOtherEnumId;
         }
     }
 
@@ -94,33 +87,33 @@ public class AnswerTypeMap(
     public int Count => 6;
 
     public bool ContainsKey(byte key)
-        => key == smallTextIndex ||
-            key == checkboxIndex ||
-            key == radioIndex ||
-            key == radioOrOtherIndex ||
-            key == multiSelectIndex ||
-            key == multiSelectAndOtherIndex;
+        => key == smallTextEnumId ||
+            key == checkboxEnumId ||
+            key == radioEnumId ||
+            key == radioOrOtherEnumId ||
+            key == multiSelectEnumId ||
+            key == multiSelectAndOtherEnumId;
 
     bool IReadOnlyDictionary<AnswerType, byte>.ContainsKey(AnswerType key) => Enum.IsDefined(key);
 
     public IEnumerator<KeyValuePair<byte, AnswerType>> GetEnumerator()
     {
-        yield return new(smallTextIndex, AnswerType.SmallText);
-        yield return new(checkboxIndex, AnswerType.Checkbox);
-        yield return new(radioIndex, AnswerType.Radio);
-        yield return new(radioOrOtherIndex, AnswerType.RadioOrOther);
-        yield return new(multiSelectIndex, AnswerType.MultiSelect);
-        yield return new(multiSelectAndOtherIndex, AnswerType.MultiSelectAndOther);
+        yield return new(smallTextEnumId, AnswerType.SmallText);
+        yield return new(checkboxEnumId, AnswerType.Checkbox);
+        yield return new(radioEnumId, AnswerType.Radio);
+        yield return new(radioOrOtherEnumId, AnswerType.RadioOrOther);
+        yield return new(multiSelectEnumId, AnswerType.MultiSelect);
+        yield return new(multiSelectAndOtherEnumId, AnswerType.MultiSelectAndOther);
     }
 
     IEnumerator<KeyValuePair<AnswerType, byte>> IEnumerable<KeyValuePair<AnswerType, byte>>.GetEnumerator()
     {
-        yield return new(AnswerType.SmallText, smallTextIndex);
-        yield return new(AnswerType.Checkbox, checkboxIndex);
-        yield return new(AnswerType.Radio, radioIndex);
-        yield return new(AnswerType.RadioOrOther, radioOrOtherIndex);
-        yield return new(AnswerType.MultiSelect, multiSelectIndex);
-        yield return new(AnswerType.MultiSelectAndOther, multiSelectAndOtherIndex);
+        yield return new(AnswerType.SmallText, smallTextEnumId);
+        yield return new(AnswerType.Checkbox, checkboxEnumId);
+        yield return new(AnswerType.Radio, radioEnumId);
+        yield return new(AnswerType.RadioOrOther, radioOrOtherEnumId);
+        yield return new(AnswerType.MultiSelect, multiSelectEnumId);
+        yield return new(AnswerType.MultiSelectAndOther, multiSelectAndOtherEnumId);
     }
 
     public bool TryGetValue(byte key, out AnswerType value)
@@ -155,22 +148,22 @@ public class AnswerTypeMap(
 }
 
 public class ConditionOperatorMap(
-    byte andIndex,
-    byte orIndex)
+    byte andEnumId,
+    byte orEnumId)
     : IReadOnlyDictionary<byte, ConditionOperator>,
     IReadOnlyDictionary<ConditionOperator, byte>
 {
     public ConditionOperator this[byte key] => key switch
     {
-        var x when x == andIndex => ConditionOperator.And,
-        var x when x == orIndex => ConditionOperator.Or,
+        var x when x == andEnumId => ConditionOperator.And,
+        var x when x == orEnumId => ConditionOperator.Or,
         var x => throw new KeyNotFoundException($"Key {x} not found in ConditionOperatorMap.")
     };
 
     public byte this[ConditionOperator key] => key switch
     {
-        ConditionOperator.And => andIndex,
-        ConditionOperator.Or => orIndex,
+        ConditionOperator.And => andEnumId,
+        ConditionOperator.Or => orEnumId,
         _ => throw new KeyNotFoundException($"Invalid key given to ConditionOperatorMap.")
     };
 
@@ -178,8 +171,8 @@ public class ConditionOperatorMap(
     {
         get
         {
-            yield return andIndex;
-            yield return orIndex;
+            yield return andEnumId;
+            yield return orEnumId;
         }
     }
 
@@ -192,21 +185,21 @@ public class ConditionOperatorMap(
     public int Count => 2;
 
     public bool ContainsKey(byte key)
-        => key == andIndex ||
-            key == orIndex;
+        => key == andEnumId ||
+            key == orEnumId;
 
     bool IReadOnlyDictionary<ConditionOperator, byte>.ContainsKey(ConditionOperator key) => Enum.IsDefined(key);
 
     public IEnumerator<KeyValuePair<byte, ConditionOperator>> GetEnumerator()
     {
-        yield return new(andIndex, ConditionOperator.And);
-        yield return new(orIndex, ConditionOperator.Or);
+        yield return new(andEnumId, ConditionOperator.And);
+        yield return new(orEnumId, ConditionOperator.Or);
     }
 
     IEnumerator<KeyValuePair<ConditionOperator, byte>> IEnumerable<KeyValuePair<ConditionOperator, byte>>.GetEnumerator()
     {
-        yield return new(ConditionOperator.And, andIndex);
-        yield return new(ConditionOperator.Or, orIndex);
+        yield return new(ConditionOperator.And, andEnumId);
+        yield return new(ConditionOperator.Or, orEnumId);
     }
 
     public bool TryGetValue(byte key, out ConditionOperator value)
@@ -241,22 +234,22 @@ public class ConditionOperatorMap(
 }
 
 public class ShowConditionTypeMap(
-    byte hasAnsweredIndex,
-    byte hasNotAnsweredIndex)
+    byte hasAnsweredEnumId,
+    byte hasNotAnsweredEnumId)
     : IReadOnlyDictionary<byte, ShowConditionType>,
     IReadOnlyDictionary<ShowConditionType, byte>
 {
     public ShowConditionType this[byte key] => key switch
     {
-        var x when x == hasAnsweredIndex => ShowConditionType.HasAnswered,
-        var x when x == hasNotAnsweredIndex => ShowConditionType.HasNotAnswered,
+        var x when x == hasAnsweredEnumId => ShowConditionType.HasAnswered,
+        var x when x == hasNotAnsweredEnumId => ShowConditionType.HasNotAnswered,
         var x => throw new KeyNotFoundException($"Key {x} not found in ShowConditionTypeMap.")
     };
 
     public byte this[ShowConditionType key] => key switch
     {
-        ShowConditionType.HasAnswered => hasAnsweredIndex,
-        ShowConditionType.HasNotAnswered => hasNotAnsweredIndex,
+        ShowConditionType.HasAnswered => hasAnsweredEnumId,
+        ShowConditionType.HasNotAnswered => hasNotAnsweredEnumId,
         _ => throw new KeyNotFoundException($"Invalid key given to ShowConditionTypeMap.")
     };
 
@@ -264,8 +257,8 @@ public class ShowConditionTypeMap(
     {
         get
         {
-            yield return hasAnsweredIndex;
-            yield return hasNotAnsweredIndex;
+            yield return hasAnsweredEnumId;
+            yield return hasNotAnsweredEnumId;
         }
     }
 
@@ -278,21 +271,21 @@ public class ShowConditionTypeMap(
     public int Count => 2;
 
     public bool ContainsKey(byte key)
-        => key == hasAnsweredIndex ||
-            key == hasNotAnsweredIndex;
+        => key == hasAnsweredEnumId ||
+            key == hasNotAnsweredEnumId;
 
     bool IReadOnlyDictionary<ShowConditionType, byte>.ContainsKey(ShowConditionType key) => Enum.IsDefined(key);
 
     public IEnumerator<KeyValuePair<byte, ShowConditionType>> GetEnumerator()
     {
-        yield return new(hasAnsweredIndex, ShowConditionType.HasAnswered);
-        yield return new(hasNotAnsweredIndex, ShowConditionType.HasNotAnswered);
+        yield return new(hasAnsweredEnumId, ShowConditionType.HasAnswered);
+        yield return new(hasNotAnsweredEnumId, ShowConditionType.HasNotAnswered);
     }
 
     IEnumerator<KeyValuePair<ShowConditionType, byte>> IEnumerable<KeyValuePair<ShowConditionType, byte>>.GetEnumerator()
     {
-        yield return new(ShowConditionType.HasAnswered, hasAnsweredIndex);
-        yield return new(ShowConditionType.HasNotAnswered, hasNotAnsweredIndex);
+        yield return new(ShowConditionType.HasAnswered, hasAnsweredEnumId);
+        yield return new(ShowConditionType.HasNotAnswered, hasNotAnsweredEnumId);
     }
 
     public bool TryGetValue(byte key, out ShowConditionType value)
@@ -327,22 +320,22 @@ public class ShowConditionTypeMap(
 }
 
 public class ValidationConditionTypeMap(
-    byte minIndex,
-    byte maxIndex)
+    byte minEnumId,
+    byte maxEnumId)
     : IReadOnlyDictionary<byte, ValidationConditionType>,
     IReadOnlyDictionary<ValidationConditionType, byte>
 {
     public ValidationConditionType this[byte key] => key switch
     {
-        var x when x == minIndex => ValidationConditionType.Min,
-        var x when x == maxIndex => ValidationConditionType.Max,
+        var x when x == minEnumId => ValidationConditionType.Min,
+        var x when x == maxEnumId => ValidationConditionType.Max,
         var x => throw new KeyNotFoundException($"Key {x} not found in ValidationConditionTypeMap.")
     };
 
     public byte this[ValidationConditionType key] => key switch
     {
-        ValidationConditionType.Min => minIndex,
-        ValidationConditionType.Max => maxIndex,
+        ValidationConditionType.Min => minEnumId,
+        ValidationConditionType.Max => maxEnumId,
         _ => throw new KeyNotFoundException($"Invalid key given to ValidationConditionTypeMap.")
     };
 
@@ -350,8 +343,8 @@ public class ValidationConditionTypeMap(
     {
         get
         {
-            yield return minIndex;
-            yield return maxIndex;
+            yield return minEnumId;
+            yield return maxEnumId;
         }
     }
 
@@ -364,21 +357,21 @@ public class ValidationConditionTypeMap(
     public int Count => 2;
 
     public bool ContainsKey(byte key)
-        => key == minIndex ||
-            key == maxIndex;
+        => key == minEnumId ||
+            key == maxEnumId;
 
     bool IReadOnlyDictionary<ValidationConditionType, byte>.ContainsKey(ValidationConditionType key) => Enum.IsDefined(key);
 
     public IEnumerator<KeyValuePair<byte, ValidationConditionType>> GetEnumerator()
     {
-        yield return new(minIndex, ValidationConditionType.Min);
-        yield return new(maxIndex, ValidationConditionType.Max);
+        yield return new(minEnumId, ValidationConditionType.Min);
+        yield return new(maxEnumId, ValidationConditionType.Max);
     }
 
     IEnumerator<KeyValuePair<ValidationConditionType, byte>> IEnumerable<KeyValuePair<ValidationConditionType, byte>>.GetEnumerator()
     {
-        yield return new(ValidationConditionType.Min, minIndex);
-        yield return new(ValidationConditionType.Max, maxIndex);
+        yield return new(ValidationConditionType.Min, minEnumId);
+        yield return new(ValidationConditionType.Max, maxEnumId);
     }
 
     public bool TryGetValue(byte key, out ValidationConditionType value)
@@ -412,99 +405,6 @@ public class ValidationConditionTypeMap(
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
 
-public class ConditionPassingMap(
-    byte failedIndex,
-    byte passedIndex,
-    byte undecidedIndex)
-    : IReadOnlyDictionary<byte, ConditionPassing>,
-    IReadOnlyDictionary<ConditionPassing, byte>
-{
-    public ConditionPassing this[byte key] => key switch
-    {
-        var x when x == failedIndex => ConditionPassing.Failed,
-        var x when x == passedIndex => ConditionPassing.Passed,
-        var x when x == undecidedIndex => ConditionPassing.Undecided,
-        var x => throw new KeyNotFoundException($"Key {x} not found in ConditionPassingMap.")
-    };
-
-    public byte this[ConditionPassing key] => key switch
-    {
-        ConditionPassing.Failed => failedIndex,
-        ConditionPassing.Passed => passedIndex,
-        ConditionPassing.Undecided => undecidedIndex,
-        _ => throw new KeyNotFoundException($"Invalid key given to ConditionPassingMap.")
-    };
-
-    public IEnumerable<byte> Keys
-    {
-        get
-        {
-            yield return failedIndex;
-            yield return passedIndex;
-            yield return undecidedIndex;
-        }
-    }
-
-    public IEnumerable<ConditionPassing> Values => Enum.GetValues<ConditionPassing>();
-
-    IEnumerable<ConditionPassing> IReadOnlyDictionary<ConditionPassing, byte>.Keys => Values;
-
-    IEnumerable<byte> IReadOnlyDictionary<ConditionPassing, byte>.Values => Keys;
-
-    public int Count => 3;
-
-    public bool ContainsKey(byte key)
-        => key == failedIndex ||
-            key == passedIndex ||
-            key == undecidedIndex;
-
-    bool IReadOnlyDictionary<ConditionPassing, byte>.ContainsKey(ConditionPassing key) => Enum.IsDefined(key);
-
-    public IEnumerator<KeyValuePair<byte, ConditionPassing>> GetEnumerator()
-    {
-        yield return new(failedIndex, ConditionPassing.Failed);
-        yield return new(passedIndex, ConditionPassing.Passed);
-        yield return new(undecidedIndex, ConditionPassing.Undecided);
-    }
-
-    IEnumerator<KeyValuePair<ConditionPassing, byte>> IEnumerable<KeyValuePair<ConditionPassing, byte>>.GetEnumerator()
-    {
-        yield return new(ConditionPassing.Failed, failedIndex);
-        yield return new(ConditionPassing.Passed, passedIndex);
-        yield return new(ConditionPassing.Undecided, undecidedIndex);
-    }
-
-    public bool TryGetValue(byte key, out ConditionPassing value)
-    {
-        if (ContainsKey(key))
-        {
-            value = this[key];
-            return true;
-        }
-        else
-        {
-            value = default;
-            return false;
-        }
-    }
-
-    bool IReadOnlyDictionary<ConditionPassing, byte>.TryGetValue(ConditionPassing key, out byte value)
-    {
-        if (((IReadOnlyDictionary<ConditionPassing, byte>)this).ContainsKey(key))
-        {
-            value = this[key];
-            return true;
-        }
-        else
-        {
-            value = default;
-            return false;
-        }
-    }
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-}
-
 public interface IDatabaseEnumService
 {
     AnswerTypeMap AnswerTypeMap { get; }
@@ -514,8 +414,6 @@ public interface IDatabaseEnumService
     ShowConditionTypeMap ShowConditionTypeMap { get; }
 
     ValidationConditionTypeMap ValidationConditionTypeMap { get; }
-
-    ConditionPassingMap ConditionPassingMap { get; }
 }
 
 public class DatabaseEnumService : IDatabaseEnumService
@@ -527,8 +425,6 @@ public class DatabaseEnumService : IDatabaseEnumService
     private readonly ShowConditionTypeMap showConditionTypeMap;
 
     private readonly ValidationConditionTypeMap validationConditionTypeMap;
-
-    private readonly ConditionPassingMap conditionPassingMap;
 
     public DatabaseEnumService(IConfiguration configuration)
     {
@@ -618,27 +514,6 @@ public class DatabaseEnumService : IDatabaseEnumService
             SELECT [survey_question_validation_condition_type_id]
             FROM [survey_question_validation_condition_types]
             WHERE [survey_question_validation_condition_type_name] = 'max';
-
-            IF @@ROWCOUNT = 0
-                RETURN;
-
-            SELECT [survey_question_condition_passing_id]
-            FROM [survey_question_condition_passing]
-            WHERE [survey_question_condition_passing_name] = 'failed';
-
-            IF @@ROWCOUNT = 0
-                RETURN;
-
-            SELECT [survey_question_condition_passing_id]
-            FROM [survey_question_condition_passing]
-            WHERE [survey_question_condition_passing_name] = 'passed';
-
-            IF @@ROWCOUNT = 0
-                RETURN;
-
-            SELECT [survey_question_condition_passing_id]
-            FROM [survey_question_condition_passing]
-            WHERE [survey_question_condition_passing_name] = 'undecided';
             """,
             connection);
 
@@ -758,35 +633,6 @@ public class DatabaseEnumService : IDatabaseEnumService
             surveyQuestionValidationConditionTypeMin,
             surveyQuestionValidationConditionTypeMax);
 
-        reader.NextResult();
-
-        if (!reader.Read())
-            throw new InvalidOperationException(
-                "Database does not contain an entry for 'failed' in the 'survey_question_condition_passing' enum.");
-
-        byte surveyQuestionConditionPassingFailed = reader.GetSqlByte(0).StrictValue();
-
-        reader.NextResult();
-
-        if (!reader.Read())
-            throw new InvalidOperationException(
-                "Database does not contain an entry for 'passed' in the 'survey_question_condition_passing' enum.");
-
-        byte surveyQuestionConditionPassingPassed = reader.GetSqlByte(0).StrictValue();
-
-        reader.NextResult();
-
-        if (!reader.Read())
-            throw new InvalidOperationException(
-                "Database does not contain an entry for 'undecided' in the 'survey_question_condition_passing' enum.");
-
-        byte surveyQuestionConditionPassingUndecided = reader.GetSqlByte(0).StrictValue();
-
-        conditionPassingMap = new(
-            surveyQuestionConditionPassingFailed,
-            surveyQuestionConditionPassingPassed,
-            surveyQuestionConditionPassingUndecided);
-
     }
 
     public AnswerTypeMap AnswerTypeMap
@@ -800,7 +646,4 @@ public class DatabaseEnumService : IDatabaseEnumService
 
     public ValidationConditionTypeMap ValidationConditionTypeMap
         => validationConditionTypeMap;
-
-    public ConditionPassingMap ConditionPassingMap
-        => conditionPassingMap;
 }

@@ -12,7 +12,7 @@ BEGIN
         WHERE [survey_question_show_condition_types].[survey_question_show_condition_type_name] = 'has_answered');
 
     IF (@has_answered IS NULL)
-        THROW 50000, 'survey_question_show_condition_types "has_answered" not found.', 1;
+        THROW 50000, 'Database does not contain an entry for ''has_answered'' in the ''survey_question_show_condition_types'' enum.', 1;
 
     SET @has_not_answered = (
         SELECT [survey_question_show_condition_types].[survey_question_show_condition_type_id]
@@ -20,6 +20,6 @@ BEGIN
         WHERE [survey_question_show_condition_types].[survey_question_show_condition_type_name] = 'has_not_answered');
 
     IF (@has_not_answered IS NULL)
-        THROW 50000, 'survey_question_show_condition_types "has_not_answered" not found.', 1;
+        THROW 50000, 'Database does not contain an entry for ''has_not_answered'' in the ''survey_question_show_condition_types'' enum.', 1;
 
 END

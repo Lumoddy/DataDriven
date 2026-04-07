@@ -24,7 +24,7 @@ namespace DataDriven.Data;
 /// [survey_question_answer_type_name] VARCHAR(255) NOT NULL
 /// </code>
 /// </param>
-public record SqlAnswerType(
+public partial record SqlAnswerType(
     SqlByte Id,
     SqlString Name)
 {
@@ -91,7 +91,7 @@ public record SqlAnswerType(
 /// [survey_question_condition_operator_name] VARCHAR(255) NOT NULL
 /// </code>
 /// </param>
-public record SqlConditionOperator(
+public partial record SqlConditionOperator(
     SqlByte Id,
     SqlString Name)
 {
@@ -158,7 +158,7 @@ public record SqlConditionOperator(
 /// [survey_question_show_condition_type_name] VARCHAR(255) NOT NULL
 /// </code>
 /// </param>
-public record SqlShowConditionType(
+public partial record SqlShowConditionType(
     SqlByte Id,
     SqlString Name)
 {
@@ -225,7 +225,7 @@ public record SqlShowConditionType(
 /// [survey_question_validation_condition_type_name] VARCHAR(255) NOT NULL
 /// </code>
 /// </param>
-public record SqlValidationConditionType(
+public partial record SqlValidationConditionType(
     SqlByte Id,
     SqlString Name)
 {
@@ -275,73 +275,6 @@ public record SqlValidationConditionType(
 /// <summary>
 /// Stored in the database as:
 /// <code>
-/// TABLE [survey_question_condition_passing] (
-///     [survey_question_condition_passing_id] TINYINT NOT NULL,
-///     [survey_question_condition_passing_name] VARCHAR(255) NOT NULL);
-/// </code>
-/// </summary>
-/// <param name="Id">
-/// Stored in the database as:
-/// <code>
-/// [survey_question_condition_passing_id] TINYINT NOT NULL
-/// </code>
-/// </param>
-/// <param name="Name">
-/// Stored in the database as:
-/// <code>
-/// [survey_question_condition_passing_name] VARCHAR(255) NOT NULL
-/// </code>
-/// </param>
-public record SqlConditionPassing(
-    SqlByte Id,
-    SqlString Name)
-{
-    /// <summary>
-    /// Stored in the database as:
-    /// <code>
-    /// TABLE [survey_question_condition_passing] (
-    ///     [survey_question_condition_passing_id] TINYINT NOT NULL,
-    ///     [survey_question_condition_passing_name] VARCHAR(255) NOT NULL);
-    /// </code>
-    /// </summary>
-    public const string TABLE = "[survey_question_condition_passing]";
-
-    /// <summary>
-    /// Stored in the database as:
-    /// <code>
-    /// [survey_question_condition_passing_id] TINYINT NOT NULL
-    /// </code>
-    /// </summary>
-    public const string TABLE_ID = "[survey_question_condition_passing].[survey_question_condition_passing_id]";
-
-    /// <summary>
-    /// Stored in the database as:
-    /// <code>
-    /// [survey_question_condition_passing_name] VARCHAR(255) NOT NULL
-    /// </code>
-    /// </summary>
-    public const string TABLE_NAME = "[survey_question_condition_passing].[survey_question_condition_passing_name]";
-
-    /// <summary>
-    /// Stored in the database as:
-    /// <code>
-    /// [survey_question_condition_passing_id] TINYINT NOT NULL
-    /// </code>
-    /// </summary>
-    public const string ID = "[survey_question_condition_passing_id]";
-
-    /// <summary>
-    /// Stored in the database as:
-    /// <code>
-    /// [survey_question_condition_passing_name] VARCHAR(255) NOT NULL
-    /// </code>
-    /// </summary>
-    public const string NAME = "[survey_question_condition_passing_name]";
-}
-
-/// <summary>
-/// Stored in the database as:
-/// <code>
 /// TABLE [surveys] (
 ///     [survey_id] INT NOT NULL,
 ///     [survey_title] VARCHAR(255) NOT NULL,
@@ -373,7 +306,7 @@ public record SqlConditionPassing(
 /// [survey_description] VARCHAR(MAX) NOT NULL
 /// </code>
 /// </param>
-public record SqlSurvey(
+public partial record SqlSurvey(
     SqlInt32 Id,
     SqlString Title,
     SqlString Author,
@@ -490,7 +423,7 @@ public record SqlSurvey(
 /// [survey_page_description] VARCHAR(MAX) NOT NULL
 /// </code>
 /// </param>
-public record SqlSurveyPage(
+public partial record SqlSurveyPage(
     SqlInt32 SurveyId,
     SqlInt32 Index,
     SqlString Title,
@@ -614,7 +547,7 @@ public record SqlSurveyPage(
 /// [survey_question_answer_type] TINYINT NOT NULL
 /// </code>
 /// </param>
-public record SqlSurveyQuestion(
+public partial record SqlSurveyQuestion(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 Index,
@@ -763,7 +696,7 @@ public record SqlSurveyQuestion(
 /// [registered_member_last_name] VARCHAR(255) NOT NULL
 /// </code>
 /// </param>
-public record SqlRegisteredMember(
+public partial record SqlRegisteredMember(
     SqlInt32 Id,
     SqlString PasswordHash,
     SqlString PhoneNumber,
@@ -909,7 +842,7 @@ public record SqlRegisteredMember(
 /// [registered_member_id] INT NULL
 /// </code>
 /// </param>
-public record SqlSubmission(
+public partial record SqlSubmission(
     SqlInt32 SurveyId,
     SqlInt32 Index,
     SqlInt32 RegisteredMemberId)
@@ -1015,7 +948,7 @@ public record SqlSubmission(
 /// [submission_answer_index] INT NOT NULL
 /// </code>
 /// </param>
-public record SqlSubmissionAnswer(
+public partial record SqlSubmissionAnswer(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -1164,7 +1097,7 @@ public record SqlSubmissionAnswer(
 /// [submission_answer_integer] INT NOT NULL
 /// </code>
 /// </param>
-public record SqlSubmissionIntegerAnswer(
+public partial record SqlSubmissionIntegerAnswer(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -1331,7 +1264,7 @@ public record SqlSubmissionIntegerAnswer(
 /// [submission_answer_text] VARCHAR(MAX) NOT NULL
 /// </code>
 /// </param>
-public record SqlSubmissionTextAnswer(
+public partial record SqlSubmissionTextAnswer(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -1491,7 +1424,7 @@ public record SqlSubmissionTextAnswer(
 /// [survey_answer_option_text] VARCHAR(1023) NOT NULL
 /// </code>
 /// </param>
-public record SqlSurveyQuestionAnswerOption(
+public partial record SqlSurveyQuestionAnswerOption(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -1640,7 +1573,7 @@ public record SqlSurveyQuestionAnswerOption(
 /// [survey_question_show_condition_operator] TINYINT NOT NULL
 /// </code>
 /// </param>
-public record SqlSurveyQuestionShowCondition(
+public partial record SqlSurveyQuestionShowCondition(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -1800,7 +1733,7 @@ public record SqlSurveyQuestionShowCondition(
 /// [survey_question_show_condition_arg_index] INT NOT NULL
 /// </code>
 /// </param>
-public record SqlSurveyQuestionShowConditionsArg(
+public partial record SqlSurveyQuestionShowConditionsArg(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -1956,7 +1889,7 @@ public record SqlSurveyQuestionShowConditionsArg(
 /// [referenced_survey_question_index] INT NOT NULL
 /// </code>
 /// </param>
-public record SqlSurveyQuestionShowConditionsRefArg(
+public partial record SqlSurveyQuestionShowConditionsRefArg(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -2141,7 +2074,7 @@ public record SqlSurveyQuestionShowConditionsRefArg(
 /// [survey_question_show_condition_arg_integer] INT NOT NULL
 /// </code>
 /// </param>
-public record SqlSurveyQuestionShowConditionsIntegerArg(
+public partial record SqlSurveyQuestionShowConditionsIntegerArg(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -2308,7 +2241,7 @@ public record SqlSurveyQuestionShowConditionsIntegerArg(
 /// [survey_question_show_condition_arg_text] VARCHAR(MAX) NOT NULL
 /// </code>
 /// </param>
-public record SqlSurveyQuestionShowConditionsTextArg(
+public partial record SqlSurveyQuestionShowConditionsTextArg(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -2475,7 +2408,7 @@ public record SqlSurveyQuestionShowConditionsTextArg(
 /// [survey_question_validation_condition_operator] BIT NOT NULL
 /// </code>
 /// </param>
-public record SqlSurveyQuestionValidationCondition(
+public partial record SqlSurveyQuestionValidationCondition(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -2635,7 +2568,7 @@ public record SqlSurveyQuestionValidationCondition(
 /// [survey_question_validation_condition_arg_index] INT NOT NULL
 /// </code>
 /// </param>
-public record SqlSurveyQuestionValidationConditionsArg(
+public partial record SqlSurveyQuestionValidationConditionsArg(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -2791,7 +2724,7 @@ public record SqlSurveyQuestionValidationConditionsArg(
 /// [referenced_survey_question_index] INT NOT NULL
 /// </code>
 /// </param>
-public record SqlSurveyQuestionValidationConditionsRefArg(
+public partial record SqlSurveyQuestionValidationConditionsRefArg(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -2976,7 +2909,7 @@ public record SqlSurveyQuestionValidationConditionsRefArg(
 /// [survey_question_validation_condition_arg_integer] INT NOT NULL
 /// </code>
 /// </param>
-public record SqlSurveyQuestionValidationConditionsIntegerArg(
+public partial record SqlSurveyQuestionValidationConditionsIntegerArg(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -3143,7 +3076,7 @@ public record SqlSurveyQuestionValidationConditionsIntegerArg(
 /// [survey_question_validation_condition_arg_text] VARCHAR(MAX) NOT NULL
 /// </code>
 /// </param>
-public record SqlSurveyQuestionValidationConditionsTextArg(
+public partial record SqlSurveyQuestionValidationConditionsTextArg(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -3267,7 +3200,7 @@ public record SqlSurveyQuestionValidationConditionsTextArg(
 /// <code>
 /// TABLE [registered_member_sessions] (
 ///     [registered_member_session_token] BINARY(32) NOT NULL CONSTRAINT [default_registered_member_sessions_1] DEFAULT CRYPT_GEN_RANDOM(32),
-///     [registered_member_session_expiry] DATETIME NOT NULL CONSTRAINT [default_registered_member_sessions_2] DEFAULT DATEADD(HOUR, 2, GETDATE()),
+///     [registered_member_session_expiry] DATETIME NOT NULL CONSTRAINT [default_registered_member_sessions_2] DEFAULT DATEADD(HOUR, 2, GETUTCDATE()),
 ///     [registered_member_id] INT NOT NULL);
 /// </code>
 /// </summary>
@@ -3280,7 +3213,7 @@ public record SqlSurveyQuestionValidationConditionsTextArg(
 /// <param name="Expiry">
 /// Stored in the database as:
 /// <code>
-/// [registered_member_session_expiry] DATETIME NOT NULL CONSTRAINT [default_registered_member_sessions_4] DEFAULT DATEADD(HOUR, 2, GETDATE())
+/// [registered_member_session_expiry] DATETIME NOT NULL CONSTRAINT [default_registered_member_sessions_4] DEFAULT DATEADD(HOUR, 2, GETUTCDATE())
 /// </code>
 /// </param>
 /// <param name="RegisteredMemberId">
@@ -3289,7 +3222,7 @@ public record SqlSurveyQuestionValidationConditionsTextArg(
 /// [registered_member_id] INT NOT NULL
 /// </code>
 /// </param>
-public record SqlRegisteredMemberSession(
+public partial record SqlRegisteredMemberSession(
     SqlBinary Token,
     SqlDateTime Expiry,
     SqlInt32 RegisteredMemberId)
@@ -3299,7 +3232,7 @@ public record SqlRegisteredMemberSession(
     /// <code>
     /// TABLE [registered_member_sessions] (
     ///     [registered_member_session_token] BINARY(32) NOT NULL CONSTRAINT [default_registered_member_sessions_1] DEFAULT CRYPT_GEN_RANDOM(32),
-    ///     [registered_member_session_expiry] DATETIME NOT NULL CONSTRAINT [default_registered_member_sessions_2] DEFAULT DATEADD(HOUR, 2, GETDATE()),
+    ///     [registered_member_session_expiry] DATETIME NOT NULL CONSTRAINT [default_registered_member_sessions_2] DEFAULT DATEADD(HOUR, 2, GETUTCDATE()),
     ///     [registered_member_id] INT NOT NULL);
     /// </code>
     /// </summary>
@@ -3316,7 +3249,7 @@ public record SqlRegisteredMemberSession(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [registered_member_session_expiry] DATETIME NOT NULL CONSTRAINT [default_registered_member_sessions_4] DEFAULT DATEADD(HOUR, 2, GETDATE())
+    /// [registered_member_session_expiry] DATETIME NOT NULL CONSTRAINT [default_registered_member_sessions_4] DEFAULT DATEADD(HOUR, 2, GETUTCDATE())
     /// </code>
     /// </summary>
     public const string TABLE_EXPIRY = "[registered_member_sessions].[registered_member_session_expiry]";
@@ -3340,7 +3273,7 @@ public record SqlRegisteredMemberSession(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [registered_member_session_expiry] DATETIME NOT NULL CONSTRAINT [default_registered_member_sessions_6] DEFAULT DATEADD(HOUR, 2, GETDATE())
+    /// [registered_member_session_expiry] DATETIME NOT NULL CONSTRAINT [default_registered_member_sessions_6] DEFAULT DATEADD(HOUR, 2, GETUTCDATE())
     /// </code>
     /// </summary>
     public const string EXPIRY = "[registered_member_session_expiry]";
@@ -3359,7 +3292,7 @@ public record SqlRegisteredMemberSession(
 /// <code>
 /// TABLE [survey_sessions] (
 ///     [survey_session_token] BINARY(32) NOT NULL CONSTRAINT [default_survey_sessions_1] DEFAULT CRYPT_GEN_RANDOM(32),
-///     [survey_session_expiry] DATETIME NOT NULL CONSTRAINT [default_survey_sessions_2] DEFAULT DATEADD(HOUR, 2, GETDATE()),
+///     [survey_session_expiry] DATETIME NOT NULL CONSTRAINT [default_survey_sessions_2] DEFAULT DATEADD(HOUR, 2, GETUTCDATE()),
 ///     [survey_id] INT NOT NULL);
 /// </code>
 /// </summary>
@@ -3372,7 +3305,7 @@ public record SqlRegisteredMemberSession(
 /// <param name="Expiry">
 /// Stored in the database as:
 /// <code>
-/// [survey_session_expiry] DATETIME NOT NULL CONSTRAINT [default_survey_sessions_4] DEFAULT DATEADD(HOUR, 2, GETDATE())
+/// [survey_session_expiry] DATETIME NOT NULL CONSTRAINT [default_survey_sessions_4] DEFAULT DATEADD(HOUR, 2, GETUTCDATE())
 /// </code>
 /// </param>
 /// <param name="SurveyId">
@@ -3381,7 +3314,7 @@ public record SqlRegisteredMemberSession(
 /// [survey_id] INT NOT NULL
 /// </code>
 /// </param>
-public record SqlSurveySession(
+public partial record SqlSurveySession(
     SqlBinary Token,
     SqlDateTime Expiry,
     SqlInt32 SurveyId)
@@ -3391,7 +3324,7 @@ public record SqlSurveySession(
     /// <code>
     /// TABLE [survey_sessions] (
     ///     [survey_session_token] BINARY(32) NOT NULL CONSTRAINT [default_survey_sessions_1] DEFAULT CRYPT_GEN_RANDOM(32),
-    ///     [survey_session_expiry] DATETIME NOT NULL CONSTRAINT [default_survey_sessions_2] DEFAULT DATEADD(HOUR, 2, GETDATE()),
+    ///     [survey_session_expiry] DATETIME NOT NULL CONSTRAINT [default_survey_sessions_2] DEFAULT DATEADD(HOUR, 2, GETUTCDATE()),
     ///     [survey_id] INT NOT NULL);
     /// </code>
     /// </summary>
@@ -3408,7 +3341,7 @@ public record SqlSurveySession(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_session_expiry] DATETIME NOT NULL CONSTRAINT [default_survey_sessions_4] DEFAULT DATEADD(HOUR, 2, GETDATE())
+    /// [survey_session_expiry] DATETIME NOT NULL CONSTRAINT [default_survey_sessions_4] DEFAULT DATEADD(HOUR, 2, GETUTCDATE())
     /// </code>
     /// </summary>
     public const string TABLE_EXPIRY = "[survey_sessions].[survey_session_expiry]";
@@ -3432,7 +3365,7 @@ public record SqlSurveySession(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_session_expiry] DATETIME NOT NULL CONSTRAINT [default_survey_sessions_6] DEFAULT DATEADD(HOUR, 2, GETDATE())
+    /// [survey_session_expiry] DATETIME NOT NULL CONSTRAINT [default_survey_sessions_6] DEFAULT DATEADD(HOUR, 2, GETUTCDATE())
     /// </code>
     /// </summary>
     public const string EXPIRY = "[survey_session_expiry]";
@@ -3487,7 +3420,7 @@ public record SqlSurveySession(
 /// [survey_session_answer_index] INT NOT NULL
 /// </code>
 /// </param>
-public record SqlSurveySessionAnswer(
+public partial record SqlSurveySessionAnswer(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -3636,7 +3569,7 @@ public record SqlSurveySessionAnswer(
 /// [survey_session_answer_integer] INT NOT NULL
 /// </code>
 /// </param>
-public record SqlSurveySessionIntegerAnswer(
+public partial record SqlSurveySessionIntegerAnswer(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -3803,7 +3736,7 @@ public record SqlSurveySessionIntegerAnswer(
 /// [survey_session_answer_text] VARCHAR(MAX) NOT NULL
 /// </code>
 /// </param>
-public record SqlSurveySessionTextAnswer(
+public partial record SqlSurveySessionTextAnswer(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,

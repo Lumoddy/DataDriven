@@ -71,13 +71,13 @@ BEGIN
 
             sql += field.snakeShortenedSingle;
             sql += ` IS NULL)
-        THROW 50000, '`;
-
-            sql += enumName;
-            sql += ` "`;
+        THROW 50000, 'Database does not contain an entry for ''`;
 
             sql += fieldName;
-            sql += `" not found.', 1;
+            sql += `'' in the ''`;
+
+            sql += enumName;
+            sql += `'' enum.', 1;
 `;
         }
 

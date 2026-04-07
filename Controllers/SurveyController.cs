@@ -1,6 +1,9 @@
 using System.Buffers.Text;
+using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Text;
+using System.Text.RegularExpressions;
 using DataDriven.Data;
 using DataDriven.Models;
 using Microsoft.AspNetCore.Antiforgery;
@@ -8,29 +11,10 @@ using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.ObjectPool;
 using Microsoft.Extensions.Primitives;
 
 namespace DataDriven.Controllers;
-
-public record SurveyQuestionShowConditionViewFields(
-    SurveyQuestionShowConditionType Type,
-    SurveyQuestionConditionOperator Operator,
-    (int PageIndex, int Index)? ReferencedQuestion,
-    int? IntegerValue,
-    string? TextValue);
-
-public record SurveyQuestionValidationConditionViewFields(
-    SurveyQuestionValidationConditionType Type,
-    SurveyQuestionConditionOperator Operator,
-    (int PageIndex, int Index)? ReferencedQuestion,
-    int? IntegerValue,
-    string? TextValue);
-
-public record SurveyQuestionViewFields(
-    string Title,
-    SurveyQuestionAnswerType Type,
-    List<SurveyQuestionShowConditionViewFields> ShowConditions,
-    List<SurveyQuestionValidationConditionViewFields> ValidationConditions);
 
 [Route("survey")]
 public class SurveyController(
@@ -38,228 +22,488 @@ public class SurveyController(
     IDatabaseEnumService enumService) : Controller
 {
     [NonAction]
-    public SqlConnection DefaultSqlConnection()
-        => new(configuration.GetConnectionString("Default"));
-
-    private static class SqlNextVisibleQuestions
-    {
-        public const string TEMP = "[#next_visible_questions]";
-
-        public const string INDEX = "[next_visible_question_index]";
-
-        public const string TEMP_INDEX = "[#next_visible_questions].[next_visible_question_index]";
-    }
-
-    private static class SqlGrouped
-    {
-        public const string TABLE = "[grouped]";
-
-        public const string INDEX = "[group_index]";
-
-        public const string TABLE_INDEX = "[grouped].[group_index]";
-
-        public const string VALUE = "[group_value]";
-
-        public const string TABLE_VALUE = "[grouped].[group_value]";
-    }
-
-    [NonAction]
-    public async Task<object?> QuerySurveyPageModel(
+    public async Task<SurveyPageModel?> QuerySurveyPageModel(
         SqlConnection connection,
         int surveyId,
         int surveyPageIndex,
         byte[] surveySessionToken)
     {
-        const string SURVEY_ID = "@survey_id";
-        const string SURVEY_PAGE_INDEX = "@survey_page_index";
-        const string SURVEY_SESSION_TOKEN = "@survey_session_token";
+        await using SqlCommand command = new("query_survey_page_model", connection);
+        command.CommandType = CommandType.StoredProcedure;
 
-        const string ANSWER_TYPE_SMALL_TEXT = "@answer_text_small_text";
-        const string ANSWER_TYPE_CHECKBOX = "@answer_text_checkbox";
-        const string ANSWER_TYPE_RADIO = "@answer_text_radio";
-        const string ANSWER_TYPE_RADIO_OR_OTHER = "@answer_text_radio_or_other";
-        const string ANSWER_TYPE_MULTISELECT = "@answer_text_multiselect";
-        const string ANSWER_TYPE_MULTISELECT_AND_OTHER = "@answer_text_multiselect_and_other";
-
-        const string SHOW_CONDITION_HAS_ANSWERED = "@show_condition_has_answered";
-        const string SHOW_CONDITION_HAS_NOT_ANSWERED = "@show_condition_has_not_answered";
-
-        const string OPERATOR_AND = "CAST(0 AS BIT)";
-        const string OPERATOR_OR = "CAST(1 AS BIT)";
-
-        const string QUESTION = "[question]";
-        const string GROUPED = "[grouped]";
-        const string GROUPED_INDEX = "[grouped].[index]";
-
-        Console.WriteLine();
-
-        await using SqlCommand command = new(
-            $"""
-            SELECT
-                {SqlSurvey.TABLE_TITLE},
-                {SqlSurvey.TABLE_AUTHOR},
-                {SqlSurvey.TABLE_DESCRIPTION},
-                {SqlSurveyPage.TABLE_TITLE},
-                {SqlSurveyPage.TABLE_DESCRIPTION}
-            FROM
-                {SqlSurveyPage.TABLE}
-            LEFT JOIN
-                {SqlSurvey.TABLE}
-                ON {SqlSurvey.TABLE_ID}
-                    = {SqlSurveyPage.TABLE_SURVEY_ID}
-            LEFT JOIN
-                {SqlSurveySession.TABLE}
-                ON {SqlSurveySession.TABLE_SURVEY_ID}
-                    = {SqlSurveyPage.TABLE_SURVEY_ID}
-            WHERE
-                {SqlSurvey.TABLE_ID} = {SURVEY_ID}
-                AND {SqlSurveyPage.TABLE_INDEX} = {SURVEY_PAGE_INDEX}
-                AND {SqlSurveySession.TABLE_TOKEN} = {SURVEY_SESSION_TOKEN};
-
-            IF (@@ROWCOUNT = 0)
-                RETURN;
-
-            SELECT
-                {SqlSurveyQuestion.TABLE_INDEX}
-            INTO
-                {SqlNextVisibleQuestions.TEMP}
-            FROM
-                {SqlSurveyQuestion.TABLE} AS {QUESTION}
-            WHERE
-                {SqlSurveyQuestion.TABLE_SURVEY_ID} = {SURVEY_ID}
-                AND {SqlSurveyQuestion.TABLE_PAGE_INDEX} = {SURVEY_PAGE_INDEX}
-                AND EXISTS(
-                    WITH {SqlGrouped.TABLE} AS (
-                        SELECT
-                            *,
-                            SUM(CASE
-                                WHEN
-                                    {SqlSurveyQuestionShowCondition.TABLE_IS_OR_OPERATOR} = {OPERATOR_OR}
-                                    AND {SqlSurveyQuestionShowCondition.TABLE_INDEX} > 0
-                                THEN 1
-                                ELSE 0
-                            END)
-                            OVER (
-                                ORDER BY {SqlSurveyQuestionShowCondition.TABLE_INDEX}
-                                ROWS UNBOUNDED PRECEDING) AS {SqlGrouped.INDEX},
-                            CASE
-                                WHEN
-                                    {SqlSurveyQuestionShowCondition.TABLE_TYPE} = {SHOW_CONDITION_HAS_ANSWERED}
-                                THEN EXISTS(
-                                    SELECT 1 FROM
-                                        {SqlSurveyQuestionShowConditionsRefArg.TABLE}
-                                    INNER JOIN
-                                        {SqlSurveyQuestion.TABLE}
-                                        ON
-                                            {SqlSurveyQuestion.TABLE_SURVEY_ID} = {SURVEY_ID}
-                                            AND {SqlSurveyQuestion.TABLE_PAGE_INDEX} = {SURVEY_PAGE_INDEX}
-                                            AND {SqlSurveyQuestion.TABLE_INDEX} = {QUESTION}.{SqlSurveyQuestion.INDEX}
-                                    LEFT JOIN
-                                        {SqlSurveyQuestionShowConditionsTextArg.TABLE}
-                                        ON
-                                            {SqlSurveyQuestionShowConditionsTextArg.TABLE_SURVEY_ID} = {SURVEY_ID}
-                                            AND {SqlSurveyQuestionShowConditionsTextArg.TABLE_PAGE_INDEX} = {SURVEY_PAGE_INDEX}
-                                            AND {SqlSurveyQuestionShowConditionsTextArg.TABLE_QUESTION_INDEX} = {QUESTION}.{SqlSurveyQuestion.INDEX}
-                                            AND {SqlSurveyQuestionShowConditionsTextArg.TABLE_CONDITION_INDEX} = {SqlSurveyQuestionShowConditionsRefArg.TABLE_CONDITION_INDEX}
-                                    WHERE
-                                        {SqlSurveyQuestionShowConditionsRefArg.TABLE_SURVEY_ID} = {SURVEY_ID}
-                                        AND {SqlSurveyQuestionShowConditionsRefArg.TABLE_PAGE_INDEX} = {SURVEY_PAGE_INDEX}
-                                        AND {SqlSurveyQuestionShowConditionsRefArg.TABLE_QUESTION_INDEX} = {QUESTION}.{SqlSurveyQuestion.INDEX}
-                                        AND {SqlSurveyQuestionShowConditionsRefArg.TABLE_CONDITION_INDEX} = {SqlSurveyQuestionShowCondition.TABLE_INDEX}
-                                        AND {SqlSurveyQuestionShowConditionsRefArg.TABLE_INDEX} = 0
-                                    )
-                            END
-                        FROM {SqlSurveyQuestionShowCondition.TABLE}
-                        WHERE
-                            {SqlSurveyQuestionShowCondition.TABLE_SURVEY_ID} = {SURVEY_ID}
-                            AND {SqlSurveyQuestionShowCondition.TABLE_PAGE_INDEX} = {SURVEY_PAGE_INDEX}
-                            AND {SqlSurveyQuestionShowCondition.TABLE_QUESTION_INDEX} = {QUESTION}.{SqlSurveyQuestion.INDEX})
-                    SELECT 1 FROM
-                        {SqlGrouped.TABLE}
-                    GROUP BY
-                        {SqlGrouped.TABLE_INDEX}
-                    HAVING
-                        MIN(CASE
-                            WHEN
-                                {SqlGrouped.TABLE}.{SqlSurveyQuestionShowCondition.TYPE} = {SHOW_CONDITION_HAS_ANSWERED}
-                            THEN CASE
-                                WHEN EXISTS(
-                                    SELECT 1 FROM
-                                        {SqlSurveyQuestionShowConditionsRefArg.TABLE}
-                                    WHERE
-                                        {SqlSurveyQuestionShowConditionsRefArg.TABLE_SURVEY_ID} = {SURVEY_ID}
-                                        AND {SqlSurveyQuestionShowConditionsRefArg.TABLE_PAGE_INDEX} = {SURVEY_PAGE_INDEX}
-                                        AND {SqlSurveyQuestionShowConditionsRefArg.TABLE_QUESTION_INDEX} = {QUESTION}.{SqlSurveyQuestion.INDEX}
-                                )
-                            END
-                        END) = CAST(1 AS BIT)
-                )
-            """,
-            connection);
-
-        command.Parameters.Add(SURVEY_ID, SqlDbType.Int).Value
+        command.Parameters.Add("@survey_id", SqlDbType.Int).Value
             = surveyId;
-        command.Parameters.Add(SURVEY_PAGE_INDEX, SqlDbType.Int).Value
+        command.Parameters.Add("@survey_page_index", SqlDbType.Int).Value
             = surveyPageIndex;
-        command.Parameters.Add(SURVEY_SESSION_TOKEN, SqlDbType.Binary, 32).Value
+        command.Parameters.Add("@survey_session_token", SqlDbType.Binary, 32).Value
             = surveySessionToken;
-
-        command.Parameters.Add(ANSWER_TYPE_SMALL_TEXT, SqlDbType.TinyInt).Value
-            = enumService.SurveyQuestionAnswerTypeMap[SurveyQuestionAnswerType.SmallText];
-        command.Parameters.Add(ANSWER_TYPE_CHECKBOX, SqlDbType.TinyInt).Value
-            = enumService.SurveyQuestionAnswerTypeMap[SurveyQuestionAnswerType.Checkbox];
-        command.Parameters.Add(ANSWER_TYPE_RADIO, SqlDbType.TinyInt).Value
-            = enumService.SurveyQuestionAnswerTypeMap[SurveyQuestionAnswerType.Radio];
-        command.Parameters.Add(ANSWER_TYPE_RADIO_OR_OTHER, SqlDbType.TinyInt).Value
-            = enumService.SurveyQuestionAnswerTypeMap[SurveyQuestionAnswerType.RadioOrOther];
-        command.Parameters.Add(ANSWER_TYPE_MULTISELECT, SqlDbType.TinyInt).Value
-            = enumService.SurveyQuestionAnswerTypeMap[SurveyQuestionAnswerType.MultiSelect];
-        command.Parameters.Add(ANSWER_TYPE_MULTISELECT_AND_OTHER, SqlDbType.TinyInt).Value
-            = enumService.SurveyQuestionAnswerTypeMap[SurveyQuestionAnswerType.MultiSelectAndOther];
-
-        command.Parameters.Add(SHOW_CONDITION_HAS_ANSWERED, SqlDbType.TinyInt).Value
-            = enumService.SurveyQuestionShowConditionTypeMap[SurveyQuestionShowConditionType.HasAnswered];
-        command.Parameters.Add(SHOW_CONDITION_HAS_NOT_ANSWERED, SqlDbType.TinyInt).Value
-            = enumService.SurveyQuestionShowConditionTypeMap[SurveyQuestionShowConditionType.HasNotAnswered];
 
         await using SqlDataReader reader = await command.ExecuteReaderAsync();
 
-        if (reader.HasRows)
+        if (!await reader.ReadAsync())
             return null;
 
-        await reader.ReadAsync();
-
-        string surveyTitle = reader.GetSqlString(1).StrictValue();
-        string surveyAuthor = reader.GetSqlString(2).StrictValue();
-        string surveyDescription = reader.GetSqlString(3).StrictValue();
-        int pageCount = reader.GetSqlInt32(4).StrictValue();
-
-        await reader.ReadAsync();
-
-        string pageTitle = reader.GetSqlString(0).StrictValue();
-        string pageDescription = reader.GetSqlString(1).StrictValue();
+        SurveyModel survey = new(
+            Title: reader.GetSqlString(0).StrictValue(),
+            Author: reader.GetSqlString(1).StrictValue(),
+            Description: reader.GetSqlString(2).StrictValue(),
+            PageCount: reader.GetSqlInt32(3).StrictValue());
 
         List<ISurveyQuestionModel> questions = [];
 
-        await reader.ReadAsync();
+        SurveyPageModel page = new(
+            Title: reader.GetSqlString(4).StrictValue(),
+            Description: reader.GetSqlString(5).StrictValue(),
+            Questions: questions,
+            Parent: survey);
 
-        do
+        await reader.NextResultAsync();
+
+        List<(
+            string title,
+            List<string> options,
+            AnswerType answerType,
+            List<(
+                ConditionOperator op,
+                ShowConditionType type,
+                Dictionary<int, object?> args)> showConditions,
+            List<(
+                ConditionOperator op,
+                ValidationConditionType type,
+                Dictionary<int, object?> args)> validationConditions)> questionSetup = [];
+
+        while (await reader.ReadAsync())
         {
-            questions.Add(new SurveyQuestionModel(
-                reader.GetSqlString(1).StrictValue()));
-        }
-        while (reader.Read());
+            if (reader.GetSqlInt32(0).StrictValue() is var i && i != questionSetup.Count)
+                throw new InvalidDataException(
+                    $"Sparse array of questions found in survey id '" +
+                    $"{surveyId}' page '{surveyPageIndex}' question '{i}'.");
 
-        return new SurveyPageModel(
-            surveyId,
-            surveyTitle,
-            surveyAuthor,
-            surveyDescription,
-            pageCount,
-            surveyPageIndex,
-            pageTitle,
-            pageDescription,
-            questions);
+            questionSetup.Add((
+                title: reader.GetSqlString(2).StrictValue(),
+                options: [],
+                answerType: enumService.AnswerTypeMap[reader.GetSqlByte(1).StrictValue()],
+                showConditions: [],
+                validationConditions: []));
+        }
+
+        await reader.NextResultAsync();
+
+        while (await reader.ReadAsync())
+        {
+            int questionIndex = reader.GetSqlInt32(0).StrictValue();
+            int optionIndex = reader.GetSqlInt32(1).StrictValue();
+            List<string> options = questionSetup[questionIndex].options;
+
+            if (optionIndex != options.Count)
+                throw new InvalidDataException(
+                    $"Sparse array of question options found in survey id '" +
+                    $"{surveyId}' page '{surveyPageIndex}' question '" +
+                    $"{questionIndex}' option '{optionIndex}'.");
+
+            options.Add(reader.GetSqlString(2).StrictValue());
+        }
+
+        await reader.NextResultAsync();
+
+        while (await reader.ReadAsync())
+        {
+            int questionIndex = reader.GetSqlInt32(0).StrictValue();
+            int conditionIndex = reader.GetSqlInt32(1).StrictValue();
+            List<(
+                ConditionOperator op,
+                ShowConditionType type,
+                Dictionary<int, object?> args)> showConditions = questionSetup[questionIndex].showConditions;
+
+            if (conditionIndex != showConditions.Count)
+                throw new InvalidDataException(
+                    $"Sparse array of question options found in survey id " +
+                    $"'{surveyId}' page '{surveyPageIndex}' question '" +
+                    $"{questionIndex}' show condition '{conditionIndex}'.");
+
+            showConditions.Add((
+                op: enumService.ConditionOperatorMap[reader.GetSqlByte(2).StrictValue()],
+                type: enumService.ShowConditionTypeMap[reader.GetSqlByte(3).StrictValue()],
+                []));
+        }
+
+        await reader.NextResultAsync();
+
+        while (await reader.ReadAsync())
+        {
+            int questionIndex = reader.GetSqlInt32(0).StrictValue();
+            int conditionIndex = reader.GetSqlInt32(1).StrictValue();
+            int argumentIndex = reader.GetSqlInt32(2).StrictValue();
+            Dictionary<int, object?> args = questionSetup[questionIndex].showConditions[conditionIndex].args;
+
+            (int pageIndex, int questionIndex)? refArg
+                = reader.GetSqlInt32(3).CheckedValue() is var x && x is not null
+                    ? (x.Value, reader.GetSqlInt32(4).StrictValue())
+                    : null;
+
+            int? integerArg = reader.GetSqlInt32(5).CheckedValue();
+
+            string? textArg = reader.GetSqlString(6).CheckedValue();
+
+            args.Add(
+                argumentIndex,
+                (refArg, integerArg, textArg) switch
+                {
+                    ((int p, int q), null, null) when p > surveyPageIndex => throw new InvalidDataException(
+                        $"Show condition argument references future page in survey id " +
+                        $"'{surveyId}' page '{surveyPageIndex}' question '" +
+                        $"{questionIndex}' show condition '{conditionIndex}' " +
+                        $"argument '{argumentIndex}'."),
+                    ((int p, int q), null, null) when q >= questionIndex => throw new InvalidDataException(
+                        $"Show condition argument references current or future question in survey id " +
+                        $"'{surveyId}' page '{surveyPageIndex}' question '" +
+                        $"{questionIndex}' show condition '{conditionIndex}' " +
+                        $"argument '{argumentIndex}'."),
+                    ((int p, int q), null, null) => (p, q),
+                    (null, int i, null) => i,
+                    (null, null, string s) => s,
+                    (null, null, null) => null,
+                    _ => throw new InvalidDataException(
+                        $"Show condition argument has mixed type in survey id " +
+                        $"'{surveyId}' page '{surveyPageIndex}' question '" +
+                        $"{questionIndex}' show condition '{conditionIndex}' " +
+                        $"argument '{argumentIndex}'."),
+                });
+        }
+
+        await reader.NextResultAsync();
+
+        while (await reader.ReadAsync())
+        {
+            int questionIndex = reader.GetSqlInt32(0).StrictValue();
+            int conditionIndex = reader.GetSqlInt32(1).StrictValue();
+            List<(
+                ConditionOperator op,
+                ValidationConditionType type,
+                Dictionary<int, object?> args)> validationConditions = questionSetup[questionIndex].validationConditions;
+
+            if (conditionIndex != validationConditions.Count)
+                throw new InvalidDataException(
+                    $"Sparse array of question options found in survey id " +
+                    $"'{surveyId}' page '{surveyPageIndex}' question '" +
+                    $"{questionIndex}' show condition '{conditionIndex}'.");
+
+            validationConditions.Add((
+                op: enumService.ConditionOperatorMap[reader.GetSqlByte(2).StrictValue()],
+                type: enumService.ValidationConditionTypeMap[reader.GetSqlByte(3).StrictValue()],
+                []));
+        }
+
+        await reader.NextResultAsync();
+
+        while (await reader.ReadAsync())
+        {
+            int questionIndex = reader.GetSqlInt32(0).StrictValue();
+            int conditionIndex = reader.GetSqlInt32(1).StrictValue();
+            int argumentIndex = reader.GetSqlInt32(2).StrictValue();
+            Dictionary<int, object?> args = questionSetup[questionIndex].validationConditions[conditionIndex].args;
+
+            (int pageIndex, int questionIndex)? refArg
+                = reader.GetSqlInt32(3).CheckedValue() is var x && x is not null
+                    ? (x.Value, reader.GetSqlInt32(4).StrictValue())
+                    : null;
+
+            int? integerArg = reader.GetSqlInt32(5).CheckedValue();
+
+            string? textArg = reader.GetSqlString(6).CheckedValue();
+
+            args.Add(
+                argumentIndex,
+                (refArg, integerArg, textArg) switch
+                {
+                    ((int p, int q), null, null) when p > surveyPageIndex => throw new InvalidDataException(
+                        $"Show condition argument references future page in survey id " +
+                        $"'{surveyId}' page '{surveyPageIndex}' question '" +
+                        $"{questionIndex}' show condition '{conditionIndex}' " +
+                        $"argument '{argumentIndex}'."),
+                    ((int p, int q), null, null) when q >= questionIndex => throw new InvalidDataException(
+                        $"Show condition argument references current or future question in survey id " +
+                        $"'{surveyId}' page '{surveyPageIndex}' question '" +
+                        $"{questionIndex}' show condition '{conditionIndex}' " +
+                        $"argument '{argumentIndex}'."),
+                    ((int p, int q), null, null) => (p, q),
+                    (null, int i, null) => i,
+                    (null, null, string s) => s,
+                    (null, null, null) => null,
+                    _ => throw new InvalidDataException(
+                        $"Show condition argument has mixed type in survey id " +
+                        $"'{surveyId}' page '{surveyPageIndex}' question '" +
+                        $"{questionIndex}' show condition '{conditionIndex}' " +
+                        $"argument '{argumentIndex}'."),
+                });
+        }
+
+        foreach (
+            var (
+                id,
+                (
+                    title,
+                    setupOptions,
+                    answerType,
+                    setupShowConditions,
+                    setupValidationConditions))
+            in questionSetup.Index())
+        {
+            List<ISurveyQuestionShowConstraintModel> showConditions = [];
+            List<ISurveyQuestionValidationConstraintModel> validationConditions = [];
+
+            ISurveyQuestionModel question = answerType switch
+            {
+                AnswerType.SmallText => new SurveyQuestionSmallTextModel(
+                    Id: id,
+                    Title: title,
+                    Label: setupOptions.Count == 0 ? null : setupOptions[0],
+                    ShowConditions: showConditions,
+                    ValidationConditions: validationConditions,
+                    page),
+                AnswerType.Checkbox => new SurveyQuestionCheckboxModel(
+                    Id: id,
+                    Title: title,
+                    Label: setupOptions.Count == 0 ? null : setupOptions[0],
+                    ShowConditions: showConditions,
+                    ValidationConditions: validationConditions,
+                    page),
+                AnswerType.Radio => new SurveyQuestionRadioModel(
+                    Id: id,
+                    Title: title,
+                    Options: setupOptions,
+                    ShowConditions: showConditions,
+                    ValidationConditions: validationConditions,
+                    page),
+                AnswerType.RadioOrOther => new SurveyQuestionRadioOrOtherModel(
+                    Id: id,
+                    Title: title,
+                    Options: setupOptions,
+                    ShowConditions: showConditions,
+                    ValidationConditions: validationConditions,
+                    page),
+                AnswerType.MultiSelect => new SurveyQuestionMultiSelectModel(
+                    Id: id,
+                    Title: title,
+                    Options: setupOptions,
+                    ShowConditions: showConditions,
+                    ValidationConditions: validationConditions,
+                    page),
+                AnswerType.MultiSelectAndOther => new SurveyQuestionMultiSelectAndOtherModel(
+                    Id: id,
+                    Title: title,
+                    Options: setupOptions,
+                    ShowConditions: showConditions,
+                    ValidationConditions: validationConditions,
+                    page),
+                _ => throw new UnreachableException(),
+            };
+
+            showConditions.AddRange(
+                setupShowConditions.Select<
+                    (
+                        ConditionOperator op,
+                        ShowConditionType type,
+                        Dictionary<int, object?> args),
+                    ISurveyQuestionShowConstraintModel>((condition) =>
+                {
+                    switch (condition.type)
+                    {
+                        case ShowConditionType.HasAnswered
+                            or ShowConditionType.HasNotAnswered:
+                        {
+                            (int pageIndex, int questionIndex)
+                                = condition.args[0] as (int, int)?
+                                    ?? throw new InvalidDataException(
+                                        $"Show condition 'Has(Not)Answered' argument has" +
+                                        $" wrong type for question id '{id}' in " +
+                                        $"survey id '{surveyId}' page '{surveyPageIndex}'.");
+
+                            if (pageIndex < surveyPageIndex)
+                            {
+                                return new SurveyQuestionShowConstraintPreviouslyPassed(
+                                    Operator: condition.op,
+                                    Parent: question);
+                            }
+
+                            switch (page.Questions[questionIndex])
+                            {
+                                case SurveyQuestionSmallTextModel smallText:
+                                {
+                                    return new SurveyQuestionShowConstraintHasAnsweredSmallTextModel(
+                                        Operator: condition.op,
+                                        ReferencedQuestion: smallText,
+                                        Match: new Regex(condition.args[1] as string ?? "^[^]"),
+                                        Invert: condition.type is ShowConditionType.HasNotAnswered,
+                                        Parent: question);
+                                }
+                                case SurveyQuestionCheckboxModel checkbox:
+                                {
+                                    return new SurveyQuestionShowConstraintHasAnsweredCheckboxModel(
+                                        Operator: condition.op,
+                                        ReferencedQuestion: checkbox,
+                                        Invert: condition.type is ShowConditionType.HasNotAnswered,
+                                        Parent: question);
+                                }
+                                case SurveyQuestionRadioModel radio:
+                                {
+                                    return new SurveyQuestionShowConstraintHasAnsweredRadioModel(
+                                        Operator: condition.op,
+                                        ReferencedQuestion: radio,
+                                        Mask: new HashSet<int>(from k in condition.args.Keys where k > 0 select k - 1),
+                                        Invert: condition.type is ShowConditionType.HasNotAnswered,
+                                        Parent: question);
+                                }
+                                case SurveyQuestionRadioOrOtherModel radio when condition.args[0] is string s:
+                                {
+                                    return new SurveyQuestionShowConstraintHasAnsweredOtherOfRadioOrOtherModel(
+                                        Operator: condition.op,
+                                        ReferencedQuestion: radio,
+                                        Match: new Regex(s),
+                                        Invert: condition.type is ShowConditionType.HasNotAnswered,
+                                        Parent: question);
+                                }
+                                case SurveyQuestionRadioOrOtherModel radio:
+                                {
+                                    return new SurveyQuestionShowConstraintHasAnsweredOptionOfRadioOrOtherModel(
+                                        Operator: condition.op,
+                                        ReferencedQuestion: radio,
+                                        Mask: new HashSet<int>(from k in condition.args.Keys where k > 0 select k - 1),
+                                        Invert: condition.type is ShowConditionType.HasNotAnswered,
+                                        Parent: question);
+                                }
+                                case SurveyQuestionMultiSelectAndOtherModel radio when condition.args[1] is string s:
+                                {
+                                    return new SurveyQuestionShowConstraintHasAnsweredOtherOfMultiSelectAndOtherModel(
+                                        Operator: condition.op,
+                                        ReferencedQuestion: radio,
+                                        Match: new Regex(s),
+                                        Invert: condition.type is ShowConditionType.HasNotAnswered,
+                                        Parent: question);
+                                }
+                                case SurveyQuestionMultiSelectAndOtherModel radio:
+                                {
+                                    return new SurveyQuestionShowConstraintHasAnsweredOptionOfMultiSelectAndOtherModel(
+                                        Operator: condition.op,
+                                        ReferencedQuestion: radio,
+                                        Mask: new HashSet<int>(from k in condition.args.Keys where k > 0 select k - 1),
+                                        Invert: condition.type is ShowConditionType.HasNotAnswered,
+                                        Parent: question);
+                                }
+                                default:
+                                {
+                                    throw new UnreachableException();
+                                }
+                            }
+                        }
+                        default:
+                        {
+                            throw new UnreachableException();
+                        }
+                    }
+                }));
+
+            validationConditions.AddRange(
+                setupValidationConditions.Select<
+                    (
+                        ConditionOperator op,
+                        ValidationConditionType type,
+                        Dictionary<int, object?> args),
+                    ISurveyQuestionValidationConstraintModel>((condition) =>
+                {
+                    switch (condition.type)
+                    {
+                        case ValidationConditionType.Min
+                            or ValidationConditionType.Max:
+                        {
+                            (int pageIndex, int questionIndex)
+                                = condition.args[0] as (int, int)?
+                                    ?? throw new InvalidDataException(
+                                        $"Validation condition 'Has(Not)Answered' argument has" +
+                                        $" wrong type for question id '{id}' in " +
+                                        $"survey id '{surveyId}' page '{surveyPageIndex}'.");
+
+                            if (pageIndex < surveyPageIndex)
+                            {
+                                return new SurveyQuestionValidationConstraintPreviouslyPassed(
+                                    Operator: condition.op,
+                                    Parent: question);
+                            }
+
+                            switch (question)
+                            {
+                                case SurveyQuestionSmallTextModel smallText:
+                                {
+                                    return new SurveyQuestionValidationConstraintBoundSmallTextModel(
+                                        Operator: condition.op,
+                                        LengthBound: (int)condition.args[1]!,
+                                        IsMax: condition.type is ValidationConditionType.Max,
+                                        Parent: smallText);
+                                }
+                                case SurveyQuestionCheckboxModel checkbox:
+                                {
+                                    return new SurveyQuestionValidationConstraintBoundCheckboxModel(
+                                        Operator: condition.op,
+                                        IsMax: condition.type is ValidationConditionType.Max,
+                                        Parent: checkbox);
+                                }
+                                case SurveyQuestionRadioModel radio:
+                                {
+                                    return new SurveyQuestionValidationConstraintBoundRadioModel(
+                                        Operator: condition.op,
+                                        Bound: (int)condition.args[1]!,
+                                        IsMax: condition.type is ValidationConditionType.Max,
+                                        Parent: radio);
+                                }
+                                case SurveyQuestionRadioOrOtherModel radio when condition.args.ContainsKey(2):
+                                {
+                                    return new SurveyQuestionValidationConstraintBoundOtherOfRadioOrOtherModel(
+                                        Operator: condition.op,
+                                        LengthBound: (int)condition.args[1]!,
+                                        IsMax: condition.type is ValidationConditionType.Max,
+                                        Parent: radio);
+                                }
+                                case SurveyQuestionRadioOrOtherModel radio:
+                                {
+                                    return new SurveyQuestionValidationConstraintBoundOptionOfRadioOrOtherModel(
+                                        Operator: condition.op,
+                                        Bound: (int)condition.args[1]!,
+                                        IsMax: condition.type is ValidationConditionType.Max,
+                                        Parent: radio);
+                                }
+                                case SurveyQuestionMultiSelectAndOtherModel radio when condition.args.ContainsKey(2):
+                                {
+                                    return new SurveyQuestionValidationConstraintBoundOtherOfMultiSelectAndOtherModel(
+                                        Operator: condition.op,
+                                        LengthBound: (int)condition.args[1]!,
+                                        IsMax: condition.type is ValidationConditionType.Max,
+                                        Parent: radio);
+                                }
+                                case SurveyQuestionMultiSelectAndOtherModel radio:
+                                {
+                                    return new SurveyQuestionValidationConstraintBoundOptionOfMultiSelectAndOtherModel(
+                                        Operator: condition.op,
+                                        Bound: (int)condition.args[1]!,
+                                        IsMax: condition.type is ValidationConditionType.Max,
+                                        Parent: radio);
+                                }
+                                default:
+                                {
+                                    throw new UnreachableException();
+                                }
+                            }
+                        }
+                        default:
+                        {
+                            throw new UnreachableException();
+                        }
+                    }
+                }));
+
+            questions.Add(question);
+        }
+
+        return page;
     }
 
     [Route("{surveyId}/{surveyPageIndex}")]
@@ -273,18 +517,18 @@ public class SurveyController(
             || surveyPageIndexValue < 0)
             return NotFound();
 
-        await using SqlConnection connection = DefaultSqlConnection();
+        await using SqlConnection connection = new(configuration.GetConnectionString("Default"));
 
         await connection.OpenAsync();
 
-        byte[] surveySessionToken = new byte[24];
+        byte[] surveySessionToken = new byte[32];
 
         if (!Request.Cookies.TryGetValue("session", out string? sessionToken)
             || Convert.TryFromBase64String(sessionToken, surveySessionToken, out int bytesWritten)
-            || bytesWritten != 24)
+            || bytesWritten != 32)
         {
             if (surveyPageIndexValue > 0)
-                throw new Exception();
+                return BadRequest();
 
             const string SURVEY_ID = "@surveyId";
 
@@ -304,7 +548,7 @@ public class SurveyController(
 
             Response.Cookies.Append(
                 "session",
-                sessionToken = Convert.ToBase64String((byte[])command.ExecuteScalar()));
+                sessionToken = Convert.ToBase64String(surveySessionToken = (byte[])command.ExecuteScalar()));
         }
 
         SurveyPageModel? page = await QuerySurveyPageModel(
@@ -314,7 +558,7 @@ public class SurveyController(
             surveySessionToken);
 
         if (page is null)
-            throw new Exception();
+            return NotFound();
 
         return View(page);
     }
