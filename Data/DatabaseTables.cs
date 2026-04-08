@@ -3408,7 +3408,7 @@ public partial record SqlSurveySession(
 /// [survey_question_index] INT NOT NULL
 /// </code>
 /// </param>
-/// <param name="SurveySessionToken">
+/// <param name="SessionToken">
 /// Stored in the database as:
 /// <code>
 /// [survey_session_token] BINARY(32) NOT NULL
@@ -3424,7 +3424,7 @@ public partial record SqlSurveySessionAnswer(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
-    SqlBinary SurveySessionToken,
+    SqlBinary SessionToken,
     SqlInt32 AnswerIndex)
 {
     /// <summary>
@@ -3470,7 +3470,7 @@ public partial record SqlSurveySessionAnswer(
     /// [survey_session_token] BINARY(32) NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_SURVEY_SESSION_TOKEN = "[survey_session_answers].[survey_session_token]";
+    public const string TABLE_SESSION_TOKEN = "[survey_session_answers].[survey_session_token]";
 
     /// <summary>
     /// Stored in the database as:
@@ -3510,7 +3510,7 @@ public partial record SqlSurveySessionAnswer(
     /// [survey_session_token] BINARY(32) NOT NULL
     /// </code>
     /// </summary>
-    public const string SURVEY_SESSION_TOKEN = "[survey_session_token]";
+    public const string SESSION_TOKEN = "[survey_session_token]";
 
     /// <summary>
     /// Stored in the database as:
@@ -3551,7 +3551,7 @@ public partial record SqlSurveySessionAnswer(
 /// [survey_question_index] INT NOT NULL
 /// </code>
 /// </param>
-/// <param name="SurveySessionToken">
+/// <param name="SessionToken">
 /// Stored in the database as:
 /// <code>
 /// [survey_session_token] BINARY(32) NOT NULL
@@ -3573,7 +3573,7 @@ public partial record SqlSurveySessionIntegerAnswer(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
-    SqlBinary SurveySessionToken,
+    SqlBinary SessionToken,
     SqlInt32 AnswerIndex,
     SqlInt32 Value)
 {
@@ -3621,7 +3621,7 @@ public partial record SqlSurveySessionIntegerAnswer(
     /// [survey_session_token] BINARY(32) NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_SURVEY_SESSION_TOKEN = "[survey_session_integer_answers].[survey_session_token]";
+    public const string TABLE_SESSION_TOKEN = "[survey_session_integer_answers].[survey_session_token]";
 
     /// <summary>
     /// Stored in the database as:
@@ -3669,7 +3669,7 @@ public partial record SqlSurveySessionIntegerAnswer(
     /// [survey_session_token] BINARY(32) NOT NULL
     /// </code>
     /// </summary>
-    public const string SURVEY_SESSION_TOKEN = "[survey_session_token]";
+    public const string SESSION_TOKEN = "[survey_session_token]";
 
     /// <summary>
     /// Stored in the database as:
@@ -3718,7 +3718,7 @@ public partial record SqlSurveySessionIntegerAnswer(
 /// [survey_question_index] INT NOT NULL
 /// </code>
 /// </param>
-/// <param name="SurveySessionToken">
+/// <param name="SessionToken">
 /// Stored in the database as:
 /// <code>
 /// [survey_session_token] BINARY(32) NOT NULL
@@ -3740,7 +3740,7 @@ public partial record SqlSurveySessionTextAnswer(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
-    SqlBinary SurveySessionToken,
+    SqlBinary SessionToken,
     SqlInt32 AnswerIndex,
     SqlString Value)
 {
@@ -3788,7 +3788,7 @@ public partial record SqlSurveySessionTextAnswer(
     /// [survey_session_token] BINARY(32) NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_SURVEY_SESSION_TOKEN = "[survey_session_text_answers].[survey_session_token]";
+    public const string TABLE_SESSION_TOKEN = "[survey_session_text_answers].[survey_session_token]";
 
     /// <summary>
     /// Stored in the database as:
@@ -3836,7 +3836,7 @@ public partial record SqlSurveySessionTextAnswer(
     /// [survey_session_token] BINARY(32) NOT NULL
     /// </code>
     /// </summary>
-    public const string SURVEY_SESSION_TOKEN = "[survey_session_token]";
+    public const string SESSION_TOKEN = "[survey_session_token]";
 
     /// <summary>
     /// Stored in the database as:

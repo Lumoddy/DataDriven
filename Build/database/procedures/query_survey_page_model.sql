@@ -2,8 +2,7 @@
 CREATE OR ALTER PROCEDURE [query_survey_page_model] (
     @survey_id INT,
     @survey_page_index INT,
-    @survey_session_token BINARY(32)
-) AS
+    @survey_session_token BINARY(32)) AS
 BEGIN
 
     DELETE FROM

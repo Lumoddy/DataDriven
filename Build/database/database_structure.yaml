@@ -673,7 +673,7 @@ tables:
       survey_id: { short_single: survey_id, type: ID }
       survey_page_index: { short_single: page_index, type: INDEX }
       survey_question_index: { short_single: question_index, type: INDEX }
-      survey_session_token: { short_single: survey_session_token, type: TOKEN }
+      survey_session_token: { short_single: session_token, type: TOKEN }
       survey_session_answer_index: { short_single: answer_index, type: INDEX }
     constraints:
     - primary:
@@ -702,7 +702,7 @@ tables:
       survey_id: { short_single: survey_id, type: ID }
       survey_page_index: { short_single: page_index, type: INDEX }
       survey_question_index: { short_single: question_index, type: INDEX }
-      survey_session_token: { short_single: survey_session_token, type: TOKEN }
+      survey_session_token: { short_single: session_token, type: TOKEN }
       survey_session_answer_index: { short_single: answer_index, type: INDEX }
       survey_session_answer_integer: { short_single: value, type: INT }
     constraints:
@@ -738,7 +738,7 @@ tables:
       survey_id: { short_single: survey_id, type: ID }
       survey_page_index: { short_single: page_index, type: INDEX }
       survey_question_index: { short_single: question_index, type: INDEX }
-      survey_session_token: { short_single: survey_session_token, type: TOKEN }
+      survey_session_token: { short_single: session_token, type: TOKEN }
       survey_session_answer_index: { short_single: answer_index, type: INDEX }
       survey_session_answer_text: { short_single: value, type: VARCHAR, size: MAX }
     constraints:

@@ -4,105 +4,107 @@
 @model ISurveyPageModel
 <h1>@Model.Parent!.Title</h1>
 <form method="post">
-    @foreach (ISurveyQuestionModel question in Model.Questions)
-    {
-        <div>
-            <h3>@question.Title</h3>
-            @switch (question)
-            {
-                case SurveyQuestionSmallTextModel smallText:
+    <ul>
+        @foreach (ISurveyQuestionModel question in Model.Questions)
+        {
+            <li>
+                <h3>@question.Title</h3>
+                @switch (question)
                 {
-                    if (smallText.Label is not null)
+                    case SurveyQuestionSmallTextModel smallText:
                     {
-                        <label for="question-@question.Id">@smallText.Label</label>
+                        if (smallText.Label is not null)
+                        {
+                            <label for="question-@question.Id">@smallText.Label</label>
+                        }
+
+                        <input id="question-@question.Id" type="text" name="@question.Id"/>
+
+                        break;
                     }
-
-                    <input id="question-@question.Id" type="text" name="@question.Id"/>
-
-                    break;
-                }
-                case SurveyQuestionCheckboxModel checkbox:
-                {
-                    if (checkbox.Label is not null)
+                    case SurveyQuestionCheckboxModel checkbox:
                     {
-                        <label for="question-@question.Id">@checkbox.Label</label>
+                        if (checkbox.Label is not null)
+                        {
+                            <label for="question-@question.Id">@checkbox.Label</label>
+                        }
+
+                        <input id="question-@question.Id" type="checkbox" name="@question.Id"/>
+
+                        break;
                     }
+                    case SurveyQuestionRadioModel radio:
+                    {
+                        <ul>
+                            @foreach ((int i, string option) in radio.Options.Index())
+                            {
+                                <li>
+                                    <label for="question-@question.Id-@i">@option</label>
+                                    <input id="question-@question.Id-@i" type="radio" name="@question.Id" value="@i"/>
+                                </li>
+                            }
+                        </ul>
 
-                    <input id="question-@question.Id" type="checkbox" name="@question.Id"/>
-
-                    break;
-                }
-                case SurveyQuestionRadioModel radio:
-                {
-                    <ul>
-                        @foreach ((int i, string option) in radio.Options.Index())
-                        {
+                        break;
+                    }
+                    case SurveyQuestionRadioOrOtherModel radio:
+                    {
+                        <ul>
+                            @foreach ((int i, string option) in radio.Options.Index())
+                            {
+                                <li>
+                                    <label for="question-@question.Id-@i">@option</label>
+                                    <input id="question-@question.Id-@i" type="radio" name="@question.Id" value="@i"/>
+                                </li>
+                            }
                             <li>
-                                <label for="question-@question.Id-@i">@option</label>
-                                <input id="question-@question.Id-@i" type="radio" name="@question.Id" value="@i"/>
+                                <input id="question-@question.Id-other-text" type="text" name="@question.Id-text" placeholder="Other..."/>
+                                <input id="question-@question.Id-other" type="radio" name="@question.Id" value="other"/>
                             </li>
-                        }
-                    </ul>
+                        </ul>
 
-                    break;
-                }
-                case SurveyQuestionRadioOrOtherModel radio:
-                {
-                    <ul>
-                        @foreach ((int i, string option) in radio.Options.Index())
-                        {
+                        break;
+                    }
+                    case SurveyQuestionMultiSelectModel multiSelect:
+                    {
+                        <ul>
+                            @foreach ((int i, string option) in multiSelect.Options.Index())
+                            {
+                                <li>
+                                    <label for="question-@question.Id-@i">@option</label>
+                                    <input id="question-@question.Id-@i" type="radio" name="@question.Id" value="@i"/>
+                                </li>
+                            }
+                        </ul>
+
+                        break;
+                    }
+                    case SurveyQuestionMultiSelectAndOtherModel multiSelect:
+                    {
+                        <ul>
+                            @foreach ((int i, string option) in multiSelect.Options.Index())
+                            {
+                                <li>
+                                    <label for="question-@question.Id-@i">@option</label>
+                                    <input id="question-@question.Id-@i" type="radio" name="@question.Id" value="@i"/>
+                                </li>
+                            }
                             <li>
-                                <label for="question-@question.Id-@i">@option</label>
-                                <input id="question-@question.Id-@i" type="radio" name="@question.Id" value="@i"/>
+                                <input id="question-@question.Id-other-text" type="text" name="@question.Id-text" placeholder="Other..."/>
+                                <input id="question-@question.Id-other" type="radio" name="@question.Id" value="other"/>
                             </li>
-                        }
-                        <li>
-                            <input id="question-@question.Id-other-text" type="text" name="@question.Id-text" placeholder="Other..."/>
-                            <input id="question-@question.Id-other" type="radio" name="@question.Id" value="other"/>
-                        </li>
-                    </ul>
+                        </ul>
 
-                    break;
+                        break;
+                    }
+                    default:
+                    {
+                        throw new InvalidOperationException(
+                            $"Unknown question type {question.GetType().Name}");
+                    }
                 }
-                case SurveyQuestionMultiSelectModel multiSelect:
-                {
-                    <ul>
-                        @foreach ((int i, string option) in multiSelect.Options.Index())
-                        {
-                            <li>
-                                <label for="question-@question.Id-@i">@option</label>
-                                <input id="question-@question.Id-@i" type="radio" name="@question.Id" value="@i"/>
-                            </li>
-                        }
-                    </ul>
-
-                    break;
-                }
-                case SurveyQuestionMultiSelectAndOtherModel multiSelect:
-                {
-                    <ul>
-                        @foreach ((int i, string option) in multiSelect.Options.Index())
-                        {
-                            <li>
-                                <label for="question-@question.Id-@i">@option</label>
-                                <input id="question-@question.Id-@i" type="radio" name="@question.Id" value="@i"/>
-                            </li>
-                        }
-                        <li>
-                            <input id="question-@question.Id-other-text" type="text" name="@question.Id-text" placeholder="Other..."/>
-                            <input id="question-@question.Id-other" type="radio" name="@question.Id" value="other"/>
-                        </li>
-                    </ul>
-
-                    break;
-                }
-                default:
-                {
-                    throw new InvalidOperationException(
-                        $"Unknown question type {question.GetType().Name}");
-                }
-            }
-        </div>
-    }
+            </li>
+        }
+    </ul>
     <button type="submit">Submit</button>
 </form>
