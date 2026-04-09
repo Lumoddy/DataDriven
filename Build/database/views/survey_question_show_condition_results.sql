@@ -245,8 +245,8 @@ SELECT
                                     CAST([arg1s].[survey_question_show_condition_arg_text] AS VARCHAR(8000))))))
                     OR ( -- (int? arg1) => (params object?[] answers) =>
                          --     arg1 is null
-                         --         ? answers.Any((x) => x is not null)
-                         --         : answer[arg1.Value] is not null
+                         --         ? answers.Where((_, i) => i < options.Count).Any((x) => x is not null)
+                         --         : answers[arg1.Value] is not null
                         [arg0s].[referenced_survey_question_answer_type]
                             = [answer_type].[multi_select]
                         AND (
@@ -311,8 +311,8 @@ SELECT
                                                 AND [options].[survey_answer_option_index]
                                                     = [answers].[survey_session_answer_integer])))))
                     OR ( -- (object? arg1) => (params object?[] answers) =>
-                         --     (arg1 is null && answers.Any((x) => x is not null)) ||
-                         --     (arg1 is int x && answer[arg1] is not null) ||
+                         --     (arg1 is null && answers.Where((_, i) => i < options.Count).Any((x) => x is not null)) ||
+                         --     (arg1 is int x && answers[arg1 + 1] is not null) ||
                          --     (arg1 is string x && new Regex(arg1 ?? "^[^]").IsMatch(answers[0] as string? ?? ""))
                         [arg0s].[referenced_survey_question_answer_type]
                             = [answer_type].[multi_select_and_other]
@@ -365,10 +365,10 @@ SELECT
                                             = [arg0s].[referenced_survey_question_index]
                                         AND [answers].[survey_session_token]
                                             = [survey_sessions].[survey_session_token]
-                                        AND [answers].[survey_session_answer_integer]
+                                        AND [answers].[survey_session_answer_index]
                                             IS NOT NULL
-                                        AND [answers].[survey_session_answer_integer]
-                                            = [arg1s].[survey_question_show_condition_arg_integer]
+                                        AND [answers].[survey_session_answer_index]
+                                            = [arg1s].[survey_question_show_condition_arg_integer] + 1
                                         AND EXISTS(
                                             SELECT NULL FROM
                                                 [survey_question_answer_options] AS [options]
@@ -380,7 +380,7 @@ SELECT
                                                 AND [options].[survey_question_index]
                                                     = [arg0s].[referenced_survey_question_index]
                                                 AND [options].[survey_answer_option_index]
-                                                    = [answers].[survey_session_answer_integer])))
+                                                    = [answers].[survey_session_answer_index])))
                             OR (
                                 [arg1s].[survey_question_show_condition_arg_integer]
                                     IS NULL
@@ -427,7 +427,7 @@ SELECT
 FROM
     [survey_question_show_conditions] AS [conditions]
 LEFT JOIN
-    [survey_question_show_conditions_args_view] AS [arg0s]
+    [survey_question_show_condition_args_view] AS [arg0s]
     ON [arg0s].[survey_id]
         = [conditions].[survey_id]
     AND [arg0s].[survey_page_index]
@@ -439,7 +439,7 @@ LEFT JOIN
     AND [arg0s].[survey_question_show_condition_arg_index]
         = 0
 LEFT JOIN
-    [survey_question_show_conditions_args_view] AS [arg1s]
+    [survey_question_show_condition_args_view] AS [arg1s]
     ON [arg1s].[survey_id]
         = [conditions].[survey_id]
     AND [arg1s].[survey_page_index]

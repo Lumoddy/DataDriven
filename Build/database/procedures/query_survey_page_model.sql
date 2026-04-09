@@ -5,11 +5,7 @@ CREATE OR ALTER PROCEDURE [query_survey_page_model] (
     @survey_session_token BINARY(32)) AS
 BEGIN
 
-    DELETE FROM
-        [survey_sessions]
-    WHERE
-        [survey_sessions].[survey_session_expiry]
-            <= GETUTCDATE();
+    EXEC [delete_old_survey_sessions];
 
     SELECT
         [surveys].[survey_title],
@@ -42,37 +38,31 @@ BEGIN
         AND [survey_sessions].[survey_session_token]
             = @survey_session_token;
 
-    IF (@@ROWCOUNT = 0)
+    IF @@ROWCOUNT = 0
         RETURN;
 
-    SELECT
-        [survey_question_index]
-    INTO
+    SELECT * INTO
         [#visible_questions]
     FROM
-        [survey_question_show_condition_results]
+        [survey_visible_questions]
     WHERE
-        [survey_id] = @survey_id
-        AND [survey_page_index] = @survey_page_index
-        AND [survey_session_token] = @survey_session_token
-        AND [survey_question_is_visible] = 1;
+        [survey_visible_questions].[survey_id]
+            = @survey_id
+        AND [survey_visible_questions].[survey_page_index]
+            = @survey_page_index
+        AND [survey_visible_questions].[survey_session_token]
+            = @survey_session_token
+        AND [survey_visible_questions].[survey_question_is_visible]
+            = 1;
 
     SELECT
-        [survey_questions].[survey_question_index],
-        [survey_questions].[survey_question_answer_type],
-        [survey_questions].[survey_question_prompt]
+        [#visible_questions].[survey_question_index],
+        [#visible_questions].[survey_question_answer_type],
+        [#visible_questions].[survey_question_prompt]
     FROM
         [#visible_questions]
-    JOIN
-        [survey_questions]
-        ON [survey_questions].[survey_id]
-            = @survey_id
-        AND [survey_questions].[survey_page_index]
-            = @survey_page_index
-        AND [survey_questions].[survey_question_index]
-            = [#visible_questions].[survey_question_index]
     ORDER BY
-        [survey_questions].[survey_question_index] ASC;
+        [#visible_questions].[survey_question_index] ASC;
 
     SELECT
         [survey_question_answer_options].[survey_question_index],
@@ -112,27 +102,27 @@ BEGIN
         [survey_question_show_conditions].[survey_question_show_condition_index] ASC;
 
     SELECT
-        [survey_question_show_conditions_args_view].[survey_question_index],
-        [survey_question_show_conditions_args_view].[survey_question_show_condition_index],
-        [survey_question_show_conditions_args_view].[survey_question_show_condition_arg_index],
-        [survey_question_show_conditions_args_view].[referenced_survey_page_index],
-        [survey_question_show_conditions_args_view].[referenced_survey_question_index],
-        [survey_question_show_conditions_args_view].[survey_question_show_condition_arg_integer],
-        [survey_question_show_conditions_args_view].[survey_question_show_condition_arg_text]
+        [survey_question_show_condition_args_view].[survey_question_index],
+        [survey_question_show_condition_args_view].[survey_question_show_condition_index],
+        [survey_question_show_condition_args_view].[survey_question_show_condition_arg_index],
+        [survey_question_show_condition_args_view].[referenced_survey_page_index],
+        [survey_question_show_condition_args_view].[referenced_survey_question_index],
+        [survey_question_show_condition_args_view].[survey_question_show_condition_arg_integer],
+        [survey_question_show_condition_args_view].[survey_question_show_condition_arg_text]
     FROM
         [#visible_questions]
     JOIN
-        [survey_question_show_conditions_args_view]
-        ON [survey_question_show_conditions_args_view].[survey_id]
+        [survey_question_show_condition_args_view]
+        ON [survey_question_show_condition_args_view].[survey_id]
             = @survey_id
-        AND [survey_question_show_conditions_args_view].[survey_page_index]
+        AND [survey_question_show_condition_args_view].[survey_page_index]
             = @survey_page_index
-        AND [survey_question_show_conditions_args_view].[survey_question_index]
+        AND [survey_question_show_condition_args_view].[survey_question_index]
             = [#visible_questions].[survey_question_index]
     ORDER BY
-        [survey_question_show_conditions_args_view].[survey_question_index] ASC,
-        [survey_question_show_conditions_args_view].[survey_question_show_condition_index] ASC,
-        [survey_question_show_conditions_args_view].[survey_question_show_condition_arg_index] ASC;
+        [survey_question_show_condition_args_view].[survey_question_index] ASC,
+        [survey_question_show_condition_args_view].[survey_question_show_condition_index] ASC,
+        [survey_question_show_condition_args_view].[survey_question_show_condition_arg_index] ASC;
 
     SELECT
         [survey_question_validation_conditions].[survey_question_index],
@@ -154,26 +144,26 @@ BEGIN
         [survey_question_validation_conditions].[survey_question_validation_condition_index] ASC;
 
     SELECT
-        [survey_question_validation_conditions_args_view].[survey_question_index],
-        [survey_question_validation_conditions_args_view].[survey_question_validation_condition_index],
-        [survey_question_validation_conditions_args_view].[survey_question_validation_condition_arg_index],
-        [survey_question_validation_conditions_args_view].[referenced_survey_page_index],
-        [survey_question_validation_conditions_args_view].[referenced_survey_question_index],
-        [survey_question_validation_conditions_args_view].[survey_question_validation_condition_arg_integer],
-        [survey_question_validation_conditions_args_view].[survey_question_validation_condition_arg_text]
+        [survey_question_validation_condition_args_view].[survey_question_index],
+        [survey_question_validation_condition_args_view].[survey_question_validation_condition_index],
+        [survey_question_validation_condition_args_view].[survey_question_validation_condition_arg_index],
+        [survey_question_validation_condition_args_view].[referenced_survey_page_index],
+        [survey_question_validation_condition_args_view].[referenced_survey_question_index],
+        [survey_question_validation_condition_args_view].[survey_question_validation_condition_arg_integer],
+        [survey_question_validation_condition_args_view].[survey_question_validation_condition_arg_text]
     FROM
         [#visible_questions]
     JOIN
-        [survey_question_validation_conditions_args_view]
-        ON [survey_question_validation_conditions_args_view].[survey_id]
+        [survey_question_validation_condition_args_view]
+        ON [survey_question_validation_condition_args_view].[survey_id]
             = @survey_id
-        AND [survey_question_validation_conditions_args_view].[survey_page_index]
+        AND [survey_question_validation_condition_args_view].[survey_page_index]
             = @survey_page_index
-        AND [survey_question_validation_conditions_args_view].[survey_question_index]
+        AND [survey_question_validation_condition_args_view].[survey_question_index]
             = [#visible_questions].[survey_question_index]
     ORDER BY
-        [survey_question_validation_conditions_args_view].[survey_question_index] ASC,
-        [survey_question_validation_conditions_args_view].[survey_question_validation_condition_index] ASC,
-        [survey_question_validation_conditions_args_view].[survey_question_validation_condition_arg_index] ASC;
+        [survey_question_validation_condition_args_view].[survey_question_index] ASC,
+        [survey_question_validation_condition_args_view].[survey_question_validation_condition_index] ASC,
+        [survey_question_validation_condition_args_view].[survey_question_validation_condition_arg_index] ASC;
 
 END

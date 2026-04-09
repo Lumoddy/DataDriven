@@ -88,14 +88,14 @@ CREATE TABLE [survey_question_show_conditions] (
     [survey_question_show_condition_type] TINYINT NOT NULL,
     [survey_question_show_condition_operator] TINYINT NOT NULL);
 
-CREATE TABLE [survey_question_show_conditions_args] (
+CREATE TABLE [survey_question_show_condition_args] (
     [survey_id] INT NOT NULL,
     [survey_page_index] INT NOT NULL,
     [survey_question_index] INT NOT NULL,
     [survey_question_show_condition_index] INT NOT NULL,
     [survey_question_show_condition_arg_index] INT NOT NULL);
 
-CREATE TABLE [survey_question_show_conditions_ref_args] (
+CREATE TABLE [survey_question_show_condition_ref_args] (
     [survey_id] INT NOT NULL,
     [survey_page_index] INT NOT NULL,
     [survey_question_index] INT NOT NULL,
@@ -104,7 +104,7 @@ CREATE TABLE [survey_question_show_conditions_ref_args] (
     [referenced_survey_page_index] INT NOT NULL,
     [referenced_survey_question_index] INT NOT NULL);
 
-CREATE TABLE [survey_question_show_conditions_integer_args] (
+CREATE TABLE [survey_question_show_condition_integer_args] (
     [survey_id] INT NOT NULL,
     [survey_page_index] INT NOT NULL,
     [survey_question_index] INT NOT NULL,
@@ -112,7 +112,7 @@ CREATE TABLE [survey_question_show_conditions_integer_args] (
     [survey_question_show_condition_arg_index] INT NOT NULL,
     [survey_question_show_condition_arg_integer] INT NOT NULL);
 
-CREATE TABLE [survey_question_show_conditions_text_args] (
+CREATE TABLE [survey_question_show_condition_text_args] (
     [survey_id] INT NOT NULL,
     [survey_page_index] INT NOT NULL,
     [survey_question_index] INT NOT NULL,
@@ -126,16 +126,16 @@ CREATE TABLE [survey_question_validation_conditions] (
     [survey_question_index] INT NOT NULL,
     [survey_question_validation_condition_index] INT NOT NULL,
     [survey_question_validation_condition_type] TINYINT NOT NULL,
-    [survey_question_validation_condition_operator] BIT NOT NULL);
+    [survey_question_validation_condition_operator] TINYINT NOT NULL);
 
-CREATE TABLE [survey_question_validation_conditions_args] (
+CREATE TABLE [survey_question_validation_condition_args] (
     [survey_id] INT NOT NULL,
     [survey_page_index] INT NOT NULL,
     [survey_question_index] INT NOT NULL,
     [survey_question_validation_condition_index] INT NOT NULL,
     [survey_question_validation_condition_arg_index] INT NOT NULL);
 
-CREATE TABLE [survey_question_validation_conditions_ref_args] (
+CREATE TABLE [survey_question_validation_condition_ref_args] (
     [survey_id] INT NOT NULL,
     [survey_page_index] INT NOT NULL,
     [survey_question_index] INT NOT NULL,
@@ -144,7 +144,7 @@ CREATE TABLE [survey_question_validation_conditions_ref_args] (
     [referenced_survey_page_index] INT NOT NULL,
     [referenced_survey_question_index] INT NOT NULL);
 
-CREATE TABLE [survey_question_validation_conditions_integer_args] (
+CREATE TABLE [survey_question_validation_condition_integer_args] (
     [survey_id] INT NOT NULL,
     [survey_page_index] INT NOT NULL,
     [survey_question_index] INT NOT NULL,
@@ -152,7 +152,7 @@ CREATE TABLE [survey_question_validation_conditions_integer_args] (
     [survey_question_validation_condition_arg_index] INT NOT NULL,
     [survey_question_validation_condition_arg_integer] INT NOT NULL);
 
-CREATE TABLE [survey_question_validation_conditions_text_args] (
+CREATE TABLE [survey_question_validation_condition_text_args] (
     [survey_id] INT NOT NULL,
     [survey_page_index] INT NOT NULL,
     [survey_question_index] INT NOT NULL,
@@ -271,32 +271,32 @@ ALTER TABLE [survey_question_show_conditions]
         [survey_question_index],
         [survey_question_show_condition_index]);
 
-ALTER TABLE [survey_question_show_conditions_args]
-    ADD CONSTRAINT [unique_survey_question_show_conditions_args_1] PRIMARY KEY (
+ALTER TABLE [survey_question_show_condition_args]
+    ADD CONSTRAINT [unique_survey_question_show_condition_args_1] PRIMARY KEY (
         [survey_id],
         [survey_page_index],
         [survey_question_index],
         [survey_question_show_condition_index],
         [survey_question_show_condition_arg_index]);
 
-ALTER TABLE [survey_question_show_conditions_ref_args]
-    ADD CONSTRAINT [unique_survey_question_show_conditions_ref_args_1] PRIMARY KEY (
+ALTER TABLE [survey_question_show_condition_ref_args]
+    ADD CONSTRAINT [unique_survey_question_show_condition_ref_args_1] PRIMARY KEY (
         [survey_id],
         [survey_page_index],
         [survey_question_index],
         [survey_question_show_condition_index],
         [survey_question_show_condition_arg_index]);
 
-ALTER TABLE [survey_question_show_conditions_integer_args]
-    ADD CONSTRAINT [unique_survey_question_show_conditions_integer_args_1] PRIMARY KEY (
+ALTER TABLE [survey_question_show_condition_integer_args]
+    ADD CONSTRAINT [unique_survey_question_show_condition_integer_args_1] PRIMARY KEY (
         [survey_id],
         [survey_page_index],
         [survey_question_index],
         [survey_question_show_condition_index],
         [survey_question_show_condition_arg_index]);
 
-ALTER TABLE [survey_question_show_conditions_text_args]
-    ADD CONSTRAINT [unique_survey_question_show_conditions_text_args_1] PRIMARY KEY (
+ALTER TABLE [survey_question_show_condition_text_args]
+    ADD CONSTRAINT [unique_survey_question_show_condition_text_args_1] PRIMARY KEY (
         [survey_id],
         [survey_page_index],
         [survey_question_index],
@@ -310,32 +310,32 @@ ALTER TABLE [survey_question_validation_conditions]
         [survey_question_index],
         [survey_question_validation_condition_index]);
 
-ALTER TABLE [survey_question_validation_conditions_args]
-    ADD CONSTRAINT [unique_survey_question_validation_conditions_args_1] PRIMARY KEY (
+ALTER TABLE [survey_question_validation_condition_args]
+    ADD CONSTRAINT [unique_survey_question_validation_condition_args_1] PRIMARY KEY (
         [survey_id],
         [survey_page_index],
         [survey_question_index],
         [survey_question_validation_condition_index],
         [survey_question_validation_condition_arg_index]);
 
-ALTER TABLE [survey_question_validation_conditions_ref_args]
-    ADD CONSTRAINT [unique_survey_question_validation_conditions_ref_args_1] PRIMARY KEY (
+ALTER TABLE [survey_question_validation_condition_ref_args]
+    ADD CONSTRAINT [unique_survey_question_validation_condition_ref_args_1] PRIMARY KEY (
         [survey_id],
         [survey_page_index],
         [survey_question_index],
         [survey_question_validation_condition_index],
         [survey_question_validation_condition_arg_index]);
 
-ALTER TABLE [survey_question_validation_conditions_integer_args]
-    ADD CONSTRAINT [unique_survey_question_validation_conditions_integer_args_1] PRIMARY KEY (
+ALTER TABLE [survey_question_validation_condition_integer_args]
+    ADD CONSTRAINT [unique_survey_question_validation_condition_integer_args_1] PRIMARY KEY (
         [survey_id],
         [survey_page_index],
         [survey_question_index],
         [survey_question_validation_condition_index],
         [survey_question_validation_condition_arg_index]);
 
-ALTER TABLE [survey_question_validation_conditions_text_args]
-    ADD CONSTRAINT [unique_survey_question_validation_conditions_text_args_1] PRIMARY KEY (
+ALTER TABLE [survey_question_validation_condition_text_args]
+    ADD CONSTRAINT [unique_survey_question_validation_condition_text_args_1] PRIMARY KEY (
         [survey_id],
         [survey_page_index],
         [survey_question_index],
@@ -521,8 +521,8 @@ ALTER TABLE [survey_question_show_conditions]
         REFERENCES [survey_question_condition_operator] (
             [survey_question_condition_operator_id]);
 
-ALTER TABLE [survey_question_show_conditions_args]
-    ADD CONSTRAINT [fk_survey_question_show_conditions_args_to_survey_question_show_conditions_1]
+ALTER TABLE [survey_question_show_condition_args]
+    ADD CONSTRAINT [fk_survey_question_show_condition_args_to_survey_question_show_conditions_1]
         FOREIGN KEY (
             [survey_id],
             [survey_page_index],
@@ -534,8 +534,8 @@ ALTER TABLE [survey_question_show_conditions_args]
             [survey_question_index],
             [survey_question_show_condition_index]);
 
-ALTER TABLE [survey_question_show_conditions_args]
-    ADD CONSTRAINT [fk_survey_question_show_conditions_args_to_survey_questions_2]
+ALTER TABLE [survey_question_show_condition_args]
+    ADD CONSTRAINT [fk_survey_question_show_condition_args_to_survey_questions_2]
         FOREIGN KEY (
             [survey_id],
             [survey_page_index],
@@ -545,23 +545,23 @@ ALTER TABLE [survey_question_show_conditions_args]
             [survey_page_index],
             [survey_question_index]);
 
-ALTER TABLE [survey_question_show_conditions_ref_args]
-    ADD CONSTRAINT [fk_survey_question_show_conditions_ref_args_to_survey_question_show_conditions_args_1]
+ALTER TABLE [survey_question_show_condition_ref_args]
+    ADD CONSTRAINT [fk_survey_question_show_condition_ref_args_to_survey_question_show_condition_args_1]
         FOREIGN KEY (
             [survey_id],
             [survey_page_index],
             [survey_question_index],
             [survey_question_show_condition_index],
             [survey_question_show_condition_arg_index])
-        REFERENCES [survey_question_show_conditions_args] (
+        REFERENCES [survey_question_show_condition_args] (
             [survey_id],
             [survey_page_index],
             [survey_question_index],
             [survey_question_show_condition_index],
             [survey_question_show_condition_arg_index]);
 
-ALTER TABLE [survey_question_show_conditions_ref_args]
-    ADD CONSTRAINT [fk_survey_question_show_conditions_ref_args_to_survey_questions_2]
+ALTER TABLE [survey_question_show_condition_ref_args]
+    ADD CONSTRAINT [fk_survey_question_show_condition_ref_args_to_survey_questions_2]
         FOREIGN KEY (
             [survey_id],
             [survey_page_index],
@@ -571,8 +571,8 @@ ALTER TABLE [survey_question_show_conditions_ref_args]
             [survey_page_index],
             [survey_question_index]);
 
-ALTER TABLE [survey_question_show_conditions_ref_args]
-    ADD CONSTRAINT [fk_survey_question_show_conditions_ref_args_to_survey_questions_3]
+ALTER TABLE [survey_question_show_condition_ref_args]
+    ADD CONSTRAINT [fk_survey_question_show_condition_ref_args_to_survey_questions_3]
         FOREIGN KEY (
             [survey_id],
             [referenced_survey_page_index],
@@ -582,23 +582,23 @@ ALTER TABLE [survey_question_show_conditions_ref_args]
             [survey_page_index],
             [survey_question_index]);
 
-ALTER TABLE [survey_question_show_conditions_integer_args]
-    ADD CONSTRAINT [fk_survey_question_show_conditions_integer_args_to_survey_question_show_conditions_args_1]
+ALTER TABLE [survey_question_show_condition_integer_args]
+    ADD CONSTRAINT [fk_survey_question_show_condition_integer_args_to_survey_question_show_condition_args_1]
         FOREIGN KEY (
             [survey_id],
             [survey_page_index],
             [survey_question_index],
             [survey_question_show_condition_index],
             [survey_question_show_condition_arg_index])
-        REFERENCES [survey_question_show_conditions_args] (
+        REFERENCES [survey_question_show_condition_args] (
             [survey_id],
             [survey_page_index],
             [survey_question_index],
             [survey_question_show_condition_index],
             [survey_question_show_condition_arg_index]);
 
-ALTER TABLE [survey_question_show_conditions_integer_args]
-    ADD CONSTRAINT [fk_survey_question_show_conditions_integer_args_to_survey_questions_2]
+ALTER TABLE [survey_question_show_condition_integer_args]
+    ADD CONSTRAINT [fk_survey_question_show_condition_integer_args_to_survey_questions_2]
         FOREIGN KEY (
             [survey_id],
             [survey_page_index],
@@ -608,23 +608,23 @@ ALTER TABLE [survey_question_show_conditions_integer_args]
             [survey_page_index],
             [survey_question_index]);
 
-ALTER TABLE [survey_question_show_conditions_text_args]
-    ADD CONSTRAINT [fk_survey_question_show_conditions_text_args_to_survey_question_show_conditions_args_1]
+ALTER TABLE [survey_question_show_condition_text_args]
+    ADD CONSTRAINT [fk_survey_question_show_condition_text_args_to_survey_question_show_condition_args_1]
         FOREIGN KEY (
             [survey_id],
             [survey_page_index],
             [survey_question_index],
             [survey_question_show_condition_index],
             [survey_question_show_condition_arg_index])
-        REFERENCES [survey_question_show_conditions_args] (
+        REFERENCES [survey_question_show_condition_args] (
             [survey_id],
             [survey_page_index],
             [survey_question_index],
             [survey_question_show_condition_index],
             [survey_question_show_condition_arg_index]);
 
-ALTER TABLE [survey_question_show_conditions_text_args]
-    ADD CONSTRAINT [fk_survey_question_show_conditions_text_args_to_survey_questions_2]
+ALTER TABLE [survey_question_show_condition_text_args]
+    ADD CONSTRAINT [fk_survey_question_show_condition_text_args_to_survey_questions_2]
         FOREIGN KEY (
             [survey_id],
             [survey_page_index],
@@ -652,8 +652,8 @@ ALTER TABLE [survey_question_validation_conditions]
         REFERENCES [survey_question_validation_condition_types] (
             [survey_question_validation_condition_type_id]);
 
-ALTER TABLE [survey_question_validation_conditions_args]
-    ADD CONSTRAINT [fk_survey_question_validation_conditions_args_to_survey_question_validation_conditions_1]
+ALTER TABLE [survey_question_validation_condition_args]
+    ADD CONSTRAINT [fk_survey_question_validation_condition_args_to_survey_question_validation_conditions_1]
         FOREIGN KEY (
             [survey_id],
             [survey_page_index],
@@ -665,8 +665,8 @@ ALTER TABLE [survey_question_validation_conditions_args]
             [survey_question_index],
             [survey_question_validation_condition_index]);
 
-ALTER TABLE [survey_question_validation_conditions_args]
-    ADD CONSTRAINT [fk_survey_question_validation_conditions_args_to_survey_questions_2]
+ALTER TABLE [survey_question_validation_condition_args]
+    ADD CONSTRAINT [fk_survey_question_validation_condition_args_to_survey_questions_2]
         FOREIGN KEY (
             [survey_id],
             [survey_page_index],
@@ -676,23 +676,23 @@ ALTER TABLE [survey_question_validation_conditions_args]
             [survey_page_index],
             [survey_question_index]);
 
-ALTER TABLE [survey_question_validation_conditions_ref_args]
-    ADD CONSTRAINT [fk_survey_question_validation_conditions_ref_args_to_survey_question_validation_conditions_args_1]
+ALTER TABLE [survey_question_validation_condition_ref_args]
+    ADD CONSTRAINT [fk_survey_question_validation_condition_ref_args_to_survey_question_validation_condition_args_1]
         FOREIGN KEY (
             [survey_id],
             [survey_page_index],
             [survey_question_index],
             [survey_question_validation_condition_index],
             [survey_question_validation_condition_arg_index])
-        REFERENCES [survey_question_validation_conditions_args] (
+        REFERENCES [survey_question_validation_condition_args] (
             [survey_id],
             [survey_page_index],
             [survey_question_index],
             [survey_question_validation_condition_index],
             [survey_question_validation_condition_arg_index]);
 
-ALTER TABLE [survey_question_validation_conditions_ref_args]
-    ADD CONSTRAINT [fk_survey_question_validation_conditions_ref_args_to_survey_questions_2]
+ALTER TABLE [survey_question_validation_condition_ref_args]
+    ADD CONSTRAINT [fk_survey_question_validation_condition_ref_args_to_survey_questions_2]
         FOREIGN KEY (
             [survey_id],
             [survey_page_index],
@@ -702,8 +702,8 @@ ALTER TABLE [survey_question_validation_conditions_ref_args]
             [survey_page_index],
             [survey_question_index]);
 
-ALTER TABLE [survey_question_validation_conditions_ref_args]
-    ADD CONSTRAINT [fk_survey_question_validation_conditions_ref_args_to_survey_questions_3]
+ALTER TABLE [survey_question_validation_condition_ref_args]
+    ADD CONSTRAINT [fk_survey_question_validation_condition_ref_args_to_survey_questions_3]
         FOREIGN KEY (
             [survey_id],
             [referenced_survey_page_index],
@@ -713,23 +713,23 @@ ALTER TABLE [survey_question_validation_conditions_ref_args]
             [survey_page_index],
             [survey_question_index]);
 
-ALTER TABLE [survey_question_validation_conditions_integer_args]
-    ADD CONSTRAINT [fk_survey_question_validation_conditions_integer_args_to_survey_question_validation_conditions_args_1]
+ALTER TABLE [survey_question_validation_condition_integer_args]
+    ADD CONSTRAINT [fk_survey_question_validation_condition_integer_args_to_survey_question_validation_condition_args_1]
         FOREIGN KEY (
             [survey_id],
             [survey_page_index],
             [survey_question_index],
             [survey_question_validation_condition_index],
             [survey_question_validation_condition_arg_index])
-        REFERENCES [survey_question_validation_conditions_args] (
+        REFERENCES [survey_question_validation_condition_args] (
             [survey_id],
             [survey_page_index],
             [survey_question_index],
             [survey_question_validation_condition_index],
             [survey_question_validation_condition_arg_index]);
 
-ALTER TABLE [survey_question_validation_conditions_integer_args]
-    ADD CONSTRAINT [fk_survey_question_validation_conditions_integer_args_to_survey_questions_2]
+ALTER TABLE [survey_question_validation_condition_integer_args]
+    ADD CONSTRAINT [fk_survey_question_validation_condition_integer_args_to_survey_questions_2]
         FOREIGN KEY (
             [survey_id],
             [survey_page_index],
@@ -739,23 +739,23 @@ ALTER TABLE [survey_question_validation_conditions_integer_args]
             [survey_page_index],
             [survey_question_index]);
 
-ALTER TABLE [survey_question_validation_conditions_text_args]
-    ADD CONSTRAINT [fk_survey_question_validation_conditions_text_args_to_survey_question_validation_conditions_args_1]
+ALTER TABLE [survey_question_validation_condition_text_args]
+    ADD CONSTRAINT [fk_survey_question_validation_condition_text_args_to_survey_question_validation_condition_args_1]
         FOREIGN KEY (
             [survey_id],
             [survey_page_index],
             [survey_question_index],
             [survey_question_validation_condition_index],
             [survey_question_validation_condition_arg_index])
-        REFERENCES [survey_question_validation_conditions_args] (
+        REFERENCES [survey_question_validation_condition_args] (
             [survey_id],
             [survey_page_index],
             [survey_question_index],
             [survey_question_validation_condition_index],
             [survey_question_validation_condition_arg_index]);
 
-ALTER TABLE [survey_question_validation_conditions_text_args]
-    ADD CONSTRAINT [fk_survey_question_validation_conditions_text_args_to_survey_questions_2]
+ALTER TABLE [survey_question_validation_condition_text_args]
+    ADD CONSTRAINT [fk_survey_question_validation_condition_text_args_to_survey_questions_2]
         FOREIGN KEY (
             [survey_id],
             [survey_page_index],

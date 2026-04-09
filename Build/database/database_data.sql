@@ -91,19 +91,19 @@ INSERT INTO [survey_question_answer_options] ([survey_id], [survey_page_index], 
 INSERT INTO [survey_question_show_conditions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_type], [survey_question_show_condition_operator]) VALUES
     (1, 1, 1, 0, @show_condition_has_answered, @operator_and);
 
-INSERT INTO [survey_question_show_conditions_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index]) VALUES
+INSERT INTO [survey_question_show_condition_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index]) VALUES
     (1, 1, 1, 0, 0);
 
-INSERT INTO [survey_question_show_conditions_ref_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index]) VALUES
+INSERT INTO [survey_question_show_condition_ref_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index]) VALUES
     (1, 1, 1, 0, 0, 1, 0);
 
 INSERT INTO [survey_question_validation_conditions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_type], [survey_question_validation_condition_operator]) VALUES
     (1, 1, 1, 0, @validation_condition_max, @operator_and);
 
-INSERT INTO [survey_question_validation_conditions_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index]) VALUES
+INSERT INTO [survey_question_validation_condition_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index]) VALUES
     (1, 1, 1, 0, 0);
 
-INSERT INTO [survey_question_validation_conditions_integer_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer]) VALUES
+INSERT INTO [survey_question_validation_condition_integer_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer]) VALUES
     (1, 1, 1, 0, 0, 1);
 
 INSERT INTO [survey_questions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_prompt], [survey_question_answer_type]) VALUES
@@ -124,19 +124,19 @@ INSERT INTO [survey_question_answer_options] ([survey_id], [survey_page_index], 
 INSERT INTO [survey_question_show_conditions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_type], [survey_question_show_condition_operator]) VALUES
     (1, 1, 3, 0, @show_condition_has_answered, @operator_and);
 
-INSERT INTO [survey_question_show_conditions_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index]) VALUES
+INSERT INTO [survey_question_show_condition_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index]) VALUES
     (1, 1, 3, 0, 0);
 
-INSERT INTO [survey_question_show_conditions_ref_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index]) VALUES
+INSERT INTO [survey_question_show_condition_ref_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index]) VALUES
     (1, 1, 3, 0, 0, 1, 2);
 
 INSERT INTO [survey_question_validation_conditions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_type], [survey_question_validation_condition_operator]) VALUES
     (1, 1, 3, 0, @validation_condition_min, @operator_and);
 
-INSERT INTO [survey_question_validation_conditions_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index]) VALUES
+INSERT INTO [survey_question_validation_condition_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index]) VALUES
     (1, 1, 3, 0, 0);
 
-INSERT INTO [survey_question_validation_conditions_integer_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer]) VALUES
+INSERT INTO [survey_question_validation_condition_integer_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer]) VALUES
     (1, 1, 3, 0, 0, 0);
 
 INSERT INTO [survey_pages] ([survey_id], [survey_page_index], [survey_page_title], [survey_page_description]) VALUES
@@ -161,19 +161,19 @@ INSERT INTO [survey_question_answer_options] ([survey_id], [survey_page_index], 
 INSERT INTO [survey_question_show_conditions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_type], [survey_question_show_condition_operator]) VALUES
     (1, 2, 1, 0, @show_condition_has_answered, @operator_and);
 
-INSERT INTO [survey_question_show_conditions_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index]) VALUES
+INSERT INTO [survey_question_show_condition_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index]) VALUES
     (1, 2, 1, 0, 0);
 
-INSERT INTO [survey_question_show_conditions_ref_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index]) VALUES
+INSERT INTO [survey_question_show_condition_ref_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_show_condition_index], [survey_question_show_condition_arg_index], [referenced_survey_page_index], [referenced_survey_question_index]) VALUES
     (1, 2, 1, 0, 0, 2, 0);
 
 INSERT INTO [survey_question_validation_conditions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_type], [survey_question_validation_condition_operator]) VALUES
     (1, 2, 1, 0, @validation_condition_min, @operator_and);
 
-INSERT INTO [survey_question_validation_conditions_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index]) VALUES
+INSERT INTO [survey_question_validation_condition_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index]) VALUES
     (1, 2, 1, 0, 0);
 
-INSERT INTO [survey_question_validation_conditions_integer_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer]) VALUES
+INSERT INTO [survey_question_validation_condition_integer_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer]) VALUES
     (1, 2, 1, 0, 0, 2);
 
 INSERT INTO [survey_questions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_prompt], [survey_question_answer_type]) VALUES

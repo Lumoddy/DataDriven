@@ -267,7 +267,7 @@ public interface IDatabaseEnumService
     for (const [, table] of enums)
     {
         cs += `
-    `;
+    public `;
         cs += table.pascalShortenedSingle;
         cs += `Map `;
         cs += table.pascalShortenedSingle;
@@ -395,8 +395,7 @@ public class DatabaseEnumService : IDatabaseEnumService
 `;
     }
 
-    cs += `
-    }
+    cs += `    }
 `;
 
     for (const [, table] of enums)

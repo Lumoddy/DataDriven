@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IDatabaseEnumService, DatabaseEnumService>();
+builder.Services.AddSingleton<IDatabaseProcedureService, DatabaseProcedureService>();
 
 var app = builder.Build();
 

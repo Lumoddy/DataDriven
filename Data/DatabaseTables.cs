@@ -1567,7 +1567,7 @@ public partial record SqlSurveyQuestionAnswerOption(
 /// [survey_question_show_condition_type] TINYINT NOT NULL
 /// </code>
 /// </param>
-/// <param name="IsOrOperator">
+/// <param name="Operator">
 /// Stored in the database as:
 /// <code>
 /// [survey_question_show_condition_operator] TINYINT NOT NULL
@@ -1579,7 +1579,7 @@ public partial record SqlSurveyQuestionShowCondition(
     SqlInt32 QuestionIndex,
     SqlInt32 Index,
     SqlByte Type,
-    SqlByte IsOrOperator)
+    SqlByte Operator)
 {
     /// <summary>
     /// Stored in the database as:
@@ -1641,7 +1641,7 @@ public partial record SqlSurveyQuestionShowCondition(
     /// [survey_question_show_condition_operator] TINYINT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_IS_OR_OPERATOR = "[survey_question_show_conditions].[survey_question_show_condition_operator]";
+    public const string TABLE_OPERATOR = "[survey_question_show_conditions].[survey_question_show_condition_operator]";
 
     /// <summary>
     /// Stored in the database as:
@@ -1689,13 +1689,13 @@ public partial record SqlSurveyQuestionShowCondition(
     /// [survey_question_show_condition_operator] TINYINT NOT NULL
     /// </code>
     /// </summary>
-    public const string IS_OR_OPERATOR = "[survey_question_show_condition_operator]";
+    public const string OPERATOR = "[survey_question_show_condition_operator]";
 }
 
 /// <summary>
 /// Stored in the database as:
 /// <code>
-/// TABLE [survey_question_show_conditions_args] (
+/// TABLE [survey_question_show_condition_args] (
 ///     [survey_id] INT NOT NULL,
 ///     [survey_page_index] INT NOT NULL,
 ///     [survey_question_index] INT NOT NULL,
@@ -1733,7 +1733,7 @@ public partial record SqlSurveyQuestionShowCondition(
 /// [survey_question_show_condition_arg_index] INT NOT NULL
 /// </code>
 /// </param>
-public partial record SqlSurveyQuestionShowConditionsArg(
+public partial record SqlSurveyQuestionShowConditionArg(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -1743,7 +1743,7 @@ public partial record SqlSurveyQuestionShowConditionsArg(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// TABLE [survey_question_show_conditions_args] (
+    /// TABLE [survey_question_show_condition_args] (
     ///     [survey_id] INT NOT NULL,
     ///     [survey_page_index] INT NOT NULL,
     ///     [survey_question_index] INT NOT NULL,
@@ -1751,7 +1751,7 @@ public partial record SqlSurveyQuestionShowConditionsArg(
     ///     [survey_question_show_condition_arg_index] INT NOT NULL);
     /// </code>
     /// </summary>
-    public const string TABLE = "[survey_question_show_conditions_args]";
+    public const string TABLE = "[survey_question_show_condition_args]";
 
     /// <summary>
     /// Stored in the database as:
@@ -1759,7 +1759,7 @@ public partial record SqlSurveyQuestionShowConditionsArg(
     /// [survey_id] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_SURVEY_ID = "[survey_question_show_conditions_args].[survey_id]";
+    public const string TABLE_SURVEY_ID = "[survey_question_show_condition_args].[survey_id]";
 
     /// <summary>
     /// Stored in the database as:
@@ -1767,7 +1767,7 @@ public partial record SqlSurveyQuestionShowConditionsArg(
     /// [survey_page_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_PAGE_INDEX = "[survey_question_show_conditions_args].[survey_page_index]";
+    public const string TABLE_PAGE_INDEX = "[survey_question_show_condition_args].[survey_page_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -1775,7 +1775,7 @@ public partial record SqlSurveyQuestionShowConditionsArg(
     /// [survey_question_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_QUESTION_INDEX = "[survey_question_show_conditions_args].[survey_question_index]";
+    public const string TABLE_QUESTION_INDEX = "[survey_question_show_condition_args].[survey_question_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -1783,7 +1783,7 @@ public partial record SqlSurveyQuestionShowConditionsArg(
     /// [survey_question_show_condition_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_CONDITION_INDEX = "[survey_question_show_conditions_args].[survey_question_show_condition_index]";
+    public const string TABLE_CONDITION_INDEX = "[survey_question_show_condition_args].[survey_question_show_condition_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -1791,7 +1791,7 @@ public partial record SqlSurveyQuestionShowConditionsArg(
     /// [survey_question_show_condition_arg_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_INDEX = "[survey_question_show_conditions_args].[survey_question_show_condition_arg_index]";
+    public const string TABLE_INDEX = "[survey_question_show_condition_args].[survey_question_show_condition_arg_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -1837,7 +1837,7 @@ public partial record SqlSurveyQuestionShowConditionsArg(
 /// <summary>
 /// Stored in the database as:
 /// <code>
-/// TABLE [survey_question_show_conditions_ref_args] (
+/// TABLE [survey_question_show_condition_ref_args] (
 ///     [survey_id] INT NOT NULL,
 ///     [survey_page_index] INT NOT NULL,
 ///     [survey_question_index] INT NOT NULL,
@@ -1889,7 +1889,7 @@ public partial record SqlSurveyQuestionShowConditionsArg(
 /// [referenced_survey_question_index] INT NOT NULL
 /// </code>
 /// </param>
-public partial record SqlSurveyQuestionShowConditionsRefArg(
+public partial record SqlSurveyQuestionShowConditionRefArg(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -1901,7 +1901,7 @@ public partial record SqlSurveyQuestionShowConditionsRefArg(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// TABLE [survey_question_show_conditions_ref_args] (
+    /// TABLE [survey_question_show_condition_ref_args] (
     ///     [survey_id] INT NOT NULL,
     ///     [survey_page_index] INT NOT NULL,
     ///     [survey_question_index] INT NOT NULL,
@@ -1911,7 +1911,7 @@ public partial record SqlSurveyQuestionShowConditionsRefArg(
     ///     [referenced_survey_question_index] INT NOT NULL);
     /// </code>
     /// </summary>
-    public const string TABLE = "[survey_question_show_conditions_ref_args]";
+    public const string TABLE = "[survey_question_show_condition_ref_args]";
 
     /// <summary>
     /// Stored in the database as:
@@ -1919,7 +1919,7 @@ public partial record SqlSurveyQuestionShowConditionsRefArg(
     /// [survey_id] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_SURVEY_ID = "[survey_question_show_conditions_ref_args].[survey_id]";
+    public const string TABLE_SURVEY_ID = "[survey_question_show_condition_ref_args].[survey_id]";
 
     /// <summary>
     /// Stored in the database as:
@@ -1927,7 +1927,7 @@ public partial record SqlSurveyQuestionShowConditionsRefArg(
     /// [survey_page_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_PAGE_INDEX = "[survey_question_show_conditions_ref_args].[survey_page_index]";
+    public const string TABLE_PAGE_INDEX = "[survey_question_show_condition_ref_args].[survey_page_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -1935,7 +1935,7 @@ public partial record SqlSurveyQuestionShowConditionsRefArg(
     /// [survey_question_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_QUESTION_INDEX = "[survey_question_show_conditions_ref_args].[survey_question_index]";
+    public const string TABLE_QUESTION_INDEX = "[survey_question_show_condition_ref_args].[survey_question_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -1943,7 +1943,7 @@ public partial record SqlSurveyQuestionShowConditionsRefArg(
     /// [survey_question_show_condition_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_CONDITION_INDEX = "[survey_question_show_conditions_ref_args].[survey_question_show_condition_index]";
+    public const string TABLE_CONDITION_INDEX = "[survey_question_show_condition_ref_args].[survey_question_show_condition_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -1951,7 +1951,7 @@ public partial record SqlSurveyQuestionShowConditionsRefArg(
     /// [survey_question_show_condition_arg_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_INDEX = "[survey_question_show_conditions_ref_args].[survey_question_show_condition_arg_index]";
+    public const string TABLE_INDEX = "[survey_question_show_condition_ref_args].[survey_question_show_condition_arg_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -1959,7 +1959,7 @@ public partial record SqlSurveyQuestionShowConditionsRefArg(
     /// [referenced_survey_page_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_REFERENCED_PAGE_INDEX = "[survey_question_show_conditions_ref_args].[referenced_survey_page_index]";
+    public const string TABLE_REFERENCED_PAGE_INDEX = "[survey_question_show_condition_ref_args].[referenced_survey_page_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -1967,7 +1967,7 @@ public partial record SqlSurveyQuestionShowConditionsRefArg(
     /// [referenced_survey_question_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_REFERENCED_QUESTION_INDEX = "[survey_question_show_conditions_ref_args].[referenced_survey_question_index]";
+    public const string TABLE_REFERENCED_QUESTION_INDEX = "[survey_question_show_condition_ref_args].[referenced_survey_question_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2029,7 +2029,7 @@ public partial record SqlSurveyQuestionShowConditionsRefArg(
 /// <summary>
 /// Stored in the database as:
 /// <code>
-/// TABLE [survey_question_show_conditions_integer_args] (
+/// TABLE [survey_question_show_condition_integer_args] (
 ///     [survey_id] INT NOT NULL,
 ///     [survey_page_index] INT NOT NULL,
 ///     [survey_question_index] INT NOT NULL,
@@ -2074,7 +2074,7 @@ public partial record SqlSurveyQuestionShowConditionsRefArg(
 /// [survey_question_show_condition_arg_integer] INT NOT NULL
 /// </code>
 /// </param>
-public partial record SqlSurveyQuestionShowConditionsIntegerArg(
+public partial record SqlSurveyQuestionShowConditionIntegerArg(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -2085,7 +2085,7 @@ public partial record SqlSurveyQuestionShowConditionsIntegerArg(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// TABLE [survey_question_show_conditions_integer_args] (
+    /// TABLE [survey_question_show_condition_integer_args] (
     ///     [survey_id] INT NOT NULL,
     ///     [survey_page_index] INT NOT NULL,
     ///     [survey_question_index] INT NOT NULL,
@@ -2094,7 +2094,7 @@ public partial record SqlSurveyQuestionShowConditionsIntegerArg(
     ///     [survey_question_show_condition_arg_integer] INT NOT NULL);
     /// </code>
     /// </summary>
-    public const string TABLE = "[survey_question_show_conditions_integer_args]";
+    public const string TABLE = "[survey_question_show_condition_integer_args]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2102,7 +2102,7 @@ public partial record SqlSurveyQuestionShowConditionsIntegerArg(
     /// [survey_id] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_SURVEY_ID = "[survey_question_show_conditions_integer_args].[survey_id]";
+    public const string TABLE_SURVEY_ID = "[survey_question_show_condition_integer_args].[survey_id]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2110,7 +2110,7 @@ public partial record SqlSurveyQuestionShowConditionsIntegerArg(
     /// [survey_page_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_PAGE_INDEX = "[survey_question_show_conditions_integer_args].[survey_page_index]";
+    public const string TABLE_PAGE_INDEX = "[survey_question_show_condition_integer_args].[survey_page_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2118,7 +2118,7 @@ public partial record SqlSurveyQuestionShowConditionsIntegerArg(
     /// [survey_question_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_QUESTION_INDEX = "[survey_question_show_conditions_integer_args].[survey_question_index]";
+    public const string TABLE_QUESTION_INDEX = "[survey_question_show_condition_integer_args].[survey_question_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2126,7 +2126,7 @@ public partial record SqlSurveyQuestionShowConditionsIntegerArg(
     /// [survey_question_show_condition_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_CONDITION_INDEX = "[survey_question_show_conditions_integer_args].[survey_question_show_condition_index]";
+    public const string TABLE_CONDITION_INDEX = "[survey_question_show_condition_integer_args].[survey_question_show_condition_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2134,7 +2134,7 @@ public partial record SqlSurveyQuestionShowConditionsIntegerArg(
     /// [survey_question_show_condition_arg_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_INDEX = "[survey_question_show_conditions_integer_args].[survey_question_show_condition_arg_index]";
+    public const string TABLE_INDEX = "[survey_question_show_condition_integer_args].[survey_question_show_condition_arg_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2142,7 +2142,7 @@ public partial record SqlSurveyQuestionShowConditionsIntegerArg(
     /// [survey_question_show_condition_arg_integer] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_ARG_VALUE = "[survey_question_show_conditions_integer_args].[survey_question_show_condition_arg_integer]";
+    public const string TABLE_ARG_VALUE = "[survey_question_show_condition_integer_args].[survey_question_show_condition_arg_integer]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2196,7 +2196,7 @@ public partial record SqlSurveyQuestionShowConditionsIntegerArg(
 /// <summary>
 /// Stored in the database as:
 /// <code>
-/// TABLE [survey_question_show_conditions_text_args] (
+/// TABLE [survey_question_show_condition_text_args] (
 ///     [survey_id] INT NOT NULL,
 ///     [survey_page_index] INT NOT NULL,
 ///     [survey_question_index] INT NOT NULL,
@@ -2241,7 +2241,7 @@ public partial record SqlSurveyQuestionShowConditionsIntegerArg(
 /// [survey_question_show_condition_arg_text] VARCHAR(MAX) NOT NULL
 /// </code>
 /// </param>
-public partial record SqlSurveyQuestionShowConditionsTextArg(
+public partial record SqlSurveyQuestionShowConditionTextArg(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -2252,7 +2252,7 @@ public partial record SqlSurveyQuestionShowConditionsTextArg(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// TABLE [survey_question_show_conditions_text_args] (
+    /// TABLE [survey_question_show_condition_text_args] (
     ///     [survey_id] INT NOT NULL,
     ///     [survey_page_index] INT NOT NULL,
     ///     [survey_question_index] INT NOT NULL,
@@ -2261,7 +2261,7 @@ public partial record SqlSurveyQuestionShowConditionsTextArg(
     ///     [survey_question_show_condition_arg_text] VARCHAR(MAX) NOT NULL);
     /// </code>
     /// </summary>
-    public const string TABLE = "[survey_question_show_conditions_text_args]";
+    public const string TABLE = "[survey_question_show_condition_text_args]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2269,7 +2269,7 @@ public partial record SqlSurveyQuestionShowConditionsTextArg(
     /// [survey_id] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_SURVEY_ID = "[survey_question_show_conditions_text_args].[survey_id]";
+    public const string TABLE_SURVEY_ID = "[survey_question_show_condition_text_args].[survey_id]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2277,7 +2277,7 @@ public partial record SqlSurveyQuestionShowConditionsTextArg(
     /// [survey_page_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_PAGE_INDEX = "[survey_question_show_conditions_text_args].[survey_page_index]";
+    public const string TABLE_PAGE_INDEX = "[survey_question_show_condition_text_args].[survey_page_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2285,7 +2285,7 @@ public partial record SqlSurveyQuestionShowConditionsTextArg(
     /// [survey_question_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_QUESTION_INDEX = "[survey_question_show_conditions_text_args].[survey_question_index]";
+    public const string TABLE_QUESTION_INDEX = "[survey_question_show_condition_text_args].[survey_question_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2293,7 +2293,7 @@ public partial record SqlSurveyQuestionShowConditionsTextArg(
     /// [survey_question_show_condition_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_CONDITION_INDEX = "[survey_question_show_conditions_text_args].[survey_question_show_condition_index]";
+    public const string TABLE_CONDITION_INDEX = "[survey_question_show_condition_text_args].[survey_question_show_condition_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2301,7 +2301,7 @@ public partial record SqlSurveyQuestionShowConditionsTextArg(
     /// [survey_question_show_condition_arg_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_INDEX = "[survey_question_show_conditions_text_args].[survey_question_show_condition_arg_index]";
+    public const string TABLE_INDEX = "[survey_question_show_condition_text_args].[survey_question_show_condition_arg_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2309,7 +2309,7 @@ public partial record SqlSurveyQuestionShowConditionsTextArg(
     /// [survey_question_show_condition_arg_text] VARCHAR(MAX) NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_ARG_VALUE = "[survey_question_show_conditions_text_args].[survey_question_show_condition_arg_text]";
+    public const string TABLE_ARG_VALUE = "[survey_question_show_condition_text_args].[survey_question_show_condition_arg_text]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2369,7 +2369,7 @@ public partial record SqlSurveyQuestionShowConditionsTextArg(
 ///     [survey_question_index] INT NOT NULL,
 ///     [survey_question_validation_condition_index] INT NOT NULL,
 ///     [survey_question_validation_condition_type] TINYINT NOT NULL,
-///     [survey_question_validation_condition_operator] BIT NOT NULL);
+///     [survey_question_validation_condition_operator] TINYINT NOT NULL);
 /// </code>
 /// </summary>
 /// <param name="SurveyId">
@@ -2402,10 +2402,10 @@ public partial record SqlSurveyQuestionShowConditionsTextArg(
 /// [survey_question_validation_condition_type] TINYINT NOT NULL
 /// </code>
 /// </param>
-/// <param name="IsOrOperator">
+/// <param name="Operator">
 /// Stored in the database as:
 /// <code>
-/// [survey_question_validation_condition_operator] BIT NOT NULL
+/// [survey_question_validation_condition_operator] TINYINT NOT NULL
 /// </code>
 /// </param>
 public partial record SqlSurveyQuestionValidationCondition(
@@ -2414,7 +2414,7 @@ public partial record SqlSurveyQuestionValidationCondition(
     SqlInt32 QuestionIndex,
     SqlInt32 Index,
     SqlByte Type,
-    SqlBoolean IsOrOperator)
+    SqlByte Operator)
 {
     /// <summary>
     /// Stored in the database as:
@@ -2425,7 +2425,7 @@ public partial record SqlSurveyQuestionValidationCondition(
     ///     [survey_question_index] INT NOT NULL,
     ///     [survey_question_validation_condition_index] INT NOT NULL,
     ///     [survey_question_validation_condition_type] TINYINT NOT NULL,
-    ///     [survey_question_validation_condition_operator] BIT NOT NULL);
+    ///     [survey_question_validation_condition_operator] TINYINT NOT NULL);
     /// </code>
     /// </summary>
     public const string TABLE = "[survey_question_validation_conditions]";
@@ -2473,10 +2473,10 @@ public partial record SqlSurveyQuestionValidationCondition(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_question_validation_condition_operator] BIT NOT NULL
+    /// [survey_question_validation_condition_operator] TINYINT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_IS_OR_OPERATOR = "[survey_question_validation_conditions].[survey_question_validation_condition_operator]";
+    public const string TABLE_OPERATOR = "[survey_question_validation_conditions].[survey_question_validation_condition_operator]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2521,16 +2521,16 @@ public partial record SqlSurveyQuestionValidationCondition(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_question_validation_condition_operator] BIT NOT NULL
+    /// [survey_question_validation_condition_operator] TINYINT NOT NULL
     /// </code>
     /// </summary>
-    public const string IS_OR_OPERATOR = "[survey_question_validation_condition_operator]";
+    public const string OPERATOR = "[survey_question_validation_condition_operator]";
 }
 
 /// <summary>
 /// Stored in the database as:
 /// <code>
-/// TABLE [survey_question_validation_conditions_args] (
+/// TABLE [survey_question_validation_condition_args] (
 ///     [survey_id] INT NOT NULL,
 ///     [survey_page_index] INT NOT NULL,
 ///     [survey_question_index] INT NOT NULL,
@@ -2568,7 +2568,7 @@ public partial record SqlSurveyQuestionValidationCondition(
 /// [survey_question_validation_condition_arg_index] INT NOT NULL
 /// </code>
 /// </param>
-public partial record SqlSurveyQuestionValidationConditionsArg(
+public partial record SqlSurveyQuestionValidationConditionArg(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -2578,7 +2578,7 @@ public partial record SqlSurveyQuestionValidationConditionsArg(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// TABLE [survey_question_validation_conditions_args] (
+    /// TABLE [survey_question_validation_condition_args] (
     ///     [survey_id] INT NOT NULL,
     ///     [survey_page_index] INT NOT NULL,
     ///     [survey_question_index] INT NOT NULL,
@@ -2586,7 +2586,7 @@ public partial record SqlSurveyQuestionValidationConditionsArg(
     ///     [survey_question_validation_condition_arg_index] INT NOT NULL);
     /// </code>
     /// </summary>
-    public const string TABLE = "[survey_question_validation_conditions_args]";
+    public const string TABLE = "[survey_question_validation_condition_args]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2594,7 +2594,7 @@ public partial record SqlSurveyQuestionValidationConditionsArg(
     /// [survey_id] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_SURVEY_ID = "[survey_question_validation_conditions_args].[survey_id]";
+    public const string TABLE_SURVEY_ID = "[survey_question_validation_condition_args].[survey_id]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2602,7 +2602,7 @@ public partial record SqlSurveyQuestionValidationConditionsArg(
     /// [survey_page_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_PAGE_INDEX = "[survey_question_validation_conditions_args].[survey_page_index]";
+    public const string TABLE_PAGE_INDEX = "[survey_question_validation_condition_args].[survey_page_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2610,7 +2610,7 @@ public partial record SqlSurveyQuestionValidationConditionsArg(
     /// [survey_question_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_QUESTION_INDEX = "[survey_question_validation_conditions_args].[survey_question_index]";
+    public const string TABLE_QUESTION_INDEX = "[survey_question_validation_condition_args].[survey_question_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2618,7 +2618,7 @@ public partial record SqlSurveyQuestionValidationConditionsArg(
     /// [survey_question_validation_condition_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_CONDITION_INDEX = "[survey_question_validation_conditions_args].[survey_question_validation_condition_index]";
+    public const string TABLE_CONDITION_INDEX = "[survey_question_validation_condition_args].[survey_question_validation_condition_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2626,7 +2626,7 @@ public partial record SqlSurveyQuestionValidationConditionsArg(
     /// [survey_question_validation_condition_arg_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_INDEX = "[survey_question_validation_conditions_args].[survey_question_validation_condition_arg_index]";
+    public const string TABLE_INDEX = "[survey_question_validation_condition_args].[survey_question_validation_condition_arg_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2672,7 +2672,7 @@ public partial record SqlSurveyQuestionValidationConditionsArg(
 /// <summary>
 /// Stored in the database as:
 /// <code>
-/// TABLE [survey_question_validation_conditions_ref_args] (
+/// TABLE [survey_question_validation_condition_ref_args] (
 ///     [survey_id] INT NOT NULL,
 ///     [survey_page_index] INT NOT NULL,
 ///     [survey_question_index] INT NOT NULL,
@@ -2724,7 +2724,7 @@ public partial record SqlSurveyQuestionValidationConditionsArg(
 /// [referenced_survey_question_index] INT NOT NULL
 /// </code>
 /// </param>
-public partial record SqlSurveyQuestionValidationConditionsRefArg(
+public partial record SqlSurveyQuestionValidationConditionRefArg(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -2736,7 +2736,7 @@ public partial record SqlSurveyQuestionValidationConditionsRefArg(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// TABLE [survey_question_validation_conditions_ref_args] (
+    /// TABLE [survey_question_validation_condition_ref_args] (
     ///     [survey_id] INT NOT NULL,
     ///     [survey_page_index] INT NOT NULL,
     ///     [survey_question_index] INT NOT NULL,
@@ -2746,7 +2746,7 @@ public partial record SqlSurveyQuestionValidationConditionsRefArg(
     ///     [referenced_survey_question_index] INT NOT NULL);
     /// </code>
     /// </summary>
-    public const string TABLE = "[survey_question_validation_conditions_ref_args]";
+    public const string TABLE = "[survey_question_validation_condition_ref_args]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2754,7 +2754,7 @@ public partial record SqlSurveyQuestionValidationConditionsRefArg(
     /// [survey_id] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_SURVEY_ID = "[survey_question_validation_conditions_ref_args].[survey_id]";
+    public const string TABLE_SURVEY_ID = "[survey_question_validation_condition_ref_args].[survey_id]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2762,7 +2762,7 @@ public partial record SqlSurveyQuestionValidationConditionsRefArg(
     /// [survey_page_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_PAGE_INDEX = "[survey_question_validation_conditions_ref_args].[survey_page_index]";
+    public const string TABLE_PAGE_INDEX = "[survey_question_validation_condition_ref_args].[survey_page_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2770,7 +2770,7 @@ public partial record SqlSurveyQuestionValidationConditionsRefArg(
     /// [survey_question_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_QUESTION_INDEX = "[survey_question_validation_conditions_ref_args].[survey_question_index]";
+    public const string TABLE_QUESTION_INDEX = "[survey_question_validation_condition_ref_args].[survey_question_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2778,7 +2778,7 @@ public partial record SqlSurveyQuestionValidationConditionsRefArg(
     /// [survey_question_validation_condition_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_CONDITION_INDEX = "[survey_question_validation_conditions_ref_args].[survey_question_validation_condition_index]";
+    public const string TABLE_CONDITION_INDEX = "[survey_question_validation_condition_ref_args].[survey_question_validation_condition_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2786,7 +2786,7 @@ public partial record SqlSurveyQuestionValidationConditionsRefArg(
     /// [survey_question_validation_condition_arg_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_INDEX = "[survey_question_validation_conditions_ref_args].[survey_question_validation_condition_arg_index]";
+    public const string TABLE_INDEX = "[survey_question_validation_condition_ref_args].[survey_question_validation_condition_arg_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2794,7 +2794,7 @@ public partial record SqlSurveyQuestionValidationConditionsRefArg(
     /// [referenced_survey_page_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_REFERENCED_PAGE_INDEX = "[survey_question_validation_conditions_ref_args].[referenced_survey_page_index]";
+    public const string TABLE_REFERENCED_PAGE_INDEX = "[survey_question_validation_condition_ref_args].[referenced_survey_page_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2802,7 +2802,7 @@ public partial record SqlSurveyQuestionValidationConditionsRefArg(
     /// [referenced_survey_question_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_REFERENCED_QUESTION_INDEX = "[survey_question_validation_conditions_ref_args].[referenced_survey_question_index]";
+    public const string TABLE_REFERENCED_QUESTION_INDEX = "[survey_question_validation_condition_ref_args].[referenced_survey_question_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2864,7 +2864,7 @@ public partial record SqlSurveyQuestionValidationConditionsRefArg(
 /// <summary>
 /// Stored in the database as:
 /// <code>
-/// TABLE [survey_question_validation_conditions_integer_args] (
+/// TABLE [survey_question_validation_condition_integer_args] (
 ///     [survey_id] INT NOT NULL,
 ///     [survey_page_index] INT NOT NULL,
 ///     [survey_question_index] INT NOT NULL,
@@ -2909,7 +2909,7 @@ public partial record SqlSurveyQuestionValidationConditionsRefArg(
 /// [survey_question_validation_condition_arg_integer] INT NOT NULL
 /// </code>
 /// </param>
-public partial record SqlSurveyQuestionValidationConditionsIntegerArg(
+public partial record SqlSurveyQuestionValidationConditionIntegerArg(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -2920,7 +2920,7 @@ public partial record SqlSurveyQuestionValidationConditionsIntegerArg(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// TABLE [survey_question_validation_conditions_integer_args] (
+    /// TABLE [survey_question_validation_condition_integer_args] (
     ///     [survey_id] INT NOT NULL,
     ///     [survey_page_index] INT NOT NULL,
     ///     [survey_question_index] INT NOT NULL,
@@ -2929,7 +2929,7 @@ public partial record SqlSurveyQuestionValidationConditionsIntegerArg(
     ///     [survey_question_validation_condition_arg_integer] INT NOT NULL);
     /// </code>
     /// </summary>
-    public const string TABLE = "[survey_question_validation_conditions_integer_args]";
+    public const string TABLE = "[survey_question_validation_condition_integer_args]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2937,7 +2937,7 @@ public partial record SqlSurveyQuestionValidationConditionsIntegerArg(
     /// [survey_id] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_SURVEY_ID = "[survey_question_validation_conditions_integer_args].[survey_id]";
+    public const string TABLE_SURVEY_ID = "[survey_question_validation_condition_integer_args].[survey_id]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2945,7 +2945,7 @@ public partial record SqlSurveyQuestionValidationConditionsIntegerArg(
     /// [survey_page_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_PAGE_INDEX = "[survey_question_validation_conditions_integer_args].[survey_page_index]";
+    public const string TABLE_PAGE_INDEX = "[survey_question_validation_condition_integer_args].[survey_page_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2953,7 +2953,7 @@ public partial record SqlSurveyQuestionValidationConditionsIntegerArg(
     /// [survey_question_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_QUESTION_INDEX = "[survey_question_validation_conditions_integer_args].[survey_question_index]";
+    public const string TABLE_QUESTION_INDEX = "[survey_question_validation_condition_integer_args].[survey_question_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2961,7 +2961,7 @@ public partial record SqlSurveyQuestionValidationConditionsIntegerArg(
     /// [survey_question_validation_condition_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_CONDITION_INDEX = "[survey_question_validation_conditions_integer_args].[survey_question_validation_condition_index]";
+    public const string TABLE_CONDITION_INDEX = "[survey_question_validation_condition_integer_args].[survey_question_validation_condition_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2969,7 +2969,7 @@ public partial record SqlSurveyQuestionValidationConditionsIntegerArg(
     /// [survey_question_validation_condition_arg_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_INDEX = "[survey_question_validation_conditions_integer_args].[survey_question_validation_condition_arg_index]";
+    public const string TABLE_INDEX = "[survey_question_validation_condition_integer_args].[survey_question_validation_condition_arg_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -2977,7 +2977,7 @@ public partial record SqlSurveyQuestionValidationConditionsIntegerArg(
     /// [survey_question_validation_condition_arg_integer] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_ARG_VALUE = "[survey_question_validation_conditions_integer_args].[survey_question_validation_condition_arg_integer]";
+    public const string TABLE_ARG_VALUE = "[survey_question_validation_condition_integer_args].[survey_question_validation_condition_arg_integer]";
 
     /// <summary>
     /// Stored in the database as:
@@ -3031,7 +3031,7 @@ public partial record SqlSurveyQuestionValidationConditionsIntegerArg(
 /// <summary>
 /// Stored in the database as:
 /// <code>
-/// TABLE [survey_question_validation_conditions_text_args] (
+/// TABLE [survey_question_validation_condition_text_args] (
 ///     [survey_id] INT NOT NULL,
 ///     [survey_page_index] INT NOT NULL,
 ///     [survey_question_index] INT NOT NULL,
@@ -3076,7 +3076,7 @@ public partial record SqlSurveyQuestionValidationConditionsIntegerArg(
 /// [survey_question_validation_condition_arg_text] VARCHAR(MAX) NOT NULL
 /// </code>
 /// </param>
-public partial record SqlSurveyQuestionValidationConditionsTextArg(
+public partial record SqlSurveyQuestionValidationConditionTextArg(
     SqlInt32 SurveyId,
     SqlInt32 PageIndex,
     SqlInt32 QuestionIndex,
@@ -3087,7 +3087,7 @@ public partial record SqlSurveyQuestionValidationConditionsTextArg(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// TABLE [survey_question_validation_conditions_text_args] (
+    /// TABLE [survey_question_validation_condition_text_args] (
     ///     [survey_id] INT NOT NULL,
     ///     [survey_page_index] INT NOT NULL,
     ///     [survey_question_index] INT NOT NULL,
@@ -3096,7 +3096,7 @@ public partial record SqlSurveyQuestionValidationConditionsTextArg(
     ///     [survey_question_validation_condition_arg_text] VARCHAR(MAX) NOT NULL);
     /// </code>
     /// </summary>
-    public const string TABLE = "[survey_question_validation_conditions_text_args]";
+    public const string TABLE = "[survey_question_validation_condition_text_args]";
 
     /// <summary>
     /// Stored in the database as:
@@ -3104,7 +3104,7 @@ public partial record SqlSurveyQuestionValidationConditionsTextArg(
     /// [survey_id] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_SURVEY_ID = "[survey_question_validation_conditions_text_args].[survey_id]";
+    public const string TABLE_SURVEY_ID = "[survey_question_validation_condition_text_args].[survey_id]";
 
     /// <summary>
     /// Stored in the database as:
@@ -3112,7 +3112,7 @@ public partial record SqlSurveyQuestionValidationConditionsTextArg(
     /// [survey_page_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_PAGE_INDEX = "[survey_question_validation_conditions_text_args].[survey_page_index]";
+    public const string TABLE_PAGE_INDEX = "[survey_question_validation_condition_text_args].[survey_page_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -3120,7 +3120,7 @@ public partial record SqlSurveyQuestionValidationConditionsTextArg(
     /// [survey_question_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_QUESTION_INDEX = "[survey_question_validation_conditions_text_args].[survey_question_index]";
+    public const string TABLE_QUESTION_INDEX = "[survey_question_validation_condition_text_args].[survey_question_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -3128,7 +3128,7 @@ public partial record SqlSurveyQuestionValidationConditionsTextArg(
     /// [survey_question_validation_condition_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_CONDITION_INDEX = "[survey_question_validation_conditions_text_args].[survey_question_validation_condition_index]";
+    public const string TABLE_CONDITION_INDEX = "[survey_question_validation_condition_text_args].[survey_question_validation_condition_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -3136,7 +3136,7 @@ public partial record SqlSurveyQuestionValidationConditionsTextArg(
     /// [survey_question_validation_condition_arg_index] INT NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_INDEX = "[survey_question_validation_conditions_text_args].[survey_question_validation_condition_arg_index]";
+    public const string TABLE_INDEX = "[survey_question_validation_condition_text_args].[survey_question_validation_condition_arg_index]";
 
     /// <summary>
     /// Stored in the database as:
@@ -3144,7 +3144,7 @@ public partial record SqlSurveyQuestionValidationConditionsTextArg(
     /// [survey_question_validation_condition_arg_text] VARCHAR(MAX) NOT NULL
     /// </code>
     /// </summary>
-    public const string TABLE_ARG_VALUE = "[survey_question_validation_conditions_text_args].[survey_question_validation_condition_arg_text]";
+    public const string TABLE_ARG_VALUE = "[survey_question_validation_condition_text_args].[survey_question_validation_condition_arg_text]";
 
     /// <summary>
     /// Stored in the database as:

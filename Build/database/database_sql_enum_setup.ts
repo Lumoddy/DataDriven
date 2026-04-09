@@ -6,7 +6,7 @@ export function sqlEnumSetupFileFrom(structure: DatabaseStructure): Map<string, 
     const enums = structure.enums;
 
     let result = new Map<string, string>();
-    
+
     for (const [enumName, table] of enums)
     {
         let sql = `

@@ -3,12 +3,53 @@
 @using System.Diagnostics
 @model ISurveyPageModel
 <h1>@Model.Parent!.Title</h1>
+<h2>@Model.Title</h2>
 <form method="post">
     <ul>
         @foreach (ISurveyQuestionModel question in Model.Questions)
         {
             <li>
                 <h3>@question.Title</h3>
+                <p>
+                    @foreach ((int i, ISurveyQuestionValidationConditionModel condition) in question.ValidationConditions.Index())
+                    {
+                        if (i != 0)
+                        {
+                            @condition.Operator.ToString().ToLower()
+                        }
+
+                        switch (condition)
+                        {
+                            case SurveyQuestionValidationConditionPreviouslyPassed x:
+                                @:(true)
+                                break;
+                            case SurveyQuestionValidationConditionBoundSmallTextModel x:
+                                @:(Length of text at @(x.IsMax ? "most" : "least") @x.LengthBound)
+                                break;
+                            case SurveyQuestionValidationConditionBoundCheckboxModel x:
+                                @:(Is @(x.IsMax ? "unchecked" : "checked"))
+                                break;
+                            case SurveyQuestionValidationConditionBoundRadioModel x:
+                                @:(Is @(x.IsMax ? "unchecked" : "checked"))
+                                break;
+                            case SurveyQuestionValidationConditionBoundOptionOfRadioOrOtherModel x:
+                                @:(Is non-other @(x.IsMax ? "unchecked" : "checked"))
+                                break;
+                            case SurveyQuestionValidationConditionBoundOtherOfRadioOrOtherModel x:
+                                @:(Other option is checked and length of other text at @(x.IsMax ? "most" : "least") @x.LengthBound)
+                                break;
+                            case SurveyQuestionValidationConditionBoundMultiSelectModel x:
+                                @:(At @(x.IsMax ? "most" : "least") @x.CountBound boxes checked)
+                                break;
+                            case SurveyQuestionValidationConditionBoundOptionOfMultiSelectAndOtherModel x:
+                                @:(At @(x.IsMax ? "most" : "least") @x.CountBound non-other boxes checked)
+                                break;
+                            case SurveyQuestionValidationConditionBoundOtherOfMultiSelectAndOtherModel x:
+                                @:(Other option is checked and length of other text at @(x.IsMax ? "most" : "least") @x.LengthBound)
+                                break;
+                        }
+                    }
+                </p>
                 @switch (question)
                 {
                     case SurveyQuestionSmallTextModel smallText:
@@ -18,7 +59,7 @@
                             <label for="question-@question.Id">@smallText.Label</label>
                         }
 
-                        <input id="question-@question.Id" type="text" name="@question.Id"/>
+                        <input id="question-@question.Id" type="text" name="question-@question.Id"/>
 
                         break;
                     }
@@ -29,7 +70,7 @@
                             <label for="question-@question.Id">@checkbox.Label</label>
                         }
 
-                        <input id="question-@question.Id" type="checkbox" name="@question.Id"/>
+                        <input id="question-@question.Id" type="checkbox" name="question-@question.Id"/>
 
                         break;
                     }
@@ -40,7 +81,7 @@
                             {
                                 <li>
                                     <label for="question-@question.Id-@i">@option</label>
-                                    <input id="question-@question.Id-@i" type="radio" name="@question.Id" value="@i"/>
+                                    <input id="question-@question.Id-@i" type="radio" name="question-@question.Id" value="@i"/>
                                 </li>
                             }
                         </ul>
@@ -54,12 +95,12 @@
                             {
                                 <li>
                                     <label for="question-@question.Id-@i">@option</label>
-                                    <input id="question-@question.Id-@i" type="radio" name="@question.Id" value="@i"/>
+                                    <input id="question-@question.Id-@i" type="radio" name="question-@question.Id" value="@i"/>
                                 </li>
                             }
                             <li>
-                                <input id="question-@question.Id-other-text" type="text" name="@question.Id-text" placeholder="Other..."/>
-                                <input id="question-@question.Id-other" type="radio" name="@question.Id" value="other"/>
+                                <input id="question-@question.Id-other-text" type="text" name="question-@question.Id-text" placeholder="Other..."/>
+                                <input id="question-@question.Id-other" type="radio" name="question-@question.Id" value="other"/>
                             </li>
                         </ul>
 
@@ -72,7 +113,7 @@
                             {
                                 <li>
                                     <label for="question-@question.Id-@i">@option</label>
-                                    <input id="question-@question.Id-@i" type="radio" name="@question.Id" value="@i"/>
+                                    <input id="question-@question.Id-@i" type="checkbox" name="question-@question.Id" value="@i"/>
                                 </li>
                             }
                         </ul>
@@ -86,12 +127,12 @@
                             {
                                 <li>
                                     <label for="question-@question.Id-@i">@option</label>
-                                    <input id="question-@question.Id-@i" type="radio" name="@question.Id" value="@i"/>
+                                    <input id="question-@question.Id-@i" type="checkbox" name="question-@question.Id" value="@i"/>
                                 </li>
                             }
                             <li>
-                                <input id="question-@question.Id-other-text" type="text" name="@question.Id-text" placeholder="Other..."/>
-                                <input id="question-@question.Id-other" type="radio" name="@question.Id" value="other"/>
+                                <input id="question-@question.Id-other-text" type="text" name="question-@question.Id-text" placeholder="Other..."/>
+                                <input id="question-@question.Id-other" type="checkbox" name="question-@question.Id" value="other"/>
                             </li>
                         </ul>
 

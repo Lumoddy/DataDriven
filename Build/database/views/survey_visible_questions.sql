@@ -71,7 +71,8 @@ SELECT
             GROUP BY
                 [conditions].[condition_group_index]
             HAVING
-                MIN(CAST([conditions].[condition_passed] AS TINYINT)) <> 0)
+                MIN(CAST([conditions].[condition_passed] AS TINYINT))
+                    <> 0)
         THEN
             CAST(1 AS BIT)
         ELSE

@@ -289,7 +289,7 @@ tables:
       survey_question_index: { short_single: question_index, type: INDEX }
       survey_question_show_condition_index: { short_single: index, type: INDEX }
       survey_question_show_condition_type: { short_single: type, type: ENUM }
-      survey_question_show_condition_operator: { short_single: is_or_operator, type: ENUM }
+      survey_question_show_condition_operator: { short_single: operator, type: ENUM }
     constraints:
     - primary:
       - survey_id
@@ -313,7 +313,7 @@ tables:
       - survey_question_condition_operator:
         - survey_question_condition_operator_id
 
-  survey_question_show_conditions_args:
+  survey_question_show_condition_args:
     columns:
       survey_id: { short_single: survey_id, type: ID }
       survey_page_index: { short_single: page_index, type: INDEX }
@@ -346,7 +346,7 @@ tables:
         - survey_page_index
         - survey_question_index
 
-  survey_question_show_conditions_ref_args:
+  survey_question_show_condition_ref_args:
     columns:
       survey_id: { short_single: survey_id, type: ID }
       survey_page_index: { short_single: page_index, type: INDEX }
@@ -368,7 +368,7 @@ tables:
         - survey_question_index
         - survey_question_show_condition_index
         - survey_question_show_condition_arg_index
-      - survey_question_show_conditions_args:
+      - survey_question_show_condition_args:
         - survey_id
         - survey_page_index
         - survey_question_index
@@ -391,7 +391,7 @@ tables:
         - survey_page_index
         - survey_question_index
 
-  survey_question_show_conditions_integer_args:
+  survey_question_show_condition_integer_args:
     columns:
       survey_id: { short_single: survey_id, type: ID }
       survey_page_index: { short_single: page_index, type: INDEX }
@@ -412,7 +412,7 @@ tables:
         - survey_question_index
         - survey_question_show_condition_index
         - survey_question_show_condition_arg_index
-      - survey_question_show_conditions_args:
+      - survey_question_show_condition_args:
         - survey_id
         - survey_page_index
         - survey_question_index
@@ -427,7 +427,7 @@ tables:
         - survey_page_index
         - survey_question_index
 
-  survey_question_show_conditions_text_args:
+  survey_question_show_condition_text_args:
     columns:
       survey_id: { short_single: survey_id, type: ID }
       survey_page_index: { short_single: page_index, type: INDEX }
@@ -448,7 +448,7 @@ tables:
         - survey_question_index
         - survey_question_show_condition_index
         - survey_question_show_condition_arg_index
-      - survey_question_show_conditions_args:
+      - survey_question_show_condition_args:
         - survey_id
         - survey_page_index
         - survey_question_index
@@ -470,7 +470,7 @@ tables:
       survey_question_index: { short_single: question_index, type: INDEX }
       survey_question_validation_condition_index: { short_single: index, type: INDEX }
       survey_question_validation_condition_type: { short_single: type, type: ENUM }
-      survey_question_validation_condition_operator: { short_single: is_or_operator, type: BOOL }
+      survey_question_validation_condition_operator: { short_single: operator, type: ENUM }
     constraints:
     - primary:
       - survey_id
@@ -490,7 +490,7 @@ tables:
       - survey_question_validation_condition_types:
         - survey_question_validation_condition_type_id
 
-  survey_question_validation_conditions_args:
+  survey_question_validation_condition_args:
     columns:
       survey_id: { short_single: survey_id, type: ID }
       survey_page_index: { short_single: page_index, type: INDEX }
@@ -523,7 +523,7 @@ tables:
         - survey_page_index
         - survey_question_index
 
-  survey_question_validation_conditions_ref_args:
+  survey_question_validation_condition_ref_args:
     columns:
       survey_id: { short_single: survey_id, type: ID }
       survey_page_index: { short_single: page_index, type: INDEX }
@@ -545,7 +545,7 @@ tables:
         - survey_question_index
         - survey_question_validation_condition_index
         - survey_question_validation_condition_arg_index
-      - survey_question_validation_conditions_args:
+      - survey_question_validation_condition_args:
         - survey_id
         - survey_page_index
         - survey_question_index
@@ -568,7 +568,7 @@ tables:
         - survey_page_index
         - survey_question_index
 
-  survey_question_validation_conditions_integer_args:
+  survey_question_validation_condition_integer_args:
     columns:
       survey_id: { short_single: survey_id, type: ID }
       survey_page_index: { short_single: page_index, type: INDEX }
@@ -589,7 +589,7 @@ tables:
         - survey_question_index
         - survey_question_validation_condition_index
         - survey_question_validation_condition_arg_index
-      - survey_question_validation_conditions_args:
+      - survey_question_validation_condition_args:
         - survey_id
         - survey_page_index
         - survey_question_index
@@ -604,7 +604,7 @@ tables:
         - survey_page_index
         - survey_question_index
 
-  survey_question_validation_conditions_text_args:
+  survey_question_validation_condition_text_args:
     columns:
       survey_id: { short_single: survey_id, type: ID }
       survey_page_index: { short_single: page_index, type: INDEX }
@@ -625,7 +625,7 @@ tables:
         - survey_question_index
         - survey_question_validation_condition_index
         - survey_question_validation_condition_arg_index
-      - survey_question_validation_conditions_args:
+      - survey_question_validation_condition_args:
         - survey_id
         - survey_page_index
         - survey_question_index

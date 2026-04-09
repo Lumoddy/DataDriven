@@ -74,50 +74,144 @@ SELECT
                      --     (answer ?? "").Length >= arg1
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[small_text]
-                    AND [arg0s].[survey_question_validation_condition_arg_integer]
+                    AND [arg1s].[survey_question_validation_condition_arg_integer]
                         IS NOT NULL
                     AND LEN(
                         COALESCE(
                             (SELECT
-                                [answer0s].[survey_session_answer_text]
+                                [answers].[survey_session_answer_text]
                             FROM
-                                [survey_session_answers_view] AS [answer0s]
+                                [survey_session_answers_view] AS [answers]
                             WHERE
-                                [answer0s].[survey_id]
+                                [answers].[survey_id]
                                     = [conditions].[survey_id]
-                                AND [answer0s].[survey_page_index]
+                                AND [answers].[survey_page_index]
                                     = [conditions].[survey_page_index]
-                                AND [answer0s].[survey_question_index]
+                                AND [answers].[survey_question_index]
                                     = [conditions].[survey_question_index]
-                                AND [answer0s].[survey_session_answer_index]
+                                AND [answers].[survey_session_answer_index]
                                     = 0
-                                AND [answer0s].[survey_session_token]
+                                AND [answers].[survey_session_token]
                                     = [survey_sessions].[survey_session_token]),
                             ''))
-                        >= [arg0s].[survey_question_validation_condition_arg_integer])
+                        >= [arg1s].[survey_question_validation_condition_arg_integer])
                 OR ( -- () => (object? answer) =>
                      --     answer is not null
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[checkbox]
-                    AND [arg0s].[survey_question_validation_condition_index]
-                        IS NOT NULL)
-                OR ( -- () => (object? answer) =>
-                     --     answer is not null
+                    AND EXISTS(
+                        SELECT NULL FROM
+                            [survey_session_answers_view] AS [answers]
+                        WHERE
+                            [answers].[survey_id]
+                                = [conditions].[survey_id]
+                            AND [answers].[survey_page_index]
+                                = [arg0s].[referenced_survey_page_index]
+                            AND [answers].[survey_question_index]
+                                = [arg0s].[referenced_survey_question_index]
+                            AND [answers].[survey_session_answer_index]
+                                = 0
+                            AND [answers].[survey_session_token]
+                                = [survey_sessions].[survey_session_token]))
+                OR ( -- () => (int? answer) =>
+                     --     options.Select((_, i) => i).Cast<int?>().Contains(answer)
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[radio]
-                    AND [arg0s].[survey_question_validation_condition_index]
-                        IS NOT NULL)
-                OR ( -- () => (object? answer) =>
-                     --     answer is not null
+                    AND EXISTS(
+                        SELECT NULL FROM
+                            [survey_session_answers_view] AS [answers]
+                        WHERE
+                            [answers].[survey_id]
+                                = [conditions].[survey_id]
+                            AND [answers].[survey_page_index]
+                                = [arg0s].[referenced_survey_page_index]
+                            AND [answers].[survey_question_index]
+                                = [arg0s].[referenced_survey_question_index]
+                            AND [answers].[survey_session_answer_index]
+                                = 0
+                            AND [answers].[survey_session_token]
+                                = [survey_sessions].[survey_session_token]
+                            AND [answers].[survey_session_answer_integer]
+                                IS NOT NULL
+                            AND EXISTS(
+                                SELECT NULL FROM
+                                    [survey_question_answer_options] AS [options]
+                                WHERE
+                                    [options].[survey_id]
+                                        = [conditions].[survey_id]
+                                    AND [options].[survey_page_index]
+                                        = [arg0s].[referenced_survey_page_index]
+                                    AND [options].[survey_question_index]
+                                        = [arg0s].[referenced_survey_question_index]
+                                    AND [options].[survey_answer_option_index]
+                                        = [answers].[survey_session_answer_integer])))
+                OR ( -- (int arg1, object? arg2) => (object? answer) =>
+                     --     arg2 is null
+                     --         ? options.Select((_, i) => i).Cast<int?>().Contains(answer as int?)
+                     --         : (answers[0] as string? ?? "").Length >= arg1
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[radio_or_other]
-                    AND [arg0s].[survey_question_validation_condition_index]
-                        IS NOT NULL)
+                    AND (
+                        (
+                            [arg2s].[survey_question_validation_condition_arg_index]
+                                IS NULL
+                            AND EXISTS(
+                                SELECT NULL FROM
+                                    [survey_session_answers_view] AS [answers]
+                                WHERE
+                                    [answers].[survey_id]
+                                        = [conditions].[survey_id]
+                                    AND [answers].[survey_page_index]
+                                        = [arg0s].[referenced_survey_page_index]
+                                    AND [answers].[survey_question_index]
+                                        = [arg0s].[referenced_survey_question_index]
+                                    AND [answers].[survey_session_answer_index]
+                                        = 0
+                                    AND [answers].[survey_session_token]
+                                        = [survey_sessions].[survey_session_token]
+                                    AND [answers].[survey_session_answer_integer]
+                                        IS NOT NULL
+                                    AND EXISTS(
+                                        SELECT NULL FROM
+                                            [survey_question_answer_options] AS [options]
+                                        WHERE
+                                            [options].[survey_id]
+                                                = [conditions].[survey_id]
+                                            AND [options].[survey_page_index]
+                                                = [arg0s].[referenced_survey_page_index]
+                                            AND [options].[survey_question_index]
+                                                = [arg0s].[referenced_survey_question_index]
+                                            AND [options].[survey_answer_option_index]
+                                                = [answers].[survey_session_answer_integer])))
+                        OR (
+                            [arg2s].[survey_question_validation_condition_arg_index]
+                                IS NOT NULL
+                            AND [arg1s].[survey_question_validation_condition_arg_integer]
+                                IS NOT NULL
+                            AND LEN(
+                                COALESCE(
+                                    (SELECT
+                                        [answers].[survey_session_answer_text]
+                                    FROM
+                                        [survey_session_answers_view] AS [answers]
+                                    WHERE
+                                        [answers].[survey_id]
+                                            = [conditions].[survey_id]
+                                        AND [answers].[survey_page_index]
+                                            = [conditions].[survey_page_index]
+                                        AND [answers].[survey_question_index]
+                                            = [conditions].[survey_question_index]
+                                        AND [answers].[survey_session_answer_index]
+                                            = 0
+                                        AND [answers].[survey_session_token]
+                                            = [survey_sessions].[survey_session_token]),
+                                    ''))
+                                >= [arg1s].[survey_question_validation_condition_arg_integer])))
                 OR ( -- (int arg1) => (params object?[] answers) =>
                      --     answers.Count((x) => x is not null) >= arg1
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[multi_select]
-                    AND [arg0s].[survey_question_validation_condition_arg_integer]
+                    AND [arg1s].[survey_question_validation_condition_arg_integer]
                         IS NOT NULL
                     AND (
                         SELECT
@@ -147,19 +241,19 @@ SELECT
                                         = [arg0s].[referenced_survey_question_index]
                                     AND [options].[survey_answer_option_index]
                                         = [answers].[survey_session_answer_integer]))
-                        >= [arg0s].[survey_question_validation_condition_arg_integer])
+                        >= [arg1s].[survey_question_validation_condition_arg_integer])
                 OR ( -- (int arg1, object? arg2) => (params object?[] answers) =>
                      --     arg2 is null
                      --         ? answers.Count((x) => x is not null) >= arg1
                      --         : (answers[0] as string? ?? "").Length >= arg1
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[multi_select]
-                    AND [arg0s].[survey_question_validation_condition_arg_integer]
-                        IS NOT NULL
                     AND (
                         (
-                            [arg1s].[survey_question_validation_condition_arg_index]
+                            [arg2s].[survey_question_validation_condition_arg_index]
                                 IS NULL
+                            AND [arg1s].[survey_question_validation_condition_arg_integer]
+                                IS NOT NULL
                             AND (
                                 SELECT
                                     COUNT(*)
@@ -188,81 +282,177 @@ SELECT
                                                 = [arg0s].[referenced_survey_question_index]
                                             AND [options].[survey_answer_option_index]
                                                 = [answers].[survey_session_answer_integer]))
-                                >= [arg0s].[survey_question_validation_condition_arg_integer])
+                                >= [arg1s].[survey_question_validation_condition_arg_integer])
                         OR (
-                            [arg1s].[survey_question_validation_condition_arg_index]
+                            [arg2s].[survey_question_validation_condition_arg_index]
+                                IS NOT NULL
+                            AND [arg1s].[survey_question_validation_condition_arg_integer]
                                 IS NOT NULL
                             AND LEN(
                                 COALESCE(
                                     (SELECT
-                                        [answer0s].[survey_session_answer_text]
+                                        [answers].[survey_session_answer_text]
                                     FROM
-                                        [survey_session_answers_view] AS [answer0s]
+                                        [survey_session_answers_view] AS [answers]
                                     WHERE
-                                        [answer0s].[survey_id]
+                                        [answers].[survey_id]
                                             = [conditions].[survey_id]
-                                        AND [answer0s].[survey_page_index]
+                                        AND [answers].[survey_page_index]
                                             = [conditions].[survey_page_index]
-                                        AND [answer0s].[survey_question_index]
+                                        AND [answers].[survey_question_index]
                                             = [conditions].[survey_question_index]
-                                        AND [answer0s].[survey_session_answer_index]
+                                        AND [answers].[survey_session_answer_index]
                                             = 0
-                                        AND [answer0s].[survey_session_token]
+                                        AND [answers].[survey_session_token]
                                             = [survey_sessions].[survey_session_token]),
                                     ''))
-                                >= [arg0s].[survey_question_validation_condition_arg_integer])))))
+                                >= [arg1s].[survey_question_validation_condition_arg_integer])))))
         OR (
             [conditions].[survey_question_validation_condition_type]
-                = [validation_condition_type].[max]
+                = [validation_condition_type].[min]
             AND (
                 (    -- (int arg1) => (string? answer) =>
                      --     (answer ?? "").Length <= arg1
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[small_text]
-                    AND [arg0s].[survey_question_validation_condition_arg_integer]
+                    AND [arg1s].[survey_question_validation_condition_arg_integer]
                         IS NOT NULL
                     AND LEN(
                         COALESCE(
                             (SELECT
-                                [answer0s].[survey_session_answer_text]
+                                [answers].[survey_session_answer_text]
                             FROM
-                                [survey_session_answers_view] AS [answer0s]
+                                [survey_session_answers_view] AS [answers]
                             WHERE
-                                [answer0s].[survey_id]
+                                [answers].[survey_id]
                                     = [conditions].[survey_id]
-                                AND [answer0s].[survey_page_index]
+                                AND [answers].[survey_page_index]
                                     = [conditions].[survey_page_index]
-                                AND [answer0s].[survey_question_index]
+                                AND [answers].[survey_question_index]
                                     = [conditions].[survey_question_index]
-                                AND [answer0s].[survey_session_answer_index]
+                                AND [answers].[survey_session_answer_index]
                                     = 0
-                                AND [answer0s].[survey_session_token]
+                                AND [answers].[survey_session_token]
                                     = [survey_sessions].[survey_session_token]),
                             ''))
-                        <= [arg0s].[survey_question_validation_condition_arg_integer])
+                        <= [arg1s].[survey_question_validation_condition_arg_integer])
                 OR ( -- () => (object? answer) =>
                      --     answer is null
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[checkbox]
-                    AND [arg0s].[survey_question_validation_condition_index]
-                        IS NULL)
-                OR ( -- () => (object? answer) =>
-                     --     answer is null
+                    AND NOT EXISTS(
+                        SELECT NULL FROM
+                            [survey_session_answers_view] AS [answers]
+                        WHERE
+                            [answers].[survey_id]
+                                = [conditions].[survey_id]
+                            AND [answers].[survey_page_index]
+                                = [arg0s].[referenced_survey_page_index]
+                            AND [answers].[survey_question_index]
+                                = [arg0s].[referenced_survey_question_index]
+                            AND [answers].[survey_session_answer_index]
+                                = 0
+                            AND [answers].[survey_session_token]
+                                = [survey_sessions].[survey_session_token]))
+                OR ( -- () => (int? answer) =>
+                     --     !options.Select((_, i) => i).Cast<int?>().Contains(answer)
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[radio]
-                    AND [arg0s].[survey_question_validation_condition_index]
-                        IS NULL)
-                OR ( -- () => (object? answer) =>
-                     --     answer is null
+                    AND NOT EXISTS(
+                        SELECT NULL FROM
+                            [survey_session_answers_view] AS [answers]
+                        WHERE
+                            [answers].[survey_id]
+                                = [conditions].[survey_id]
+                            AND [answers].[survey_page_index]
+                                = [arg0s].[referenced_survey_page_index]
+                            AND [answers].[survey_question_index]
+                                = [arg0s].[referenced_survey_question_index]
+                            AND [answers].[survey_session_answer_index]
+                                = 0
+                            AND [answers].[survey_session_token]
+                                = [survey_sessions].[survey_session_token]
+                            AND [answers].[survey_session_answer_integer]
+                                IS NOT NULL
+                            AND NOT EXISTS(
+                                SELECT NULL FROM
+                                    [survey_question_answer_options] AS [options]
+                                WHERE
+                                    [options].[survey_id]
+                                        = [conditions].[survey_id]
+                                    AND [options].[survey_page_index]
+                                        = [arg0s].[referenced_survey_page_index]
+                                    AND [options].[survey_question_index]
+                                        = [arg0s].[referenced_survey_question_index]
+                                    AND [options].[survey_answer_option_index]
+                                        = [answers].[survey_session_answer_integer])))
+                OR ( -- (int arg1, object? arg2) => (object? answer) =>
+                     --     arg2 is null
+                     --         ? !options.Select((_, i) => i).Cast<int?>().Contains(answer as int?)
+                     --         : (answers[0] as string? ?? "").Length <= arg1
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[radio_or_other]
-                    AND [arg0s].[survey_question_validation_condition_index]
-                        IS NULL)
+                    AND (
+                        (
+                            [arg2s].[survey_question_validation_condition_arg_index]
+                                IS NULL
+                            AND NOT EXISTS(
+                                SELECT NULL FROM
+                                    [survey_session_answers_view] AS [answers]
+                                WHERE
+                                    [answers].[survey_id]
+                                        = [conditions].[survey_id]
+                                    AND [answers].[survey_page_index]
+                                        = [arg0s].[referenced_survey_page_index]
+                                    AND [answers].[survey_question_index]
+                                        = [arg0s].[referenced_survey_question_index]
+                                    AND [answers].[survey_session_answer_index]
+                                        = 0
+                                    AND [answers].[survey_session_token]
+                                        = [survey_sessions].[survey_session_token]
+                                    AND [answers].[survey_session_answer_integer]
+                                        IS NOT NULL
+                                    AND EXISTS(
+                                        SELECT NULL FROM
+                                            [survey_question_answer_options] AS [options]
+                                        WHERE
+                                            [options].[survey_id]
+                                                = [conditions].[survey_id]
+                                            AND [options].[survey_page_index]
+                                                = [arg0s].[referenced_survey_page_index]
+                                            AND [options].[survey_question_index]
+                                                = [arg0s].[referenced_survey_question_index]
+                                            AND [options].[survey_answer_option_index]
+                                                = [answers].[survey_session_answer_integer])))
+                        OR (
+                            [arg2s].[survey_question_validation_condition_arg_index]
+                                IS NOT NULL
+                            AND [arg1s].[survey_question_validation_condition_arg_integer]
+                                IS NOT NULL
+                            AND LEN(
+                                COALESCE(
+                                    (SELECT
+                                        [answers].[survey_session_answer_text]
+                                    FROM
+                                        [survey_session_answers_view] AS [answers]
+                                    WHERE
+                                        [answers].[survey_id]
+                                            = [conditions].[survey_id]
+                                        AND [answers].[survey_page_index]
+                                            = [conditions].[survey_page_index]
+                                        AND [answers].[survey_question_index]
+                                            = [conditions].[survey_question_index]
+                                        AND [answers].[survey_session_answer_index]
+                                            = 0
+                                        AND [answers].[survey_session_token]
+                                            = [survey_sessions].[survey_session_token]),
+                                    ''))
+                                <= [arg1s].[survey_question_validation_condition_arg_integer])))
                 OR ( -- (int arg1) => (params object?[] answers) =>
                      --     answers.Count((x) => x is not null) <= arg1
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[multi_select]
-                    AND [arg0s].[survey_question_validation_condition_arg_integer]
+                    AND [arg1s].[survey_question_validation_condition_arg_integer]
                         IS NOT NULL
                     AND (
                         SELECT
@@ -292,19 +482,19 @@ SELECT
                                         = [arg0s].[referenced_survey_question_index]
                                     AND [options].[survey_answer_option_index]
                                         = [answers].[survey_session_answer_integer]))
-                        <= [arg0s].[survey_question_validation_condition_arg_integer])
+                        <= [arg1s].[survey_question_validation_condition_arg_integer])
                 OR ( -- (int arg1, object? arg2) => (params object?[] answers) =>
                      --     arg2 is null
                      --         ? answers.Count((x) => x is not null) <= arg1
                      --         : (answers[0] as string? ?? "").Length <= arg1
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[multi_select]
-                    AND [arg0s].[survey_question_validation_condition_arg_integer]
-                        IS NOT NULL
                     AND (
                         (
-                            [arg1s].[survey_question_validation_condition_arg_index]
+                            [arg2s].[survey_question_validation_condition_arg_index]
                                 IS NULL
+                            AND [arg1s].[survey_question_validation_condition_arg_integer]
+                                IS NOT NULL
                             AND (
                                 SELECT
                                     COUNT(*)
@@ -333,29 +523,31 @@ SELECT
                                                 = [arg0s].[referenced_survey_question_index]
                                             AND [options].[survey_answer_option_index]
                                                 = [answers].[survey_session_answer_integer]))
-                                <= [arg0s].[survey_question_validation_condition_arg_integer])
+                                <= [arg1s].[survey_question_validation_condition_arg_integer])
                         OR (
-                            [arg1s].[survey_question_validation_condition_arg_index]
+                            [arg2s].[survey_question_validation_condition_arg_index]
+                                IS NOT NULL
+                            AND [arg1s].[survey_question_validation_condition_arg_integer]
                                 IS NOT NULL
                             AND LEN(
                                 COALESCE(
                                     (SELECT
-                                        [answer0s].[survey_session_answer_text]
+                                        [answers].[survey_session_answer_text]
                                     FROM
-                                        [survey_session_answers_view] AS [answer0s]
+                                        [survey_session_answers_view] AS [answers]
                                     WHERE
-                                        [answer0s].[survey_id]
+                                        [answers].[survey_id]
                                             = [conditions].[survey_id]
-                                        AND [answer0s].[survey_page_index]
+                                        AND [answers].[survey_page_index]
                                             = [conditions].[survey_page_index]
-                                        AND [answer0s].[survey_question_index]
+                                        AND [answers].[survey_question_index]
                                             = [conditions].[survey_question_index]
-                                        AND [answer0s].[survey_session_answer_index]
+                                        AND [answers].[survey_session_answer_index]
                                             = 0
-                                        AND [answer0s].[survey_session_token]
+                                        AND [answers].[survey_session_token]
                                             = [survey_sessions].[survey_session_token]),
                                     ''))
-                                <= [arg0s].[survey_question_validation_condition_arg_integer])))))
+                                <= [arg1s].[survey_question_validation_condition_arg_integer])))))
         THEN
             CAST(1 AS BIT)
         ELSE
@@ -365,7 +557,7 @@ SELECT
 FROM
     [survey_question_validation_conditions] AS [conditions]
 LEFT JOIN
-    [survey_question_validation_conditions_args_view] AS [arg0s]
+    [survey_question_validation_condition_args_view] AS [arg0s]
     ON [arg0s].[survey_id]
         = [conditions].[survey_id]
     AND [arg0s].[survey_page_index]
@@ -377,7 +569,7 @@ LEFT JOIN
     AND [arg0s].[survey_question_validation_condition_arg_index]
         = 0
 LEFT JOIN
-    [survey_question_validation_conditions_args_view] AS [arg1s]
+    [survey_question_validation_condition_args_view] AS [arg1s]
     ON [arg1s].[survey_id]
         = [conditions].[survey_id]
     AND [arg1s].[survey_page_index]
@@ -389,7 +581,7 @@ LEFT JOIN
     AND [arg1s].[survey_question_validation_condition_arg_index]
         = 1
 LEFT JOIN
-    [survey_question_validation_conditions_args_view] AS [arg2s]
+    [survey_question_validation_condition_args_view] AS [arg2s]
     ON [arg2s].[survey_id]
         = [conditions].[survey_id]
     AND [arg2s].[survey_page_index]

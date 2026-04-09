@@ -8,11 +8,11 @@ namespace DataDriven.Models;
 
 public interface ISurveyModel
 {
-    string Title { get; }
-    string Author { get; }
-    string Description { get; }
-    int PageCount { get; }
-    IReadOnlyList<ISurveyPageModel>? Pages { get; }
+    public string Title { get; }
+    public string Author { get; }
+    public string Description { get; }
+    public int PageCount { get; }
+    public IReadOnlyList<ISurveyPageModel>? Pages { get; }
 }
 
 public record SurveyModel : ISurveyModel
@@ -66,10 +66,10 @@ public record SurveyModel : ISurveyModel
 
 public interface ISurveyPageModel
 {
-    ISurveyModel? Parent { get; }
-    string Title { get; }
-    string Description { get; }
-    IReadOnlyList<ISurveyQuestionModel> Questions { get; }
+    public ISurveyModel? Parent { get; }
+    public string Title { get; }
+    public string Description { get; }
+    public IReadOnlyList<ISurveyQuestionModel> Questions { get; }
 }
 
 public record SurveyPageModel(
@@ -80,203 +80,201 @@ public record SurveyPageModel(
 
 public interface ISurveyQuestionModel
 {
-    ISurveyPageModel? Parent { get; }
-    int Id { get; }
-    string Title { get; }
-    IReadOnlyList<ISurveyQuestionShowConstraintModel> ShowConditions { get; }
-    IReadOnlyList<ISurveyQuestionValidationConstraintModel> ValidationConditions { get; }
+    public ISurveyPageModel? Parent { get; }
+    public int Id { get; }
+    public string Title { get; }
+    public IReadOnlyList<ISurveyQuestionShowConditionModel> ShowConditions { get; }
+    public IReadOnlyList<ISurveyQuestionValidationConditionModel> ValidationConditions { get; }
 }
 
 public record SurveyQuestionSmallTextModel(
     int Id,
     string Title,
     string? Label,
-    IReadOnlyList<ISurveyQuestionShowConstraintModel> ShowConditions,
-    IReadOnlyList<ISurveyQuestionValidationConstraintModel> ValidationConditions,
+    IReadOnlyList<ISurveyQuestionShowConditionModel> ShowConditions,
+    IReadOnlyList<ISurveyQuestionValidationConditionModel> ValidationConditions,
     ISurveyPageModel? Parent) : ISurveyQuestionModel;
 
 public record SurveyQuestionCheckboxModel(
     int Id,
     string Title,
     string? Label,
-    IReadOnlyList<ISurveyQuestionShowConstraintModel> ShowConditions,
-    IReadOnlyList<ISurveyQuestionValidationConstraintModel> ValidationConditions,
+    IReadOnlyList<ISurveyQuestionShowConditionModel> ShowConditions,
+    IReadOnlyList<ISurveyQuestionValidationConditionModel> ValidationConditions,
     ISurveyPageModel? Parent) : ISurveyQuestionModel;
 
 public record SurveyQuestionRadioModel(
     int Id,
     string Title,
     IReadOnlyList<string> Options,
-    IReadOnlyList<ISurveyQuestionShowConstraintModel> ShowConditions,
-    IReadOnlyList<ISurveyQuestionValidationConstraintModel> ValidationConditions,
+    IReadOnlyList<ISurveyQuestionShowConditionModel> ShowConditions,
+    IReadOnlyList<ISurveyQuestionValidationConditionModel> ValidationConditions,
     ISurveyPageModel? Parent) : ISurveyQuestionModel;
 
 public record SurveyQuestionRadioOrOtherModel(
     int Id,
     string Title,
     IReadOnlyList<string> Options,
-    IReadOnlyList<ISurveyQuestionShowConstraintModel> ShowConditions,
-    IReadOnlyList<ISurveyQuestionValidationConstraintModel> ValidationConditions,
+    IReadOnlyList<ISurveyQuestionShowConditionModel> ShowConditions,
+    IReadOnlyList<ISurveyQuestionValidationConditionModel> ValidationConditions,
     ISurveyPageModel? Parent) : ISurveyQuestionModel;
 
 public record SurveyQuestionMultiSelectModel(
     int Id,
     string Title,
     IReadOnlyList<string> Options,
-    IReadOnlyList<ISurveyQuestionShowConstraintModel> ShowConditions,
-    IReadOnlyList<ISurveyQuestionValidationConstraintModel> ValidationConditions,
+    IReadOnlyList<ISurveyQuestionShowConditionModel> ShowConditions,
+    IReadOnlyList<ISurveyQuestionValidationConditionModel> ValidationConditions,
     ISurveyPageModel? Parent) : ISurveyQuestionModel;
 
 public record SurveyQuestionMultiSelectAndOtherModel(
     int Id,
     string Title,
     IReadOnlyList<string> Options,
-    IReadOnlyList<ISurveyQuestionShowConstraintModel> ShowConditions,
-    IReadOnlyList<ISurveyQuestionValidationConstraintModel> ValidationConditions,
+    IReadOnlyList<ISurveyQuestionShowConditionModel> ShowConditions,
+    IReadOnlyList<ISurveyQuestionValidationConditionModel> ValidationConditions,
     ISurveyPageModel? Parent) : ISurveyQuestionModel;
 
-public interface ISurveyQuestionShowConstraintModel
+public interface ISurveyQuestionShowConditionModel
 {
-    ConditionOperator Operator { get; }
-    ISurveyQuestionModel? Parent { get; }
+    public ConditionOperator Operator { get; }
+    public ISurveyQuestionModel? Parent { get; }
 }
 
-public record SurveyQuestionShowConstraintPreviouslyPassed(
+public record SurveyQuestionShowConditionPreviouslyPassed(
     ConditionOperator Operator,
-    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConstraintModel;
+    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConditionModel;
 
-public record SurveyQuestionShowConstraintHasAnsweredSmallTextModel(
+public record SurveyQuestionShowConditionHasAnsweredSmallTextModel(
     ConditionOperator Operator,
     SurveyQuestionSmallTextModel ReferencedQuestion,
     Regex Match,
     bool Invert = false,
-    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConstraintModel;
+    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConditionModel;
 
-public record SurveyQuestionShowConstraintHasAnsweredCheckboxModel(
+public record SurveyQuestionShowConditionHasAnsweredCheckboxModel(
     ConditionOperator Operator,
     SurveyQuestionCheckboxModel ReferencedQuestion,
     bool Invert = false,
-    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConstraintModel;
+    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConditionModel;
 
-public record SurveyQuestionShowConstraintHasAnsweredRadioModel(
+public record SurveyQuestionShowConditionHasAnsweredRadioModel(
     ConditionOperator Operator,
     SurveyQuestionRadioModel ReferencedQuestion,
     IReadOnlySet<int> Mask,
     bool Invert = false,
-    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConstraintModel;
+    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConditionModel;
 
-public record SurveyQuestionShowConstraintHasAnsweredOptionOfRadioOrOtherModel(
+public record SurveyQuestionShowConditionHasAnsweredOptionOfRadioOrOtherModel(
     ConditionOperator Operator,
     SurveyQuestionRadioOrOtherModel ReferencedQuestion,
     IReadOnlySet<int> Mask,
     bool Invert = false,
-    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConstraintModel;
+    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConditionModel;
 
-public record SurveyQuestionShowConstraintHasAnsweredOtherOfRadioOrOtherModel(
+public record SurveyQuestionShowConditionHasAnsweredOtherOfRadioOrOtherModel(
     ConditionOperator Operator,
     SurveyQuestionRadioOrOtherModel ReferencedQuestion,
     Regex Match,
     bool Invert = false,
-    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConstraintModel;
+    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConditionModel;
 
-public record SurveyQuestionShowConstraintHasAnsweredMultiSelectModel(
+public record SurveyQuestionShowConditionHasAnsweredMultiSelectModel(
     ConditionOperator Operator,
     SurveyQuestionMultiSelectModel ReferencedQuestion,
     IReadOnlySet<int> Mask,
     bool Invert = false,
-    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConstraintModel;
+    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConditionModel;
 
-public record SurveyQuestionShowConstraintHasAnsweredOptionOfMultiSelectAndOtherModel(
+public record SurveyQuestionShowConditionHasAnsweredOptionOfMultiSelectAndOtherModel(
     ConditionOperator Operator,
     SurveyQuestionMultiSelectAndOtherModel ReferencedQuestion,
     IReadOnlySet<int> Mask,
     bool Invert = false,
-    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConstraintModel;
+    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConditionModel;
 
-public record SurveyQuestionShowConstraintHasAnsweredOtherOfMultiSelectAndOtherModel(
+public record SurveyQuestionShowConditionHasAnsweredOtherOfMultiSelectAndOtherModel(
     ConditionOperator Operator,
     SurveyQuestionMultiSelectAndOtherModel ReferencedQuestion,
     Regex Match,
     bool Invert = false,
-    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConstraintModel;
+    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConditionModel;
 
-public interface ISurveyQuestionValidationConstraintModel
+public interface ISurveyQuestionValidationConditionModel
 {
-    ConditionOperator Operator { get; }
-    ISurveyQuestionModel? Parent { get; }
+    public ConditionOperator Operator { get; }
+    public ISurveyQuestionModel? Parent { get; }
 }
 
-public record SurveyQuestionValidationConstraintPreviouslyPassed(
+public record SurveyQuestionValidationConditionPreviouslyPassed(
     ConditionOperator Operator,
-    ISurveyQuestionModel? Parent = null) : ISurveyQuestionValidationConstraintModel;
+    ISurveyQuestionModel? Parent = null) : ISurveyQuestionValidationConditionModel;
 
-public record SurveyQuestionValidationConstraintBoundSmallTextModel(
+public record SurveyQuestionValidationConditionBoundSmallTextModel(
     ConditionOperator Operator,
     int LengthBound,
     bool IsMax,
-    SurveyQuestionSmallTextModel Parent) : ISurveyQuestionValidationConstraintModel
+    SurveyQuestionSmallTextModel Parent) : ISurveyQuestionValidationConditionModel
 {
-    ISurveyQuestionModel ISurveyQuestionValidationConstraintModel.Parent => Parent;
+    ISurveyQuestionModel ISurveyQuestionValidationConditionModel.Parent => Parent;
 }
 
-public record SurveyQuestionValidationConstraintBoundCheckboxModel(
+public record SurveyQuestionValidationConditionBoundCheckboxModel(
     ConditionOperator Operator,
     bool IsMax,
-    SurveyQuestionCheckboxModel Parent) : ISurveyQuestionValidationConstraintModel
+    SurveyQuestionCheckboxModel Parent) : ISurveyQuestionValidationConditionModel
 {
-    ISurveyQuestionModel ISurveyQuestionValidationConstraintModel.Parent => Parent;
+    ISurveyQuestionModel ISurveyQuestionValidationConditionModel.Parent => Parent;
 }
 
-public record SurveyQuestionValidationConstraintBoundRadioModel(
+public record SurveyQuestionValidationConditionBoundRadioModel(
     ConditionOperator Operator,
-    int Bound,
     bool IsMax,
-    SurveyQuestionRadioModel Parent) : ISurveyQuestionValidationConstraintModel
+    SurveyQuestionRadioModel Parent) : ISurveyQuestionValidationConditionModel
 {
-    ISurveyQuestionModel ISurveyQuestionValidationConstraintModel.Parent => Parent;
+    ISurveyQuestionModel ISurveyQuestionValidationConditionModel.Parent => Parent;
 }
 
-public record SurveyQuestionValidationConstraintBoundOptionOfRadioOrOtherModel(
+public record SurveyQuestionValidationConditionBoundOptionOfRadioOrOtherModel(
     ConditionOperator Operator,
-    int Bound,
     bool IsMax,
-    SurveyQuestionRadioOrOtherModel Parent) : ISurveyQuestionValidationConstraintModel
+    SurveyQuestionRadioOrOtherModel Parent) : ISurveyQuestionValidationConditionModel
 {
-    ISurveyQuestionModel ISurveyQuestionValidationConstraintModel.Parent => Parent;
+    ISurveyQuestionModel ISurveyQuestionValidationConditionModel.Parent => Parent;
 }
 
-public record SurveyQuestionValidationConstraintBoundOtherOfRadioOrOtherModel(
+public record SurveyQuestionValidationConditionBoundOtherOfRadioOrOtherModel(
     ConditionOperator Operator,
     int LengthBound,
     bool IsMax,
-    SurveyQuestionRadioOrOtherModel Parent) : ISurveyQuestionValidationConstraintModel
+    SurveyQuestionRadioOrOtherModel Parent) : ISurveyQuestionValidationConditionModel
 {
-    ISurveyQuestionModel ISurveyQuestionValidationConstraintModel.Parent => Parent;
+    ISurveyQuestionModel ISurveyQuestionValidationConditionModel.Parent => Parent;
 }
 
-public record SurveyQuestionValidationConstraintBoundMultiSelectModel(
+public record SurveyQuestionValidationConditionBoundMultiSelectModel(
     ConditionOperator Operator,
-    int Bound,
+    int CountBound,
     bool IsMax,
-    SurveyQuestionMultiSelectModel Parent) : ISurveyQuestionValidationConstraintModel
+    SurveyQuestionMultiSelectModel Parent) : ISurveyQuestionValidationConditionModel
 {
-    ISurveyQuestionModel ISurveyQuestionValidationConstraintModel.Parent => Parent;
+    ISurveyQuestionModel ISurveyQuestionValidationConditionModel.Parent => Parent;
 }
 
-public record SurveyQuestionValidationConstraintBoundOptionOfMultiSelectAndOtherModel(
+public record SurveyQuestionValidationConditionBoundOptionOfMultiSelectAndOtherModel(
     ConditionOperator Operator,
-    int Bound,
+    int CountBound,
     bool IsMax,
-    SurveyQuestionMultiSelectAndOtherModel Parent) : ISurveyQuestionValidationConstraintModel
+    SurveyQuestionMultiSelectAndOtherModel Parent) : ISurveyQuestionValidationConditionModel
 {
-    ISurveyQuestionModel ISurveyQuestionValidationConstraintModel.Parent => Parent;
+    ISurveyQuestionModel ISurveyQuestionValidationConditionModel.Parent => Parent;
 }
 
-public record SurveyQuestionValidationConstraintBoundOtherOfMultiSelectAndOtherModel(
+public record SurveyQuestionValidationConditionBoundOtherOfMultiSelectAndOtherModel(
     ConditionOperator Operator,
     int LengthBound,
     bool IsMax,
-    SurveyQuestionMultiSelectAndOtherModel Parent) : ISurveyQuestionValidationConstraintModel
+    SurveyQuestionMultiSelectAndOtherModel Parent) : ISurveyQuestionValidationConditionModel
 {
-    ISurveyQuestionModel ISurveyQuestionValidationConstraintModel.Parent => Parent;
+    ISurveyQuestionModel ISurveyQuestionValidationConditionModel.Parent => Parent;
 }

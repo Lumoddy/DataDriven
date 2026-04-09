@@ -407,13 +407,13 @@ public class ValidationConditionTypeMap(
 
 public interface IDatabaseEnumService
 {
-    AnswerTypeMap AnswerTypeMap { get; }
+    public AnswerTypeMap AnswerTypeMap { get; }
 
-    ConditionOperatorMap ConditionOperatorMap { get; }
+    public ConditionOperatorMap ConditionOperatorMap { get; }
 
-    ShowConditionTypeMap ShowConditionTypeMap { get; }
+    public ShowConditionTypeMap ShowConditionTypeMap { get; }
 
-    ValidationConditionTypeMap ValidationConditionTypeMap { get; }
+    public ValidationConditionTypeMap ValidationConditionTypeMap { get; }
 }
 
 public class DatabaseEnumService : IDatabaseEnumService
@@ -632,7 +632,6 @@ public class DatabaseEnumService : IDatabaseEnumService
         validationConditionTypeMap = new(
             surveyQuestionValidationConditionTypeMin,
             surveyQuestionValidationConditionTypeMax);
-
     }
 
     public AnswerTypeMap AnswerTypeMap
