@@ -106,32 +106,33 @@ BEGIN
         [answers].[submission_answer_text]
             IS NOT NULL
 
-    SELECT
-        [validation_condition_results].[survey_question_index],
-        [validation_condition_results].[survey_question_validation_condition_index]
-    FROM
-        [survey_visible_questions] AS [visible_questions]
-    INNER JOIN
-        [survey_question_validation_condition_results] AS [validation_condition_results]
-        ON [validation_condition_results].[survey_id]
-            = @survey_id
-        AND [validation_condition_results].[survey_page_index]
-            = @survey_page_index
-        AND [validation_condition_results].[survey_session_token]
-            = @survey_session_token
-        AND [validation_condition_results].[survey_question_index]
-            = [visible_questions].[survey_question_index]
-    WHERE
-        [validation_condition_results].[survey_id]
-            = @survey_id
-        AND [validation_condition_results].[survey_page_index]
-            = @survey_page_index
-        AND [validation_condition_results].[survey_session_token]
-            = @survey_session_token
-        AND [visible_questions].[survey_question_is_visible]
-            = 1
-        AND [validation_condition_results].[survey_question_validation_condition_passed]
-            = 0
+    SELECT NULL, NULL FROM GENERATE_SERIES(0, -1, 1);
+    -- SELECT
+    --     [validation_condition_results].[survey_question_index],
+    --     [validation_condition_results].[survey_question_validation_condition_index]
+    -- FROM
+    --     [survey_visible_questions] AS [visible_questions]
+    -- INNER JOIN
+    --     [survey_question_validation_condition_results] AS [validation_condition_results]
+    --     ON [validation_condition_results].[survey_id]
+    --         = @survey_id
+    --     AND [validation_condition_results].[survey_page_index]
+    --         = @survey_page_index
+    --     AND [validation_condition_results].[survey_session_token]
+    --         = @survey_session_token
+    --     AND [validation_condition_results].[survey_question_index]
+    --         = [visible_questions].[survey_question_index]
+    -- WHERE
+    --     [validation_condition_results].[survey_id]
+    --         = @survey_id
+    --     AND [validation_condition_results].[survey_page_index]
+    --         = @survey_page_index
+    --     AND [validation_condition_results].[survey_session_token]
+    --         = @survey_session_token
+    --     AND [visible_questions].[survey_question_is_visible]
+    --         = 1
+    --     AND [validation_condition_results].[survey_question_validation_condition_passed]
+    --         = 0
 
     IF @@ROWCOUNT > 0
         ROLLBACK TRANSACTION;

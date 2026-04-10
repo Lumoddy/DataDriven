@@ -1,6 +1,6 @@
 
 CREATE OR ALTER PROCEDURE [start_survey_session] (
-    @surveyId INT) AS
+    @survey_id INT) AS
 BEGIN
 
     INSERT INTO [survey_sessions] (
@@ -8,6 +8,6 @@ BEGIN
     OUTPUT
         INSERTED.[survey_session_token]
     VALUES
-        (@surveyId);
+        (@survey_id);
 
 END

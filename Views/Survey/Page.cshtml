@@ -543,7 +543,7 @@
             @Html.Raw(questionId)
             @Html.Raw(".setAttribute(\"condition-invalid\", \"\");\n\n        ")
         }@*
-        
+
         console.log(
         {
             @foreach ((int questionId, ISurveyQuestionModel question) in Model.Questions)
@@ -712,5 +712,8 @@
             </li>
         }
     </ul>
-    <button type="submit">Submit</button>
+    <p id="submit-page-anyway" style="color: red;">
+        There are invalid answers, submit anyway for testing purposes?
+    </p>
+    <button id="submit-page" type="submit">Submit</button>
 </form>

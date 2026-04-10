@@ -32,3 +32,8 @@ html
         }
     }
 }
+
+#submit-page-anyway:not(*:has([condition-invalid]:not([condition-hidden])) ~ #submit-page-anyway)
+{
+    display: none;
+}

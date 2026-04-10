@@ -67,7 +67,7 @@ public class SurveyController(
                 connection)
             { CommandType = CommandType.StoredProcedure };
 
-            command.Parameters.Add("@surveyId", SqlDbType.Int).Value
+            command.Parameters.Add("@survey_id", SqlDbType.Int).Value
                 = surveyIdValue;
 
             Response.Cookies.Append(
@@ -226,15 +226,55 @@ public class SurveyController(
                     return BadRequest();
             }
 
+            surveyPageIndexValue += 1;
+
+            if (surveyPageIndexValue == page.Parent!.PageCount)
+            {
+                return RedirectToAction(
+                    nameof(FinalPage),
+                    new { surveyId = surveyIdValue });
+            }
+
             return RedirectToAction(
                 nameof(Page),
                 new
                 {
                     surveyId = surveyIdValue,
-                    surveyPageIndex = surveyPageIndexValue + 1,
+                    surveyPageIndex = surveyPageIndexValue,
                 });
         }
 
         return View(page);
+    }
+
+    [Route("{surveyId}/done")]
+    public async Task<IActionResult> FinalPage(
+        [FromRoute] string surveyId)
+    {
+        if (!int.TryParse(surveyId, out int surveyIdValue)
+            || surveyIdValue < 0)
+            return NotFound();
+
+        await using SqlConnection connection = new(configuration.GetConnectionString("Default"));
+
+        await connection.OpenAsync();
+
+        byte[] sessionTokenValue = new byte[32];
+
+        if (!Request.Cookies.TryGetValue("session", out string? sessionToken)
+            || !Convert.TryFromBase64String(sessionToken, sessionTokenValue, out int bytesWritten)
+            || bytesWritten != 32)
+            return NotFound();
+
+        int? submissionIndex = await procedureService.SaveSurveySubmission(
+            connection,
+            surveyIdValue,
+            sessionTokenValue);
+
+        if (submissionIndex is null)
+            return BadRequest();
+
+        ViewData["index"] = submissionIndex;
+        return View("FinalPage");
     }
 }
