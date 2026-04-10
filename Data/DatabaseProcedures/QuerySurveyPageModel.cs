@@ -45,7 +45,7 @@ public partial class DatabaseProcedureService(
             Description: reader.GetSqlString(2).StrictValue(),
             PageCount: reader.GetSqlInt32(3).StrictValue());
 
-        List<ISurveyQuestionModel> questions = [];
+        Dictionary<int, ISurveyQuestionModel> questions = [];
 
         SurveyPageModel page = new(
             Title: reader.GetSqlString(4).StrictValue(),
@@ -55,32 +55,31 @@ public partial class DatabaseProcedureService(
 
         await reader.NextResultAsync();
 
-        List<(
-            string title,
-            List<string> options,
-            AnswerType answerType,
-            List<(
-                ConditionOperator op,
-                ShowConditionType type,
-                Dictionary<int, object?> args)> showConditions,
-            List<(
-                ConditionOperator op,
-                ValidationConditionType type,
-                Dictionary<int, object?> args)> validationConditions)> questionSetup = [];
+        Dictionary<
+            int,
+            (
+                string title,
+                List<string> options,
+                AnswerType answerType,
+                List<(
+                    ConditionOperator op,
+                    ShowConditionType type,
+                    Dictionary<int, object?> args)> showConditions,
+                List<(
+                    ConditionOperator op,
+                    ValidationConditionType type,
+                    Dictionary<int, object?> args)> validationConditions)> questionSetup = [];
 
         while (await reader.ReadAsync())
         {
-            if (reader.GetSqlInt32(0).StrictValue() is var i && i != questionSetup.Count)
-                throw new InvalidDataException(
-                    $"Sparse array of questions found in survey id '" +
-                    $"{surveyId}' page '{surveyPageIndex}' question '{i}'.");
-
-            questionSetup.Add((
-                title: reader.GetSqlString(2).StrictValue(),
-                options: [],
-                answerType: enumService.AnswerTypeMap[reader.GetSqlByte(1).StrictValue()],
-                showConditions: [],
-                validationConditions: []));
+            questionSetup.Add(
+                reader.GetSqlInt32(0).StrictValue(),
+                (
+                    title: reader.GetSqlString(2).StrictValue(),
+                    options: [],
+                    answerType: enumService.AnswerTypeMap[reader.GetSqlByte(1).StrictValue()],
+                    showConditions: [],
+                    validationConditions: []));
         }
 
         await reader.NextResultAsync();
@@ -235,15 +234,21 @@ public partial class DatabaseProcedureService(
         }
 
         foreach (
-            var (
-                id,
+            (
+                int id,
                 (
-                    title,
-                    setupOptions,
-                    answerType,
-                    setupShowConditions,
-                    setupValidationConditions))
-            in questionSetup.Index())
+                    string? title,
+                    List<string>? setupOptions,
+                    AnswerType answerType,
+                    List<(
+                        ConditionOperator op,
+                        ShowConditionType type,
+                        Dictionary<int, object?> args)>? setupShowConditions,
+                    List<(
+                        ConditionOperator op,
+                        ValidationConditionType type,
+                        Dictionary<int, object?> args)>? setupValidationConditions))
+            in questionSetup)
         {
             List<ISurveyQuestionShowConditionModel> showConditions = [];
             List<ISurveyQuestionValidationConditionModel> validationConditions = [];
@@ -292,7 +297,8 @@ public partial class DatabaseProcedureService(
                     ShowConditions: showConditions,
                     ValidationConditions: validationConditions,
                     page),
-                _ => throw new UnreachableException(),
+                _ => throw new UnreachableException(
+                    $"Unknown answer type '{answerType}'"),
             };
 
             showConditions.AddRange(
@@ -310,7 +316,7 @@ public partial class DatabaseProcedureService(
                         {
                             (int pageIndex, int questionIndex)
                                 = condition.args[0] as (int, int)?
-                                    ?? throw new InvalidDataException(
+                                    ?? throw new UnreachableException(
                                         $"Show condition 'Has(Not)Answered' argument has" +
                                         $" wrong type for question id '{id}' in " +
                                         $"survey id '{surveyId}' page '{surveyPageIndex}'.");
@@ -329,7 +335,10 @@ public partial class DatabaseProcedureService(
                                     return new SurveyQuestionShowConditionHasAnsweredSmallTextModel(
                                         Operator: condition.op,
                                         ReferencedQuestion: smallText,
-                                        Match: new Regex(condition.args[1] as string ?? "^[^]"),
+                                        Match: new Regex((
+                                            condition.args.TryGetValue(1, out object? matchArg)
+                                                ? matchArg as string
+                                                : null) ?? "^[^]"),
                                         Invert: condition.type is ShowConditionType.HasNotAnswered,
                                         Parent: question);
                                 }
@@ -346,16 +355,23 @@ public partial class DatabaseProcedureService(
                                     return new SurveyQuestionShowConditionHasAnsweredRadioModel(
                                         Operator: condition.op,
                                         ReferencedQuestion: radio,
-                                        Mask: new HashSet<int>(from k in condition.args.Keys where k > 0 select k - 1),
+                                        OptionIndex: condition.args.TryGetValue(1, out object? indexArg)
+                                            ? indexArg as int?
+                                            : null,
                                         Invert: condition.type is ShowConditionType.HasNotAnswered,
                                         Parent: question);
                                 }
-                                case SurveyQuestionRadioOrOtherModel radio when condition.args[0] is string s:
+                                case SurveyQuestionRadioOrOtherModel radio
+                                when condition.args.TryGetValue(2, out object? markerArg)
+                                    && markerArg is not null:
                                 {
                                     return new SurveyQuestionShowConditionHasAnsweredOtherOfRadioOrOtherModel(
                                         Operator: condition.op,
                                         ReferencedQuestion: radio,
-                                        Match: new Regex(s),
+                                        Match: new Regex((
+                                            condition.args.TryGetValue(1, out object? matchArg)
+                                                ? matchArg as string
+                                                : null) ?? "^[^]"),
                                         Invert: condition.type is ShowConditionType.HasNotAnswered,
                                         Parent: question);
                                 }
@@ -364,37 +380,61 @@ public partial class DatabaseProcedureService(
                                     return new SurveyQuestionShowConditionHasAnsweredOptionOfRadioOrOtherModel(
                                         Operator: condition.op,
                                         ReferencedQuestion: radio,
-                                        Mask: new HashSet<int>(from k in condition.args.Keys where k > 0 select k - 1),
+                                        OptionIndex: condition.args.TryGetValue(1, out object? indexArg)
+                                            ? indexArg as int?
+                                            : null,
                                         Invert: condition.type is ShowConditionType.HasNotAnswered,
                                         Parent: question);
                                 }
-                                case SurveyQuestionMultiSelectAndOtherModel radio when condition.args[1] is string s:
+                                case SurveyQuestionMultiSelectModel multiSelect
+                                when condition.args.TryGetValue(2, out object? x)
+                                    && x is not null:
+                                {
+                                    return new SurveyQuestionShowConditionHasAnsweredMultiSelectModel(
+                                        Operator: condition.op,
+                                        ReferencedQuestion: multiSelect,
+                                        OptionIndex: condition.args.TryGetValue(1, out object? indexArg)
+                                            ? indexArg as int?
+                                            : null,
+                                        Invert: condition.type is ShowConditionType.HasNotAnswered,
+                                        Parent: question);
+                                }
+                                case SurveyQuestionMultiSelectAndOtherModel multiSelect
+                                when condition.args.TryGetValue(2, out object? x)
+                                    && x is not null:
                                 {
                                     return new SurveyQuestionShowConditionHasAnsweredOtherOfMultiSelectAndOtherModel(
                                         Operator: condition.op,
-                                        ReferencedQuestion: radio,
-                                        Match: new Regex(s),
+                                        ReferencedQuestion: multiSelect,
+                                        Match: new Regex((
+                                            condition.args.TryGetValue(1, out object? matchArg)
+                                                ? matchArg as string
+                                                : null) ?? "^[^]"),
                                         Invert: condition.type is ShowConditionType.HasNotAnswered,
                                         Parent: question);
                                 }
-                                case SurveyQuestionMultiSelectAndOtherModel radio:
+                                case SurveyQuestionMultiSelectAndOtherModel multiSelect:
                                 {
                                     return new SurveyQuestionShowConditionHasAnsweredOptionOfMultiSelectAndOtherModel(
                                         Operator: condition.op,
-                                        ReferencedQuestion: radio,
-                                        Mask: new HashSet<int>(from k in condition.args.Keys where k > 0 select k - 1),
+                                        ReferencedQuestion: multiSelect,
+                                        OptionIndex: condition.args.TryGetValue(1, out object? indexArg)
+                                            ? indexArg as int?
+                                            : null,
                                         Invert: condition.type is ShowConditionType.HasNotAnswered,
                                         Parent: question);
                                 }
                                 default:
                                 {
-                                    throw new UnreachableException();
+                                    throw new UnreachableException(
+                                        $"Unknown question type '{question.GetType().Name}'");
                                 }
                             }
                         }
                         default:
                         {
-                            throw new UnreachableException();
+                            throw new UnreachableException(
+                                $"Unknown show condition type '{condition.type}'");
                         }
                     }
                 }));
@@ -478,18 +518,19 @@ public partial class DatabaseProcedureService(
                                 default:
                                 {
                                     throw new UnreachableException(
-                                        $"Found unexpected {question.GetType().Name}");
+                                        $"Found unexpected '{question.GetType().Name}'");
                                 }
                             }
                         }
                         default:
                         {
-                            throw new UnreachableException();
+                            throw new UnreachableException(
+                                $"Unknown validation condition type '{condition.type}'");
                         }
                     }
                 }));
 
-            questions.Add(question);
+            questions.Add(id, question);
         }
 
         return page;

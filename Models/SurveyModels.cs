@@ -1,5 +1,4 @@
 
-using System.Collections;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using DataDriven.Data;
@@ -69,13 +68,13 @@ public interface ISurveyPageModel
     public ISurveyModel? Parent { get; }
     public string Title { get; }
     public string Description { get; }
-    public IReadOnlyList<ISurveyQuestionModel> Questions { get; }
+    public IReadOnlyDictionary<int, ISurveyQuestionModel> Questions { get; }
 }
 
 public record SurveyPageModel(
     string Title,
     string Description,
-    IReadOnlyList<ISurveyQuestionModel> Questions,
+    IReadOnlyDictionary<int, ISurveyQuestionModel> Questions,
     ISurveyModel? Parent = null) : ISurveyPageModel;
 
 public interface ISurveyQuestionModel
@@ -138,77 +137,77 @@ public record SurveyQuestionMultiSelectAndOtherModel(
 public interface ISurveyQuestionShowConditionModel
 {
     public ConditionOperator Operator { get; }
-    public ISurveyQuestionModel? Parent { get; }
+    public ISurveyQuestionModel Parent { get; }
 }
 
 public record SurveyQuestionShowConditionPreviouslyPassed(
     ConditionOperator Operator,
-    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConditionModel;
+    ISurveyQuestionModel Parent) : ISurveyQuestionShowConditionModel;
 
 public record SurveyQuestionShowConditionHasAnsweredSmallTextModel(
     ConditionOperator Operator,
     SurveyQuestionSmallTextModel ReferencedQuestion,
     Regex Match,
-    bool Invert = false,
-    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConditionModel;
+    bool Invert,
+    ISurveyQuestionModel Parent) : ISurveyQuestionShowConditionModel;
 
 public record SurveyQuestionShowConditionHasAnsweredCheckboxModel(
     ConditionOperator Operator,
     SurveyQuestionCheckboxModel ReferencedQuestion,
-    bool Invert = false,
-    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConditionModel;
+    bool Invert,
+    ISurveyQuestionModel Parent) : ISurveyQuestionShowConditionModel;
 
 public record SurveyQuestionShowConditionHasAnsweredRadioModel(
     ConditionOperator Operator,
     SurveyQuestionRadioModel ReferencedQuestion,
-    IReadOnlySet<int> Mask,
-    bool Invert = false,
-    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConditionModel;
+    int? OptionIndex,
+    bool Invert,
+    ISurveyQuestionModel Parent) : ISurveyQuestionShowConditionModel;
 
 public record SurveyQuestionShowConditionHasAnsweredOptionOfRadioOrOtherModel(
     ConditionOperator Operator,
     SurveyQuestionRadioOrOtherModel ReferencedQuestion,
-    IReadOnlySet<int> Mask,
-    bool Invert = false,
-    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConditionModel;
+    int? OptionIndex,
+    bool Invert,
+    ISurveyQuestionModel Parent) : ISurveyQuestionShowConditionModel;
 
 public record SurveyQuestionShowConditionHasAnsweredOtherOfRadioOrOtherModel(
     ConditionOperator Operator,
     SurveyQuestionRadioOrOtherModel ReferencedQuestion,
     Regex Match,
-    bool Invert = false,
-    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConditionModel;
+    bool Invert,
+    ISurveyQuestionModel Parent) : ISurveyQuestionShowConditionModel;
 
 public record SurveyQuestionShowConditionHasAnsweredMultiSelectModel(
     ConditionOperator Operator,
     SurveyQuestionMultiSelectModel ReferencedQuestion,
-    IReadOnlySet<int> Mask,
-    bool Invert = false,
-    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConditionModel;
+    int? OptionIndex,
+    bool Invert,
+    ISurveyQuestionModel Parent) : ISurveyQuestionShowConditionModel;
 
 public record SurveyQuestionShowConditionHasAnsweredOptionOfMultiSelectAndOtherModel(
     ConditionOperator Operator,
     SurveyQuestionMultiSelectAndOtherModel ReferencedQuestion,
-    IReadOnlySet<int> Mask,
-    bool Invert = false,
-    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConditionModel;
+    int? OptionIndex,
+    bool Invert,
+    ISurveyQuestionModel Parent) : ISurveyQuestionShowConditionModel;
 
 public record SurveyQuestionShowConditionHasAnsweredOtherOfMultiSelectAndOtherModel(
     ConditionOperator Operator,
     SurveyQuestionMultiSelectAndOtherModel ReferencedQuestion,
     Regex Match,
-    bool Invert = false,
-    ISurveyQuestionModel? Parent = null) : ISurveyQuestionShowConditionModel;
+    bool Invert,
+    ISurveyQuestionModel Parent) : ISurveyQuestionShowConditionModel;
 
 public interface ISurveyQuestionValidationConditionModel
 {
     public ConditionOperator Operator { get; }
-    public ISurveyQuestionModel? Parent { get; }
+    public ISurveyQuestionModel Parent { get; }
 }
 
 public record SurveyQuestionValidationConditionPreviouslyPassed(
     ConditionOperator Operator,
-    ISurveyQuestionModel? Parent = null) : ISurveyQuestionValidationConditionModel;
+    ISurveyQuestionModel Parent) : ISurveyQuestionValidationConditionModel;
 
 public record SurveyQuestionValidationConditionBoundSmallTextModel(
     ConditionOperator Operator,

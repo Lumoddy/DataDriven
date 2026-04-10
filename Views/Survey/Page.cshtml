@@ -1,19 +1,584 @@
 @using DataDriven.Controllers
 @using DataDriven.Data
 @using System.Diagnostics
+@using System.Reflection.Metadata
 @model ISurveyPageModel
+<script type="module">
+
+    document.addEventListener("input", updateQuestionConditions);
+
+    updateQuestionConditions();
+
+    function updateQuestionConditions()
+    {
+        @foreach ((int questionId, ISurveyQuestionModel question) in Model.Questions)
+        {
+            @Html.Raw("        const question")
+            @Html.Raw(questionId)
+            @Html.Raw("Visible = ")
+
+            bool lastWasOr = true;
+            bool foundAny = false;
+            foreach ((int conditionIndex, ISurveyQuestionShowConditionModel condition) in question.ShowConditions.Index())
+            {
+                if (!foundAny)
+                {
+                    @Html.Raw("(")
+                    foundAny = true;
+                }
+
+                if (conditionIndex != 0)
+                {
+                    if (condition.Operator is ConditionOperator.Or)
+                    {
+                        @Html.Raw(")\n            || (")
+                        lastWasOr = true;
+                    }
+                    else if (lastWasOr)
+                    {
+                        @Html.Raw("\n                &&")
+                        lastWasOr = false;
+                    }
+                }
+
+                switch (condition)
+                {
+                    case SurveyQuestionShowConditionPreviouslyPassed x:
+                    {
+                        @Html.Raw("true")
+
+                        break;
+                    }
+                    case SurveyQuestionShowConditionHasAnsweredSmallTextModel x:
+                    {
+                        if (x.Invert)
+                            @Html.Raw("!")
+
+                        @Html.Raw("/")
+                        @Html.Raw(x.Match.ToString())
+                        @Html.Raw("/.test(document.getElementById(\"question-")
+                        @Html.Raw(x.ReferencedQuestion.Id)
+                        @Html.Raw("-text\").value")
+
+                        break;
+                    }
+                    case SurveyQuestionShowConditionHasAnsweredCheckboxModel x:
+                    {
+                        if (x.Invert)
+                            @Html.Raw("!")
+
+                        @Html.Raw("document.getElementById(\"question-")
+                        @Html.Raw(x.ReferencedQuestion.Id)
+                        @Html.Raw("-checkbox\").checked")
+
+                        break;
+                    }
+                    case SurveyQuestionShowConditionHasAnsweredRadioModel x:
+                    {
+                        IReadOnlyList<string> options = x.ReferencedQuestion.Options;
+
+                        if (x.Invert)
+                        {
+                            for (int i = 0; i < options.Count; i += 1)
+                            {
+                                if (i != 0)
+                                    @Html.Raw(" && ")
+
+                                @Html.Raw("!document.getElementById(\"question-")
+                                @Html.Raw(x.ReferencedQuestion.Id)
+                                @Html.Raw("-radio\").checked")
+                            }
+                        }
+                        else
+                        {
+                            @Html.Raw("(")
+
+                            for (int i = 0; i < options.Count; i += 1)
+                            {
+                                if (i != 0)
+                                    @Html.Raw(" || ")
+
+                                @Html.Raw("document.getElementById(\"question-")
+                                @Html.Raw(x.ReferencedQuestion.Id)
+                                @Html.Raw("-radio\").checked")
+                            }
+
+                            @Html.Raw(")")
+                        }
+
+                        break;
+                    }
+                    case SurveyQuestionShowConditionHasAnsweredOptionOfRadioOrOtherModel x:
+                    {
+                        IReadOnlyList<string> options = x.ReferencedQuestion.Options;
+
+                        if (x.Invert)
+                        {
+                            for (int i = 0; i < options.Count; i += 1)
+                            {
+                                if (i != 0)
+                                    @Html.Raw(" && ")
+
+                                @Html.Raw("!document.getElementById(\"question-")
+                                @Html.Raw(x.ReferencedQuestion.Id)
+                                @Html.Raw("-radio")
+                                @Html.Raw(i)
+                                @Html.Raw("\").checked")
+                            }
+                        }
+                        else
+                        {
+                            @Html.Raw("(")
+
+                            for (int i = 0; i < options.Count; i += 1)
+                            {
+                                if (i != 0)
+                                    @Html.Raw(" || ")
+
+                                @Html.Raw("document.getElementById(\"question-")
+                                @Html.Raw(x.ReferencedQuestion.Id)
+                                @Html.Raw("-radio")
+                                @Html.Raw(i)
+                                @Html.Raw("\").checked")
+                            }
+
+                            @Html.Raw(")")
+                        }
+
+                        break;
+                    }
+                    case SurveyQuestionShowConditionHasAnsweredOtherOfRadioOrOtherModel x:
+                    {
+                        if (x.Invert)
+                            @Html.Raw("!(")
+
+                        @Html.Raw("/")
+                        @Html.Raw(x.Match.ToString())
+                        @Html.Raw("/.test(document.getElementById(\"question-")
+                        @Html.Raw(x.ReferencedQuestion.Id)
+                        @Html.Raw("-radio-other-text\").value")
+
+                        if (x.Invert)
+                            @Html.Raw(")")
+
+                        break;
+                    }
+                    case SurveyQuestionShowConditionHasAnsweredMultiSelectModel x:
+                    {
+                        if (x.OptionIndex is int index)
+                        {
+                            if (x.Invert)
+                                @Html.Raw("!")
+
+                            @Html.Raw("document.getElementById(\"question-")
+                            @Html.Raw(questionId)
+                            @Html.Raw("-multi-select-")
+                            @Html.Raw(x.OptionIndex)
+                            @Html.Raw("\").checked")
+                        }
+                        else
+                        {
+                            IReadOnlyList<string> options = x.ReferencedQuestion.Options;
+
+                            if (x.Invert)
+                            {
+                                for (int i = 0; i < options.Count; i += 1)
+                                {
+                                    if (i != 0)
+                                        @Html.Raw(" && ")
+
+                                    @Html.Raw("!document.getElementById(\"question-")
+                                    @Html.Raw(questionId)
+                                    @Html.Raw("-multi-select-")
+                                    @Html.Raw(i)
+                                    @Html.Raw("\")")
+                                }
+                            }
+                            else
+                            {
+                                @Html.Raw("(")
+
+                                for (int i = 0; i < options.Count; i += 1)
+                                {
+                                    if (i != 0)
+                                        @Html.Raw(" || ")
+
+                                    @Html.Raw("!document.getElementById(\"question-")
+                                    @Html.Raw(questionId)
+                                    @Html.Raw("-multi-select-")
+                                    @Html.Raw(i)
+                                    @Html.Raw("\")")
+                                }
+
+                                @Html.Raw(")")
+                            }
+                        }
+
+                        break;
+                    }
+                    case SurveyQuestionShowConditionHasAnsweredOptionOfMultiSelectAndOtherModel x:
+                    {
+                        if (x.OptionIndex is int index)
+                        {
+                            if (x.Invert)
+                                @Html.Raw("!")
+
+                            @Html.Raw("document.getElementById(\"question-")
+                            @Html.Raw(questionId)
+                            @Html.Raw("-multi-select-")
+                            @Html.Raw(x.OptionIndex)
+                            @Html.Raw("\").checked")
+                        }
+                        else
+                        {
+                            IReadOnlyList<string> options = x.ReferencedQuestion.Options;
+
+                            if (x.Invert)
+                            {
+                                for (int i = 0; i < options.Count; i += 1)
+                                {
+                                    if (i != 0)
+                                        @Html.Raw(" && ")
+
+                                    @Html.Raw("!document.getElementById(\"question-")
+                                    @Html.Raw(questionId)
+                                    @Html.Raw("-multi-select-")
+                                    @Html.Raw(i)
+                                    @Html.Raw("\")")
+                                }
+                            }
+                            else
+                            {
+                                @Html.Raw("(")
+
+                                for (int i = 0; i < options.Count; i += 1)
+                                {
+                                    if (i != 0)
+                                        @Html.Raw(" || ")
+
+                                    @Html.Raw("!document.getElementById(\"question-")
+                                    @Html.Raw(questionId)
+                                    @Html.Raw("-multi-select-")
+                                    @Html.Raw(i)
+                                    @Html.Raw("\")")
+                                }
+
+                                @Html.Raw(")")
+                            }
+                        }
+
+                        break;
+                    }
+                    case SurveyQuestionShowConditionHasAnsweredOtherOfMultiSelectAndOtherModel x:
+                    {
+                        if (x.Invert)
+                            @Html.Raw("!(")
+
+                        @Html.Raw("document.getElementById(\"question-")
+                        @Html.Raw(x.ReferencedQuestion.Id)
+                        @Html.Raw("-multi-select-other\").checked && /")
+                        @Html.Raw(x.Match.ToString())
+                        @Html.Raw("/.test(document.getElementById(\"question-")
+                        @Html.Raw(x.ReferencedQuestion.Id)
+                        @Html.Raw("-multi-select-other-text\").value")
+
+                        if (x.Invert)
+                            @Html.Raw(")")
+
+                        break;
+                    }
+                }
+            }
+
+            if (foundAny)
+                @Html.Raw(")")
+            else
+                @Html.Raw("true")
+
+            @Html.Raw(";\n")
+        }
+
+        @foreach ((int questionId, ISurveyQuestionModel question) in Model.Questions)
+        {
+            @Html.Raw("        const question")
+            @Html.Raw(questionId)
+            @Html.Raw("Valid = ")
+
+            bool lastWasOr = true;
+            bool foundAny = false;
+            foreach ((int conditionIndex, ISurveyQuestionValidationConditionModel condition) in question.ValidationConditions.Index())
+            {
+                if (!foundAny)
+                {
+                    @Html.Raw("(")
+                    foundAny = true;
+                }
+
+                if (conditionIndex != 0)
+                {
+                    if (condition.Operator is ConditionOperator.Or)
+                    {
+                        @Html.Raw(")\n            || (")
+                        lastWasOr = true;
+                    }
+                    else if (lastWasOr)
+                    {
+                        @Html.Raw("\n                &&")
+                        lastWasOr = false;
+                    }
+                }
+
+                switch (condition)
+                {
+                    case SurveyQuestionValidationConditionPreviouslyPassed x:
+                    {
+                        @Html.Raw("true")
+
+                        break;
+                    }
+                    case SurveyQuestionValidationConditionBoundSmallTextModel x:
+                    {
+                        @Html.Raw("document.getElementById(\"question-")
+                        @Html.Raw(questionId)
+                        @Html.Raw("-text\").value.length ")
+                        @Html.Raw(x.IsMax ? "<=" : ">=")
+                        @Html.Raw(" ")
+                        @Html.Raw(x.LengthBound)
+
+                        break;
+                    }
+                    case SurveyQuestionValidationConditionBoundCheckboxModel x:
+                    {
+                        if (x.IsMax)
+                            @Html.Raw("!")
+
+                        @Html.Raw("document.getElementById(\"question-")
+                        @Html.Raw(questionId)
+                        @Html.Raw("-checkbox\").checked")
+
+                        break;
+                    }
+                    case SurveyQuestionValidationConditionBoundRadioModel x:
+                    {
+                        IReadOnlyList<string> options = x.Parent.Options;
+
+                        if (x.IsMax)
+                        {
+                            for (int i = 0; i < options.Count; i += 1)
+                            {
+                                if (i != 0)
+                                    @Html.Raw(" && ")
+
+                                @Html.Raw("!document.getElementById(\"question-")
+                                @Html.Raw(questionId)
+                                @Html.Raw("-radio")
+                                @Html.Raw(i)
+                                @Html.Raw("\").checked")
+                            }
+                        }
+                        else
+                        {
+                            @Html.Raw("(")
+
+                            for (int i = 0; i < options.Count; i += 1)
+                            {
+                                if (i != 0)
+                                    @Html.Raw(" || ")
+
+                                @Html.Raw("document.getElementById(\"question-")
+                                @Html.Raw(questionId)
+                                @Html.Raw("-radio")
+                                @Html.Raw(i)
+                                @Html.Raw("\").checked")
+                            }
+
+                            @Html.Raw(")")
+                        }
+
+                        break;
+                    }
+                    case SurveyQuestionValidationConditionBoundOptionOfRadioOrOtherModel x:
+                    {
+                        IReadOnlyList<string> options = x.Parent.Options;
+
+                        if (x.IsMax)
+                        {
+                            for (int i = 0; i < options.Count; i += 1)
+                            {
+                                if (i != 0)
+                                    @Html.Raw(" && ")
+
+                                @Html.Raw("!document.getElementById(\"question-")
+                                @Html.Raw(questionId)
+                                @Html.Raw("-radio")
+                                @Html.Raw(i)
+                                @Html.Raw("\").checked")
+                            }
+                        }
+                        else
+                        {
+                            @Html.Raw("(")
+
+                            for (int i = 0; i < options.Count; i += 1)
+                            {
+                                if (i != 0)
+                                    @Html.Raw(" || ")
+
+                                @Html.Raw("document.getElementById(\"question-")
+                                @Html.Raw(questionId)
+                                @Html.Raw("-radio")
+                                @Html.Raw(i)
+                                @Html.Raw("\").checked")
+                            }
+
+                            @Html.Raw(")")
+                        }
+
+                        break;
+                    }
+                    case SurveyQuestionValidationConditionBoundOtherOfRadioOrOtherModel x:
+                    {
+                        @Html.Raw("document.getElementById(\"question-")
+                        @Html.Raw(questionId)
+                        @Html.Raw("-radio-other\").checked && document.getElementById(\"question-")
+                        @Html.Raw(questionId)
+                        @Html.Raw("-radio-other-text\").value.length ")
+                        @Html.Raw(x.IsMax ? "<=" : ">=")
+                        @Html.Raw(" ")
+                        @Html.Raw(x.LengthBound)
+
+                        break;
+                    }
+                    case SurveyQuestionValidationConditionBoundMultiSelectModel x:
+                    {
+                        IReadOnlyList<string> options = x.Parent.Options;
+
+                        @Html.Raw("(")
+
+                        for (int i = 0; i < options.Count; i += 1)
+                        {
+                            if (i != 0)
+                                @Html.Raw(" + ")
+
+                            @Html.Raw("(document.getElementById(\"question-")
+                            @Html.Raw(questionId)
+                            @Html.Raw("-multi-select-")
+                            @Html.Raw(i)
+                            @Html.Raw("\").checked ? 1 : 0)")
+                        }
+
+                        @Html.Raw(") ")
+                        @Html.Raw(x.IsMax ? "<=" : ">=")
+                        @Html.Raw(" ")
+                        @Html.Raw(x.CountBound)
+
+                        break;
+                    }
+                    case SurveyQuestionValidationConditionBoundOptionOfMultiSelectAndOtherModel x:
+                    {
+                        IReadOnlyList<string> options = x.Parent.Options;
+
+                        @Html.Raw("(")
+
+                        for (int i = 0; i < options.Count; i += 1)
+                        {
+                            if (i != 0)
+                                @Html.Raw(" + ")
+
+                            @Html.Raw("(document.getElementById(\"question-")
+                            @Html.Raw(questionId)
+                            @Html.Raw("-multi-select-")
+                            @Html.Raw(i)
+                            @Html.Raw("\").checked ? 1 : 0)")
+                        }
+
+                        @Html.Raw(") ")
+                        @Html.Raw(x.IsMax ? "<=" : ">=")
+                        @Html.Raw(" ")
+                        @Html.Raw(x.CountBound)
+
+                        break;
+                    }
+                    case SurveyQuestionValidationConditionBoundOtherOfMultiSelectAndOtherModel x:
+                    {
+                        @Html.Raw("document.getElementById(\"question-")
+                        @Html.Raw(questionId)
+                        @Html.Raw("-multi-select-other\").checked && document.getElementById(\"question-")
+                        @Html.Raw(questionId)
+                        @Html.Raw("-multi-select-other-text\").value.length ")
+                        @Html.Raw(x.IsMax ? "<=" : ">=")
+                        @Html.Raw(" ")
+                        @Html.Raw(x.LengthBound)
+
+                        break;
+                    }
+                }
+            }
+
+            if (foundAny)
+                @Html.Raw(")")
+            else
+                @Html.Raw("true")
+
+            @Html.Raw(";\n")
+        }
+
+        @foreach ((int questionId, ISurveyQuestionModel question) in Model.Questions)
+        {
+            @Html.Raw("        const question")
+            @Html.Raw(questionId)
+            @Html.Raw(" = document.getElementById(\"question-")
+            @Html.Raw(questionId)
+            @Html.Raw("\");\n\n        if (question")
+            @Html.Raw(questionId)
+            @Html.Raw("Visible)\n            question")
+            @Html.Raw(questionId)
+            @Html.Raw(".removeAttribute(\"condition-hidden\");\n        else\n            question")
+            @Html.Raw(questionId)
+            @Html.Raw(".setAttribute(\"condition-hidden\", \"\");\n\n        if (question")
+            @Html.Raw(questionId)
+            @Html.Raw("Valid)\n            question")
+            @Html.Raw(questionId)
+            @Html.Raw(".removeAttribute(\"condition-invalid\");\n        else\n            question")
+            @Html.Raw(questionId)
+            @Html.Raw(".setAttribute(\"condition-invalid\", \"\");\n\n        ")
+        }@*
+        
+        console.log(
+        {
+            @foreach ((int questionId, ISurveyQuestionModel question) in Model.Questions)
+            {
+                if (questionId != 0)
+                    @Html.Raw("\n");
+
+                @Html.Raw("            question")
+                @Html.Raw(questionId)
+                @Html.Raw(",\n            question")
+                @Html.Raw(questionId)
+                @Html.Raw("Visible,\n            question")
+                @Html.Raw(questionId)
+                @Html.Raw("Valid: question")
+                @Html.Raw(questionId)
+                @Html.Raw("Visible ? question")
+                @Html.Raw(questionId)
+                @Html.Raw("Valid : null,")
+            }
+        });
+        *@
+    }
+</script>
 <h1>@Model.Parent!.Title</h1>
 <h2>@Model.Title</h2>
 <form method="post">
     <ul>
-        @foreach (ISurveyQuestionModel question in Model.Questions)
+        @foreach ((int questionId, ISurveyQuestionModel question) in Model.Questions)
         {
-            <li>
+            <li class="question" id="question-@question.Id">
                 <h3>@question.Title</h3>
                 <p>
-                    @foreach ((int i, ISurveyQuestionValidationConditionModel condition) in question.ValidationConditions.Index())
+                    @foreach ((int conditionIndex, ISurveyQuestionValidationConditionModel condition) in question.ValidationConditions.Index())
                     {
-                        if (i != 0)
+                        if (conditionIndex != 0)
                         {
                             @condition.Operator.ToString().ToLower()
                         }
@@ -21,7 +586,7 @@
                         switch (condition)
                         {
                             case SurveyQuestionValidationConditionPreviouslyPassed x:
-                                @:(true)
+                                @:(True)
                                 break;
                             case SurveyQuestionValidationConditionBoundSmallTextModel x:
                                 @:(Length of text at @(x.IsMax ? "most" : "least") @x.LengthBound)
@@ -56,10 +621,10 @@
                     {
                         if (smallText.Label is not null)
                         {
-                            <label for="question-@question.Id">@smallText.Label</label>
+                            <label for="question-@question.Id-text">@smallText.Label</label>
                         }
 
-                        <input id="question-@question.Id" type="text" name="question-@question.Id"/>
+                        <input id="question-@question.Id-text" type="text" name="question-@question.Id"/>
 
                         break;
                     }
@@ -67,10 +632,10 @@
                     {
                         if (checkbox.Label is not null)
                         {
-                            <label for="question-@question.Id">@checkbox.Label</label>
+                            <label for="question-@question.Id-checkbox">@checkbox.Label</label>
                         }
 
-                        <input id="question-@question.Id" type="checkbox" name="question-@question.Id"/>
+                        <input id="question-@question.Id-checkbox" type="checkbox" name="question-@question.Id"/>
 
                         break;
                     }
@@ -80,8 +645,8 @@
                             @foreach ((int i, string option) in radio.Options.Index())
                             {
                                 <li>
-                                    <label for="question-@question.Id-@i">@option</label>
-                                    <input id="question-@question.Id-@i" type="radio" name="question-@question.Id" value="@i"/>
+                                    <label for="question-@question.Id-radio-@i">@option</label>
+                                    <input id="question-@question.Id-radio-@i" type="radio" name="question-@question.Id" value="@i"/>
                                 </li>
                             }
                         </ul>
@@ -94,13 +659,13 @@
                             @foreach ((int i, string option) in radio.Options.Index())
                             {
                                 <li>
-                                    <label for="question-@question.Id-@i">@option</label>
-                                    <input id="question-@question.Id-@i" type="radio" name="question-@question.Id" value="@i"/>
+                                    <label for="question-@question.Id-radio-@i">@option</label>
+                                    <input id="question-@question.Id-radio-@i" type="radio" name="question-@question.Id" value="@i"/>
                                 </li>
                             }
                             <li>
-                                <input id="question-@question.Id-other-text" type="text" name="question-@question.Id-text" placeholder="Other..."/>
-                                <input id="question-@question.Id-other" type="radio" name="question-@question.Id" value="other"/>
+                                <input id="question-@question.Id-radio-other-text" type="text" name="question-@question.Id-text" placeholder="Other..."/>
+                                <input id="question-@question.Id-radio-other" type="radio" name="question-@question.Id" value="other"/>
                             </li>
                         </ul>
 
@@ -112,8 +677,8 @@
                             @foreach ((int i, string option) in multiSelect.Options.Index())
                             {
                                 <li>
-                                    <label for="question-@question.Id-@i">@option</label>
-                                    <input id="question-@question.Id-@i" type="checkbox" name="question-@question.Id" value="@i"/>
+                                    <label for="question-@question.Id-multi-select-@i">@option</label>
+                                    <input id="question-@question.Id-multi-select-@i" type="checkbox" name="question-@question.Id" value="@i"/>
                                 </li>
                             }
                         </ul>
@@ -126,13 +691,13 @@
                             @foreach ((int i, string option) in multiSelect.Options.Index())
                             {
                                 <li>
-                                    <label for="question-@question.Id-@i">@option</label>
-                                    <input id="question-@question.Id-@i" type="checkbox" name="question-@question.Id" value="@i"/>
+                                    <label for="question-@question.Id-multi-select-@i">@option</label>
+                                    <input id="question-@question.Id-multi-select-@i" type="checkbox" name="question-@question.Id" value="@i"/>
                                 </li>
                             }
                             <li>
-                                <input id="question-@question.Id-other-text" type="text" name="question-@question.Id-text" placeholder="Other..."/>
-                                <input id="question-@question.Id-other" type="checkbox" name="question-@question.Id" value="other"/>
+                                <input id="question-@question.Id-multi-select-other-text" type="text" name="question-@question.Id-text" placeholder="Other..."/>
+                                <input id="question-@question.Id-multi-select-other" type="checkbox" name="question-@question.Id" value="other"/>
                             </li>
                         </ul>
 
@@ -141,7 +706,7 @@
                     default:
                     {
                         throw new InvalidOperationException(
-                            $"Unknown question type {question.GetType().Name}");
+                            $"Unknown question type '{question.GetType().Name}'");
                     }
                 }
             </li>

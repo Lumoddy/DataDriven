@@ -165,17 +165,17 @@ SELECT
                                             IS NOT NULL
                                         AND [answers].[survey_session_answer_integer]
                                             = [arg1s].[survey_question_show_condition_arg_integer]))))
-                    OR ( -- (object? arg1) => (object? answer) =>
-                         --     (arg1 is null && answer is not null) ||
-                         --     (arg1 is int x && answer == x) ||
-                         --     (arg1 is string x && new Regex(arg1 ?? "^[^]").IsMatch(answer as string? ?? ""))
+                    OR ( -- (object? arg1, object? arg2) => (object? answer) =>
+                         --     arg2 is null
+                         --         ? arg1 is int x && answer == x
+                         --         : new Regex(arg1 ?? "^[^]").IsMatch(answer as string? ?? "")
                         [arg0s].[referenced_survey_question_answer_type]
                             = [answer_type].[radio_or_other]
                         AND (
                             (
-                                [arg1s].[survey_question_show_condition_arg_integer]
+                                [arg2s].[survey_question_show_condition_arg_text]
                                     IS NULL
-                                AND [arg1s].[survey_question_show_condition_arg_text]
+                                AND [arg1s].[survey_question_show_condition_arg_integer]
                                     IS NULL
                                 AND EXISTS(
                                     SELECT NULL FROM
@@ -193,14 +193,12 @@ SELECT
                                             = [survey_sessions].[survey_session_token]
                                         AND (
                                             [answers].[survey_session_answer_integer]
-                                                IS NOT NULL
-                                            OR [answers].[survey_session_answer_text]
                                                 IS NOT NULL)))
                             OR (
-                                [arg1s].[survey_question_show_condition_arg_integer]
-                                    IS NOT NULL
-                                AND [arg1s].[survey_question_show_condition_arg_text]
+                                [arg2s].[survey_question_show_condition_arg_text]
                                     IS NULL
+                                AND [arg1s].[survey_question_show_condition_arg_integer]
+                                    IS NOT NULL
                                 AND EXISTS(
                                     SELECT NULL FROM
                                         [survey_session_answers_view] AS [answers]
@@ -220,9 +218,7 @@ SELECT
                                         AND [answers].[survey_session_answer_integer]
                                             = [arg1s].[survey_question_show_condition_arg_integer]))
                             OR (
-                                [arg1s].[survey_question_show_condition_arg_integer]
-                                    IS NULL
-                                AND [arg1s].[survey_question_show_condition_arg_text]
+                                [arg2s].[survey_question_show_condition_arg_text]
                                     IS NOT NULL
                                 AND REGEXP_LIKE(
                                     COALESCE(
@@ -242,7 +238,7 @@ SELECT
                                             AND [answer0s].[survey_session_token]
                                                 = [survey_sessions].[survey_session_token]),
                                         ''),
-                                    CAST([arg1s].[survey_question_show_condition_arg_text] AS VARCHAR(8000))))))
+                                    COALESCE(CAST([arg1s].[survey_question_show_condition_arg_text] AS VARCHAR(8000)), '^[^]')))))
                     OR ( -- (int? arg1) => (params object?[] answers) =>
                          --     arg1 is null
                          --         ? answers.Where((_, i) => i < options.Count).Any((x) => x is not null)
@@ -310,17 +306,19 @@ SELECT
                                                     = [arg0s].[referenced_survey_question_index]
                                                 AND [options].[survey_answer_option_index]
                                                     = [answers].[survey_session_answer_integer])))))
-                    OR ( -- (object? arg1) => (params object?[] answers) =>
-                         --     (arg1 is null && answers.Where((_, i) => i < options.Count).Any((x) => x is not null)) ||
-                         --     (arg1 is int x && answers[arg1 + 1] is not null) ||
-                         --     (arg1 is string x && new Regex(arg1 ?? "^[^]").IsMatch(answers[0] as string? ?? ""))
+                    OR ( -- (object? arg1, object? arg2) => (params object?[] answers) =>
+                         --     arg2 is null
+                         --         ? arg1 is int x
+                         --             ? answers[arg1 + 1] is not null)
+                         --             : answers.Where((_, i) => i < options.Count).Any((x) => x is not null)
+                         --         : new Regex(arg1 ?? "^[^]").IsMatch(answers[0] as string? ?? "")
                         [arg0s].[referenced_survey_question_answer_type]
                             = [answer_type].[multi_select_and_other]
                         AND (
                             (
-                                [arg1s].[survey_question_show_condition_arg_integer]
+                                [arg2s].[survey_question_show_condition_arg_integer]
                                     IS NULL
-                                AND [arg1s].[survey_question_show_condition_arg_text]
+                                AND [arg1s].[survey_question_show_condition_arg_integer]
                                     IS NULL
                                 AND EXISTS(
                                     SELECT NULL FROM
@@ -349,10 +347,10 @@ SELECT
                                                 AND [options].[survey_answer_option_index]
                                                     = [answers].[survey_session_answer_integer])))
                             OR (
-                                [arg1s].[survey_question_show_condition_arg_integer]
-                                    IS NOT NULL
-                                AND [arg1s].[survey_question_show_condition_arg_text]
+                                [arg2s].[survey_question_show_condition_arg_integer]
                                     IS NULL
+                                AND [arg1s].[survey_question_show_condition_arg_integer]
+                                    IS NOT NULL
                                 AND EXISTS(
                                     SELECT NULL FROM
                                         [survey_session_answers_view] AS [answers]
@@ -382,9 +380,7 @@ SELECT
                                                 AND [options].[survey_answer_option_index]
                                                     = [answers].[survey_session_answer_index])))
                             OR (
-                                [arg1s].[survey_question_show_condition_arg_integer]
-                                    IS NULL
-                                AND [arg1s].[survey_question_show_condition_arg_text]
+                                [arg2s].[survey_question_show_condition_arg_integer]
                                     IS NOT NULL
                                 AND REGEXP_LIKE(
                                     COALESCE(
@@ -404,7 +400,7 @@ SELECT
                                             AND [answer0s].[survey_session_token]
                                                 = [survey_sessions].[survey_session_token]),
                                         ''),
-                                    CAST([arg1s].[survey_question_show_condition_arg_text] AS VARCHAR(8000)))))))
+                                    COALESCE(CAST([arg1s].[survey_question_show_condition_arg_text] AS VARCHAR(8000)), '^[^]'))))))
                 THEN
                     CAST(1 AS BIT)
                 ELSE
@@ -450,6 +446,18 @@ LEFT JOIN
         = [conditions].[survey_question_show_condition_index]
     AND [arg1s].[survey_question_show_condition_arg_index]
         = 1
+LEFT JOIN
+    [survey_question_show_condition_args_view] AS [arg2s]
+    ON [arg2s].[survey_id]
+        = [conditions].[survey_id]
+    AND [arg2s].[survey_page_index]
+        = [conditions].[survey_page_index]
+    AND [arg2s].[survey_question_index]
+        = [conditions].[survey_question_index]
+    AND [arg2s].[survey_question_show_condition_index]
+        = [conditions].[survey_question_show_condition_index]
+    AND [arg2s].[survey_question_show_condition_arg_index]
+        = 2
 INNER JOIN
     [survey_sessions]
     ON [survey_sessions].[survey_id]

@@ -104,7 +104,7 @@ INSERT INTO [survey_question_validation_condition_args] ([survey_id], [survey_pa
     (1, 1, 1, 0, 0);
 
 INSERT INTO [survey_question_validation_condition_integer_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer]) VALUES
-    (1, 1, 1, 0, 0, 1);
+    (1, 1, 1, 0, 0, 4);
 
 INSERT INTO [survey_questions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_prompt], [survey_question_answer_type]) VALUES
     (1, 1, 2, 'Are you interested in sports?', @answer_type_checkbox);
@@ -131,13 +131,13 @@ INSERT INTO [survey_question_show_condition_ref_args] ([survey_id], [survey_page
     (1, 1, 3, 0, 0, 1, 2);
 
 INSERT INTO [survey_question_validation_conditions] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_type], [survey_question_validation_condition_operator]) VALUES
-    (1, 1, 3, 0, @validation_condition_min, @operator_and);
+    (1, 1, 3, 0, @validation_condition_max, @operator_and);
 
 INSERT INTO [survey_question_validation_condition_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index]) VALUES
     (1, 1, 3, 0, 0);
 
 INSERT INTO [survey_question_validation_condition_integer_args] ([survey_id], [survey_page_index], [survey_question_index], [survey_question_validation_condition_index], [survey_question_validation_condition_arg_index], [survey_question_validation_condition_arg_integer]) VALUES
-    (1, 1, 3, 0, 0, 0);
+    (1, 1, 3, 0, 0, 2);
 
 INSERT INTO [survey_pages] ([survey_id], [survey_page_index], [survey_page_title], [survey_page_description]) VALUES
     (1, 2, 'Future', '');

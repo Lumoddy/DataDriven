@@ -91,7 +91,7 @@ public class SurveyController(
 
             List<IReadOnlyList<object?>> postedAnswers = [];
 
-            foreach ((int questionIndex, ISurveyQuestionModel question) in page.Questions.Index())
+            foreach ((int questionIndex, ISurveyQuestionModel question) in page.Questions)
             {
                 switch (question)
                 {
