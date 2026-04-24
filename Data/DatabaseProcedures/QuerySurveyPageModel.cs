@@ -1,5 +1,6 @@
 using System.Data;
 using System.Diagnostics;
+using System.Text;
 using System.Text.RegularExpressions;
 using DataDriven.Models;
 using Microsoft.Data.SqlClient;
@@ -386,9 +387,7 @@ public partial class DatabaseProcedureService(
                                         Invert: condition.type is ShowConditionType.HasNotAnswered,
                                         Parent: question);
                                 }
-                                case SurveyQuestionMultiSelectModel multiSelect
-                                when condition.args.TryGetValue(2, out object? x)
-                                    && x is not null:
+                                case SurveyQuestionMultiSelectModel multiSelect:
                                 {
                                     return new SurveyQuestionShowConditionHasAnsweredMultiSelectModel(
                                         Operator: condition.op,
@@ -400,8 +399,7 @@ public partial class DatabaseProcedureService(
                                         Parent: question);
                                 }
                                 case SurveyQuestionMultiSelectAndOtherModel multiSelect
-                                when condition.args.TryGetValue(2, out object? x)
-                                    && x is not null:
+                                when condition.args.ContainsKey(2):
                                 {
                                     return new SurveyQuestionShowConditionHasAnsweredOtherOfMultiSelectAndOtherModel(
                                         Operator: condition.op,
@@ -424,11 +422,12 @@ public partial class DatabaseProcedureService(
                                         Invert: condition.type is ShowConditionType.HasNotAnswered,
                                         Parent: question);
                                 }
-                                default:
+                                case object question:
                                 {
                                     throw new UnreachableException(
-                                        $"Unknown question type '{question.GetType().Name}'");
+                                        $"Unknown question type '{question.GetType().Name} [{condition.args.Aggregate(new StringBuilder(), (a, x) => (a.Length == 0 ? a : a.Append(", ")).Append(x))}]'");
                                 }
+                                default: throw null!;
                             }
                         }
                         default:

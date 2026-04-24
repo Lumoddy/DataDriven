@@ -171,7 +171,7 @@
                                 @Html.Raw("!")
 
                             @Html.Raw("document.getElementById(\"question-")
-                            @Html.Raw(questionId)
+                            @Html.Raw(x.ReferencedQuestion.Id)
                             @Html.Raw("-multi-select-")
                             @Html.Raw(x.OptionIndex)
                             @Html.Raw("\").checked")
@@ -188,7 +188,7 @@
                                         @Html.Raw(" && ")
 
                                     @Html.Raw("!document.getElementById(\"question-")
-                                    @Html.Raw(questionId)
+                                    @Html.Raw(x.ReferencedQuestion.Id)
                                     @Html.Raw("-multi-select-")
                                     @Html.Raw(i)
                                     @Html.Raw("\")")
@@ -204,7 +204,7 @@
                                         @Html.Raw(" || ")
 
                                     @Html.Raw("!document.getElementById(\"question-")
-                                    @Html.Raw(questionId)
+                                    @Html.Raw(x.ReferencedQuestion.Id)
                                     @Html.Raw("-multi-select-")
                                     @Html.Raw(i)
                                     @Html.Raw("\")")
@@ -224,7 +224,7 @@
                                 @Html.Raw("!")
 
                             @Html.Raw("document.getElementById(\"question-")
-                            @Html.Raw(questionId)
+                            @Html.Raw(x.ReferencedQuestion.Id)
                             @Html.Raw("-multi-select-")
                             @Html.Raw(x.OptionIndex)
                             @Html.Raw("\").checked")
@@ -241,7 +241,7 @@
                                         @Html.Raw(" && ")
 
                                     @Html.Raw("!document.getElementById(\"question-")
-                                    @Html.Raw(questionId)
+                                    @Html.Raw(x.ReferencedQuestion.Id)
                                     @Html.Raw("-multi-select-")
                                     @Html.Raw(i)
                                     @Html.Raw("\")")
@@ -257,7 +257,7 @@
                                         @Html.Raw(" || ")
 
                                     @Html.Raw("!document.getElementById(\"question-")
-                                    @Html.Raw(questionId)
+                                    @Html.Raw(x.ReferencedQuestion.Id)
                                     @Html.Raw("-multi-select-")
                                     @Html.Raw(i)
                                     @Html.Raw("\")")
@@ -541,7 +541,7 @@
             @Html.Raw(questionId)
             @Html.Raw(".removeAttribute(\"condition-invalid\");\n        else\n            question")
             @Html.Raw(questionId)
-            @Html.Raw(".setAttribute(\"condition-invalid\", \"\");\n\n        ")
+            @Html.Raw(".setAttribute(\"condition-invalid\", \"\");\n\n")
         }@*
 
         console.log(
