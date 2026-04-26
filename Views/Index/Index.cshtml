@@ -1,0 +1,10 @@
+@model IEnumerable<ISurveyModel>
+<ul>
+    @foreach (ISurveyModel survey in Model)
+    {
+        <li>
+            <h2>@survey.Title</h2>
+            <p>@survey.Author</p>
+        </li>
+    }
+</ul>

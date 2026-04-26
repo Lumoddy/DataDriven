@@ -542,29 +542,7 @@
             @Html.Raw(".removeAttribute(\"condition-invalid\");\n        else\n            question")
             @Html.Raw(questionId)
             @Html.Raw(".setAttribute(\"condition-invalid\", \"\");\n\n")
-        }@*
-
-        console.log(
-        {
-            @foreach ((int questionId, ISurveyQuestionModel question) in Model.Questions)
-            {
-                if (questionId != 0)
-                    @Html.Raw("\n");
-
-                @Html.Raw("            question")
-                @Html.Raw(questionId)
-                @Html.Raw(",\n            question")
-                @Html.Raw(questionId)
-                @Html.Raw("Visible,\n            question")
-                @Html.Raw(questionId)
-                @Html.Raw("Valid: question")
-                @Html.Raw(questionId)
-                @Html.Raw("Visible ? question")
-                @Html.Raw(questionId)
-                @Html.Raw("Valid : null,")
-            }
-        });
-        *@
+        }
     }
 </script>
 <h1>@Model.Parent!.Title</h1>
@@ -619,7 +597,7 @@
                 {
                     case SurveyQuestionSmallTextModel smallText:
                     {
-                        if (smallText.Label is not null)
+                        if (smallText.Label != null)
                         {
                             <label for="question-@question.Id-text">@smallText.Label</label>
                         }
@@ -630,7 +608,7 @@
                     }
                     case SurveyQuestionCheckboxModel checkbox:
                     {
-                        if (checkbox.Label is not null)
+                        if (checkbox.Label != null)
                         {
                             <label for="question-@question.Id-checkbox">@checkbox.Label</label>
                         }

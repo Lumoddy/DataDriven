@@ -133,7 +133,7 @@ public partial class DatabaseProcedureService(
             Dictionary<int, object?> args = questionSetup[questionIndex].showConditions[conditionIndex].args;
 
             (int pageIndex, int questionIndex)? refArg
-                = reader.GetSqlInt32(3).CheckedValue() is var x && x is not null
+                = reader.GetSqlInt32(3).CheckedValue() is var x && x != null
                     ? (x.Value, reader.GetSqlInt32(4).StrictValue())
                     : null;
 
@@ -200,7 +200,7 @@ public partial class DatabaseProcedureService(
             Dictionary<int, object?> args = questionSetup[questionIndex].validationConditions[conditionIndex].args;
 
             (int pageIndex, int questionIndex)? refArg
-                = reader.GetSqlInt32(3).CheckedValue() is var x && x is not null
+                = reader.GetSqlInt32(3).CheckedValue() is var x && x != null
                     ? (x.Value, reader.GetSqlInt32(4).StrictValue())
                     : null;
 
@@ -364,7 +364,7 @@ public partial class DatabaseProcedureService(
                                 }
                                 case SurveyQuestionRadioOrOtherModel radio
                                 when condition.args.TryGetValue(2, out object? markerArg)
-                                    && markerArg is not null:
+                                    && markerArg != null:
                                 {
                                     return new SurveyQuestionShowConditionHasAnsweredOtherOfRadioOrOtherModel(
                                         Operator: condition.op,

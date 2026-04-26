@@ -1,8 +1,4 @@
-using System.Collections;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
-using Azure;
 using DataDriven.Data;
 using DataDriven.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -49,7 +45,7 @@ public class SurveyController(
                 surveyPageIndexValue,
                 sessionTokenValue);
 
-            if (page is null && surveyPageIndexValue == 0)
+            if (page == null && surveyPageIndexValue == 0)
                 start_new_session = true;
         }
 
@@ -62,18 +58,13 @@ public class SurveyController(
                 return BadRequest();
             }
 
-            await using SqlCommand command = new(
-                "start_survey_session",
-                connection)
-            { CommandType = CommandType.StoredProcedure };
+            sessionTokenValue = await procedureService.StartSurveySession(
+                connection,
+                surveyIdValue);
 
-            command.Parameters.Add("@survey_id", SqlDbType.Int).Value
-                = surveyIdValue;
+            sessionToken = Convert.ToBase64String(sessionTokenValue);
 
-            Response.Cookies.Append(
-                "session",
-                sessionToken = Convert.ToBase64String(
-                    sessionTokenValue = (byte[])command.ExecuteScalar()));
+            Response.Cookies.Append("session", sessionToken);
 
             page = await procedureService.QuerySurveyPageModel(
                 connection,
@@ -82,7 +73,7 @@ public class SurveyController(
                 sessionTokenValue);
         }
 
-        if (page is null)
+        if (page == null)
             return NotFound();
 
         if (Request.HasFormContentType)
@@ -132,8 +123,7 @@ public class SurveyController(
                             ? integerAnswer
                             : null;
 
-                        postedAnswers.Add(
-                            [answer]);
+                        postedAnswers.Add([answer]);
 
                         break;
                     }
@@ -195,11 +185,7 @@ public class SurveyController(
                             .Select((_, i) => form.ContainsKey(
                                 $"question-{questionIndex}-{i}"));
 
-                        postedAnswers.Add(
-                        [
-                            textAnswer,
-                            ..answer.Cast<object>(),
-                        ]);
+                        postedAnswers.Add([textAnswer, .. answer]);
 
                         break;
                     }
@@ -213,7 +199,7 @@ public class SurveyController(
                 sessionTokenValue,
                 postedAnswers);
 
-            if (errors is not null)
+            if (errors != null)
             {
                 bool foundError = false;
                 foreach ((int questionIndex, int failedConditionIndex) in errors)
@@ -271,7 +257,7 @@ public class SurveyController(
             surveyIdValue,
             sessionTokenValue);
 
-        if (submissionIndex is null)
+        if (submissionIndex == null)
             return BadRequest();
 
         ViewData["index"] = submissionIndex;

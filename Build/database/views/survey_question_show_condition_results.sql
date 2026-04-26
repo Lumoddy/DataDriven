@@ -115,13 +115,13 @@ SELECT
                                 ''),
                             COALESCE(CAST([arg1s].[survey_question_show_condition_arg_text] AS VARCHAR(8000)), '^[^]')))
                     OR ( -- () => (object? answer) =>
-                         --     answer is not null
+                         --     answer != null
                         [arg0s].[referenced_survey_question_answer_type]
                             = [answer_type].[checkbox]
                         AND [arg1s].[survey_question_show_condition_index]
                             IS NOT NULL)
                     OR ( -- (int? arg1) => (int answer) =>
-                         --     arg1 is null || answer == arg1.Value
+                         --     arg1 == null || answer == arg1.Value
                         [arg0s].[referenced_survey_question_answer_type]
                             = [answer_type].[radio]
                         AND (
@@ -166,7 +166,7 @@ SELECT
                                         AND [answers].[survey_session_answer_integer]
                                             = [arg1s].[survey_question_show_condition_arg_integer]))))
                     OR ( -- (object? arg1, object? arg2) => (object? answer) =>
-                         --     arg2 is null
+                         --     arg2 == null
                          --         ? arg1 is int x && answer == x
                          --         : new Regex(arg1 ?? "^[^]").IsMatch(answer as string? ?? "")
                         [arg0s].[referenced_survey_question_answer_type]
@@ -240,9 +240,9 @@ SELECT
                                         ''),
                                     COALESCE(CAST([arg1s].[survey_question_show_condition_arg_text] AS VARCHAR(8000)), '^[^]')))))
                     OR ( -- (int? arg1) => (params object?[] answers) =>
-                         --     arg1 is null
-                         --         ? answers.Where((_, i) => i < options.Count).Any((x) => x is not null)
-                         --         : answers[arg1.Value] is not null
+                         --     arg1 == null
+                         --         ? answers.Where((_, i) => i < options.Count).Any((x) => x != null)
+                         --         : answers[arg1.Value] != null
                         [arg0s].[referenced_survey_question_answer_type]
                             = [answer_type].[multi_select]
                         AND (
@@ -307,10 +307,10 @@ SELECT
                                                 AND [options].[survey_answer_option_index]
                                                     = [answers].[survey_session_answer_integer])))))
                     OR ( -- (object? arg1, object? arg2) => (params object?[] answers) =>
-                         --     arg2 is null
+                         --     arg2 == null
                          --         ? arg1 is int x
-                         --             ? answers[arg1 + 1] is not null)
-                         --             : answers.Where((_, i) => i < options.Count).Any((x) => x is not null)
+                         --             ? answers[arg1 + 1] != null)
+                         --             : answers.Where((_, i) => i < options.Count).Any((x) => x != null)
                          --         : new Regex(arg1 ?? "^[^]").IsMatch(answers[0] as string? ?? "")
                         [arg0s].[referenced_survey_question_answer_type]
                             = [answer_type].[multi_select_and_other]

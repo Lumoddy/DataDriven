@@ -114,18 +114,32 @@ export function getVariousNamesFromPair(
     const overridesShortSingle = overrides?.["short_single"];
     const overridesShortPlural = overrides?.["short_plural"];
 
-    const
-    [
-        sourceShortSingle,
-        sourceShortPlural,
-    ]
-    = overridesShortSingle != null
-        ? overridesShortPlural != null
-            ? [String(overridesShortSingle), String(overridesShortPlural)]
-            : [String(overridesShortSingle), guessPluralOfSingle(overridesShortSingle)]
-        : overridesShortPlural != null
-            ? [guessSingleOfPlural(overridesShortPlural), String(overridesShortPlural)]
-            : [pascalSingle, sourcePlural];
+    let sourceShortSingle: string;
+    let sourceShortPlural: string;
+
+    if (overridesShortSingle != null)
+    {
+        if (overridesShortPlural != null)
+        {
+            sourceShortSingle = String(overridesShortSingle);
+            sourceShortPlural = String(overridesShortPlural);
+        }
+        else
+        {
+            sourceShortSingle = String(overridesShortSingle);
+            sourceShortPlural = guessPluralOfSingle(overridesShortSingle);
+        }
+    }
+    else if (overridesShortPlural != null)
+    {
+        sourceShortSingle = guessSingleOfPlural(overridesShortPlural);
+        sourceShortPlural = String(overridesShortPlural);
+    }
+    else
+    {
+        sourceShortSingle = pascalSingle;
+        sourceShortPlural = sourcePlural;
+    }
 
     const pascalShortenedSingle = String(overrides?.["C# Short Single"] ?? toPascalCase(sourceShortSingle));
     const pascalShortenedPlural = String(overrides?.["C# Short Plural"] ?? toPascalCase(sourceShortPlural));

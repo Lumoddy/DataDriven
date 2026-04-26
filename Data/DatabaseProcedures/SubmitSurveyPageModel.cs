@@ -46,12 +46,12 @@ public partial class DatabaseProcedureService : IDatabaseProcedureService
 
         foreach ((int questionIndex, IReadOnlyList<object?>? questionAnswers) in answers.Index())
         {
-            if (questionAnswers is null)
+            if (questionAnswers == null)
                 continue;
 
             foreach ((int answerIndex, object? answer) in questionAnswers.Index())
             {
-                if (answer is null)
+                if (answer == null)
                 {
                     answerDataTable.Rows.Add(
                         new SqlInt32(questionIndex),

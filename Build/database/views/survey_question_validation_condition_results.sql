@@ -96,7 +96,7 @@ SELECT
                             ''))
                         >= [arg1s].[survey_question_validation_condition_arg_integer])
                 OR ( -- () => (object? answer) =>
-                     --     answer is not null
+                     --     answer != null
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[checkbox]
                     AND EXISTS(
@@ -114,7 +114,7 @@ SELECT
                             AND [answers].[survey_session_token]
                                 = [survey_sessions].[survey_session_token]))
                 OR ( -- () => (int? answer) =>
-                     --     options.Select((_, i) => i).Cast<int?>().Contains(answer)
+                     --     answer != null && options.Select((_, i) => i).Contains(answer.Value)
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[radio]
                     AND EXISTS(
@@ -146,8 +146,8 @@ SELECT
                                     AND [options].[survey_answer_option_index]
                                         = [answers].[survey_session_answer_integer])))
                 OR ( -- (int arg1, object? arg2) => (object? answer) =>
-                     --     arg2 is null
-                     --         ? options.Select((_, i) => i).Cast<int?>().Contains(answer as int?)
+                     --     arg2 == null
+                     --         ? answer is int x && options.Select((_, i) => i).Contains(x)
                      --         : (answers[0] as string? ?? "").Length >= arg1
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[radio_or_other]
@@ -208,7 +208,7 @@ SELECT
                                     ''))
                                 >= [arg1s].[survey_question_validation_condition_arg_integer])))
                 OR ( -- (int arg1) => (params object?[] answers) =>
-                     --     answers.Count((x) => x is not null) >= arg1
+                     --     answers.Count((x) => x != null) >= arg1
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[multi_select]
                     AND [arg1s].[survey_question_validation_condition_arg_integer]
@@ -243,8 +243,8 @@ SELECT
                                         = [answers].[survey_session_answer_integer]))
                         >= [arg1s].[survey_question_validation_condition_arg_integer])
                 OR ( -- (int arg1, object? arg2) => (params object?[] answers) =>
-                     --     arg2 is null
-                     --         ? answers.Count((x) => x is not null) >= arg1
+                     --     arg2 == null
+                     --         ? answers.Count((x) => x != null) >= arg1
                      --         : (answers[0] as string? ?? "").Length >= arg1
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[multi_select]
@@ -337,7 +337,7 @@ SELECT
                             ''))
                         <= [arg1s].[survey_question_validation_condition_arg_integer])
                 OR ( -- () => (object? answer) =>
-                     --     answer is null
+                     --     answer == null
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[checkbox]
                     AND NOT EXISTS(
@@ -355,7 +355,7 @@ SELECT
                             AND [answers].[survey_session_token]
                                 = [survey_sessions].[survey_session_token]))
                 OR ( -- () => (int? answer) =>
-                     --     !options.Select((_, i) => i).Cast<int?>().Contains(answer)
+                     --     answer == null || !options.Select((_, i) => i).Contains(answer)
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[radio]
                     AND NOT EXISTS(
@@ -387,8 +387,8 @@ SELECT
                                     AND [options].[survey_answer_option_index]
                                         = [answers].[survey_session_answer_integer])))
                 OR ( -- (int arg1, object? arg2) => (object? answer) =>
-                     --     arg2 is null
-                     --         ? !options.Select((_, i) => i).Cast<int?>().Contains(answer as int?)
+                     --     arg2 == null
+                     --         ? answer is not int x || !options.Select((_, i) => i).Contains(x)
                      --         : (answers[0] as string? ?? "").Length <= arg1
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[radio_or_other]
@@ -449,7 +449,7 @@ SELECT
                                     ''))
                                 <= [arg1s].[survey_question_validation_condition_arg_integer])))
                 OR ( -- (int arg1) => (params object?[] answers) =>
-                     --     answers.Count((x) => x is not null) <= arg1
+                     --     answers.Count((x) => x != null) <= arg1
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[multi_select]
                     AND [arg1s].[survey_question_validation_condition_arg_integer]
@@ -484,8 +484,8 @@ SELECT
                                         = [answers].[survey_session_answer_integer]))
                         <= [arg1s].[survey_question_validation_condition_arg_integer])
                 OR ( -- (int arg1, object? arg2) => (params object?[] answers) =>
-                     --     arg2 is null
-                     --         ? answers.Count((x) => x is not null) <= arg1
+                     --     arg2 == null
+                     --         ? answers.Count((x) => x != null) <= arg1
                      --         : (answers[0] as string? ?? "").Length <= arg1
                     [arg0s].[referenced_survey_question_answer_type]
                         = [answer_type].[multi_select]
