@@ -233,6 +233,28 @@ public class SurveyController(
         return View(page);
     }
 
+    [Route("{surveyId}")]
+    public async Task<IActionResult> StartPage(
+        [FromRoute] string surveyId)
+    {
+        if (!int.TryParse(surveyId, out int surveyIdValue)
+            || surveyIdValue < 0)
+            return NotFound();
+
+        await using SqlConnection connection = new(configuration.GetConnectionString("Default"));
+
+        await connection.OpenAsync();
+
+        SurveyModel? survey = await procedureService.QuerySurvey(
+            connection,
+            surveyIdValue);
+
+        if (survey == null)
+            return NotFound();
+
+        return View("StartPage", survey);
+    }
+
     [Route("{surveyId}/done")]
     public async Task<IActionResult> FinalPage(
         [FromRoute] string surveyId)
@@ -252,6 +274,13 @@ public class SurveyController(
             || bytesWritten != 32)
             return NotFound();
 
+        SurveyModel? survey = await procedureService.QuerySurvey(
+            connection,
+            surveyIdValue);
+
+        if (survey == null)
+            return NotFound();
+
         int? submissionIndex = await procedureService.SaveSurveySubmission(
             connection,
             surveyIdValue,
@@ -260,7 +289,7 @@ public class SurveyController(
         if (submissionIndex == null)
             return BadRequest();
 
-        ViewData["index"] = submissionIndex;
-        return View("FinalPage");
+        ViewData["index"] = submissionIndex.Value;
+        return View("FinalPage", survey);
     }
 }

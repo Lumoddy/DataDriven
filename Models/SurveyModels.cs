@@ -7,6 +7,7 @@ namespace DataDriven.Models;
 
 public interface ISurveyModel
 {
+    public int Id { get; }
     public string Title { get; }
     public string Author { get; }
     public string Description { get; }
@@ -16,6 +17,7 @@ public interface ISurveyModel
 
 public record SurveyModel : ISurveyModel
 {
+    public int Id { get; set; }
     public string Title { get; set; }
     public string Author { get; set; }
     public string Description { get; set; }
@@ -39,11 +41,13 @@ public record SurveyModel : ISurveyModel
     object? pageObject;
 
     public SurveyModel(
+        int Id,
         string Title,
         string Author,
         string Description,
         IReadOnlyList<ISurveyPageModel> Pages)
     {
+        this.Id = Id;
         this.Title = Title;
         this.Author = Author;
         this.Description = Description;
@@ -51,11 +55,13 @@ public record SurveyModel : ISurveyModel
     }
 
     public SurveyModel(
+        int Id,
         string Title,
         string Author,
         string Description,
         int PageCount)
     {
+        this.Id = Id;
         this.Title = Title;
         this.Author = Author;
         this.Description = Description;

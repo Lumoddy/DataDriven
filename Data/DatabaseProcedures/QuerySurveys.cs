@@ -25,10 +25,11 @@ public partial class DatabaseProcedureService : IDatabaseProcedureService
         while (await reader.ReadAsync())
         {
             surveys.Add(new(
-                Title: reader.GetSqlString(0).StrictValue(),
-                Author: reader.GetSqlString(1).StrictValue(),
-                Description: reader.GetSqlString(2).StrictValue(),
-                PageCount: reader.GetSqlInt32(3).StrictValue()));
+                Id: reader.GetSqlInt32(0).StrictValue(),
+                Title: reader.GetSqlString(1).StrictValue(),
+                Author: reader.GetSqlString(2).StrictValue(),
+                Description: reader.GetSqlString(3).StrictValue(),
+                PageCount: reader.GetSqlInt32(4).StrictValue()));
         }
 
         return surveys;

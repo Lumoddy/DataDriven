@@ -19,6 +19,8 @@ export type DatabaseColumn =
         | ({ type: "DECIMAL", size: number, precision: number } & typeof typenameMap["DECIMAL"])
         | ({ type: "VARCHAR", size: number | "MAX", precision: undefined } & typeof typenameMap["VARCHAR"])
         | ({ type: "CHAR", size: number | "MAX", precision: undefined } & typeof typenameMap["CHAR"])
+        | ({ type: "NVARCHAR", size: number | "MAX", precision: undefined } & typeof typenameMap["NVARCHAR"])
+        | ({ type: "NCHAR", size: number | "MAX", precision: undefined } & typeof typenameMap["NCHAR"])
         | ({ type: "VARBINARY", size: number | "MAX", precision: undefined } & typeof typenameMap["VARBINARY"])
         | ({ type: "BINARY", size: number | "MAX", precision: undefined }) & typeof typenameMap["BINARY"]);
 
@@ -40,6 +42,8 @@ export const typenameMap = Object.freeze(
     "DECIMAL": Object.freeze({ csType: "decimal", csSqlType: "SqlDecimal", csSqlTypeEnum: "Decimal" }),
     "VARCHAR": Object.freeze({ csType: "string", csSqlType: "SqlString", csSqlTypeEnum: "VarChar" }),
     "CHAR": Object.freeze({ csType: "string", csSqlType: "SqlString", csSqlTypeEnum: "Char" }),
+    "NVARCHAR": Object.freeze({ csType: "string", csSqlType: "SqlString", csSqlTypeEnum: "VarChar" }),
+    "NCHAR": Object.freeze({ csType: "string", csSqlType: "SqlString", csSqlTypeEnum: "Char" }),
     "VARBINARY": Object.freeze({ csType: "byte[]", csSqlType: "SqlBinary", csSqlTypeEnum: "VarBinary" }),
     "BINARY": Object.freeze({ csType: "byte[]", csSqlType: "SqlBinary", csSqlTypeEnum: "Binary" }),
 });
@@ -362,6 +366,8 @@ export function preprocessObject(source: any): DatabaseStructure
                 }
                 case "VARCHAR":
                 case "CHAR":
+                case "NVARCHAR":
+                case "NCHAR":
                 case "VARBINARY":
                 case "BINARY":
                 {

@@ -20,21 +20,21 @@ CREATE TABLE [survey_question_validation_condition_types] (
 
 CREATE TABLE [surveys] (
     [survey_id] INT NOT NULL,
-    [survey_title] VARCHAR(255) NOT NULL,
-    [survey_author] VARCHAR(255) NOT NULL,
-    [survey_description] VARCHAR(MAX) NOT NULL);
+    [survey_title] NVARCHAR(255) NOT NULL,
+    [survey_author] NVARCHAR(255) NOT NULL,
+    [survey_description] NVARCHAR(MAX) NOT NULL);
 
 CREATE TABLE [survey_pages] (
     [survey_id] INT NOT NULL,
     [survey_page_index] INT NOT NULL,
-    [survey_page_title] VARCHAR(1023) NOT NULL,
-    [survey_page_description] VARCHAR(MAX) NOT NULL);
+    [survey_page_title] NVARCHAR(1023) NOT NULL,
+    [survey_page_description] NVARCHAR(MAX) NOT NULL);
 
 CREATE TABLE [survey_questions] (
     [survey_id] INT NOT NULL,
     [survey_page_index] INT NOT NULL,
     [survey_question_index] INT NOT NULL,
-    [survey_question_prompt] VARCHAR(1023) NOT NULL,
+    [survey_question_prompt] NVARCHAR(1023) NOT NULL,
     [survey_question_answer_type] TINYINT NOT NULL);
 
 CREATE TABLE [registered_members] (
@@ -42,8 +42,8 @@ CREATE TABLE [registered_members] (
     [registered_member_password_hash] VARCHAR(255) NOT NULL,
     [registered_member_phone_number] VARCHAR(13) NOT NULL,
     [registered_member_birth_date] DATETIME NOT NULL,
-    [registered_member_first_name] VARCHAR(255) NOT NULL,
-    [registered_member_last_name] VARCHAR(255) NOT NULL);
+    [registered_member_first_name] NVARCHAR(255) NOT NULL,
+    [registered_member_last_name] NVARCHAR(255) NOT NULL);
 
 CREATE TABLE [submissions] (
     [survey_id] INT NOT NULL,
@@ -71,14 +71,14 @@ CREATE TABLE [submission_text_answers] (
     [survey_question_index] INT NOT NULL,
     [submission_index] INT NOT NULL,
     [submission_answer_index] INT NOT NULL,
-    [submission_answer_text] VARCHAR(MAX) NOT NULL);
+    [submission_answer_text] NVARCHAR(MAX) NOT NULL);
 
 CREATE TABLE [survey_question_answer_options] (
     [survey_id] INT NOT NULL,
     [survey_page_index] INT NOT NULL,
     [survey_question_index] INT NOT NULL,
     [survey_answer_option_index] INT NOT NULL,
-    [survey_answer_option_text] VARCHAR(1023) NOT NULL);
+    [survey_answer_option_text] NVARCHAR(1023) NOT NULL);
 
 CREATE TABLE [survey_question_show_conditions] (
     [survey_id] INT NOT NULL,
@@ -118,7 +118,7 @@ CREATE TABLE [survey_question_show_condition_text_args] (
     [survey_question_index] INT NOT NULL,
     [survey_question_show_condition_index] INT NOT NULL,
     [survey_question_show_condition_arg_index] INT NOT NULL,
-    [survey_question_show_condition_arg_text] VARCHAR(MAX) NOT NULL);
+    [survey_question_show_condition_arg_text] NVARCHAR(MAX) NOT NULL);
 
 CREATE TABLE [survey_question_validation_conditions] (
     [survey_id] INT NOT NULL,
@@ -158,7 +158,7 @@ CREATE TABLE [survey_question_validation_condition_text_args] (
     [survey_question_index] INT NOT NULL,
     [survey_question_validation_condition_index] INT NOT NULL,
     [survey_question_validation_condition_arg_index] INT NOT NULL,
-    [survey_question_validation_condition_arg_text] VARCHAR(MAX) NOT NULL);
+    [survey_question_validation_condition_arg_text] NVARCHAR(MAX) NOT NULL);
 
 CREATE TABLE [registered_member_sessions] (
     [registered_member_session_token] BINARY(32) NOT NULL CONSTRAINT [default_registered_member_sessions_1] DEFAULT CRYPT_GEN_RANDOM(32),
@@ -191,7 +191,7 @@ CREATE TABLE [survey_session_text_answers] (
     [survey_question_index] INT NOT NULL,
     [survey_session_token] BINARY(32) NOT NULL,
     [survey_session_answer_index] INT NOT NULL,
-    [survey_session_answer_text] VARCHAR(MAX) NOT NULL);
+    [survey_session_answer_text] NVARCHAR(MAX) NOT NULL);
 
 ALTER TABLE [survey_question_answer_types]
     ADD CONSTRAINT [unique_survey_question_answer_types_1] PRIMARY KEY (

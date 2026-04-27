@@ -1,9 +1,9 @@
 
-CREATE OR ALTER PROCEDURE [query_surveys] AS
+CREATE OR ALTER PROCEDURE [query_survey] (
+    @survey_id INT) AS
 BEGIN
 
     SELECT
-        [surveys].[survey_id],
         [surveys].[survey_title],
         [surveys].[survey_author],
         [surveys].[survey_description],
@@ -15,6 +15,9 @@ BEGIN
             [survey_pages].[survey_id]
                 = [surveys].[survey_id]) AS [survey_page_count]
     FROM
-        [surveys];
+        [surveys]
+    WHERE
+        [surveys].[survey_id]
+            = @survey_id;
 
 END

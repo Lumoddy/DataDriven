@@ -41,6 +41,7 @@ public partial class DatabaseProcedureService(
             return null;
 
         SurveyModel survey = new(
+            Id: surveyId,
             Title: reader.GetSqlString(0).StrictValue(),
             Author: reader.GetSqlString(1).StrictValue(),
             Description: reader.GetSqlString(2).StrictValue(),
@@ -340,7 +341,7 @@ public partial class DatabaseProcedureService(
                                             condition.args.TryGetValue(1, out object? matchArg)
                                                 ? matchArg as string
                                                 : null) ?? "^[^]"),
-                                        Invert: condition.type is ShowConditionType.HasNotAnswered,
+                                        Invert: condition.type == ShowConditionType.HasNotAnswered,
                                         Parent: question);
                                 }
                                 case SurveyQuestionCheckboxModel checkbox:
@@ -348,7 +349,7 @@ public partial class DatabaseProcedureService(
                                     return new SurveyQuestionShowConditionHasAnsweredCheckboxModel(
                                         Operator: condition.op,
                                         ReferencedQuestion: checkbox,
-                                        Invert: condition.type is ShowConditionType.HasNotAnswered,
+                                        Invert: condition.type == ShowConditionType.HasNotAnswered,
                                         Parent: question);
                                 }
                                 case SurveyQuestionRadioModel radio:
@@ -359,7 +360,7 @@ public partial class DatabaseProcedureService(
                                         OptionIndex: condition.args.TryGetValue(1, out object? indexArg)
                                             ? indexArg as int?
                                             : null,
-                                        Invert: condition.type is ShowConditionType.HasNotAnswered,
+                                        Invert: condition.type == ShowConditionType.HasNotAnswered,
                                         Parent: question);
                                 }
                                 case SurveyQuestionRadioOrOtherModel radio
@@ -373,7 +374,7 @@ public partial class DatabaseProcedureService(
                                             condition.args.TryGetValue(1, out object? matchArg)
                                                 ? matchArg as string
                                                 : null) ?? "^[^]"),
-                                        Invert: condition.type is ShowConditionType.HasNotAnswered,
+                                        Invert: condition.type == ShowConditionType.HasNotAnswered,
                                         Parent: question);
                                 }
                                 case SurveyQuestionRadioOrOtherModel radio:
@@ -384,7 +385,7 @@ public partial class DatabaseProcedureService(
                                         OptionIndex: condition.args.TryGetValue(1, out object? indexArg)
                                             ? indexArg as int?
                                             : null,
-                                        Invert: condition.type is ShowConditionType.HasNotAnswered,
+                                        Invert: condition.type == ShowConditionType.HasNotAnswered,
                                         Parent: question);
                                 }
                                 case SurveyQuestionMultiSelectModel multiSelect:
@@ -395,7 +396,7 @@ public partial class DatabaseProcedureService(
                                         OptionIndex: condition.args.TryGetValue(1, out object? indexArg)
                                             ? indexArg as int?
                                             : null,
-                                        Invert: condition.type is ShowConditionType.HasNotAnswered,
+                                        Invert: condition.type == ShowConditionType.HasNotAnswered,
                                         Parent: question);
                                 }
                                 case SurveyQuestionMultiSelectAndOtherModel multiSelect
@@ -408,7 +409,7 @@ public partial class DatabaseProcedureService(
                                             condition.args.TryGetValue(1, out object? matchArg)
                                                 ? matchArg as string
                                                 : null) ?? "^[^]"),
-                                        Invert: condition.type is ShowConditionType.HasNotAnswered,
+                                        Invert: condition.type == ShowConditionType.HasNotAnswered,
                                         Parent: question);
                                 }
                                 case SurveyQuestionMultiSelectAndOtherModel multiSelect:
@@ -419,7 +420,7 @@ public partial class DatabaseProcedureService(
                                         OptionIndex: condition.args.TryGetValue(1, out object? indexArg)
                                             ? indexArg as int?
                                             : null,
-                                        Invert: condition.type is ShowConditionType.HasNotAnswered,
+                                        Invert: condition.type == ShowConditionType.HasNotAnswered,
                                         Parent: question);
                                 }
                                 case object question:
@@ -458,21 +459,21 @@ public partial class DatabaseProcedureService(
                                     return new SurveyQuestionValidationConditionBoundSmallTextModel(
                                         Operator: condition.op,
                                         LengthBound: (int)condition.args[0]!,
-                                        IsMax: condition.type is ValidationConditionType.Max,
+                                        IsMax: condition.type == ValidationConditionType.Max,
                                         Parent: smallText);
                                 }
                                 case SurveyQuestionCheckboxModel checkbox:
                                 {
                                     return new SurveyQuestionValidationConditionBoundCheckboxModel(
                                         Operator: condition.op,
-                                        IsMax: condition.type is ValidationConditionType.Max,
+                                        IsMax: condition.type == ValidationConditionType.Max,
                                         Parent: checkbox);
                                 }
                                 case SurveyQuestionRadioModel radio:
                                 {
                                     return new SurveyQuestionValidationConditionBoundRadioModel(
                                         Operator: condition.op,
-                                        IsMax: condition.type is ValidationConditionType.Max,
+                                        IsMax: condition.type == ValidationConditionType.Max,
                                         Parent: radio);
                                 }
                                 case SurveyQuestionRadioOrOtherModel radio when condition.args.ContainsKey(2):
@@ -480,14 +481,14 @@ public partial class DatabaseProcedureService(
                                     return new SurveyQuestionValidationConditionBoundOtherOfRadioOrOtherModel(
                                         Operator: condition.op,
                                         LengthBound: (int)condition.args[0]!,
-                                        IsMax: condition.type is ValidationConditionType.Max,
+                                        IsMax: condition.type == ValidationConditionType.Max,
                                         Parent: radio);
                                 }
                                 case SurveyQuestionRadioOrOtherModel radio:
                                 {
                                     return new SurveyQuestionValidationConditionBoundOptionOfRadioOrOtherModel(
                                         Operator: condition.op,
-                                        IsMax: condition.type is ValidationConditionType.Max,
+                                        IsMax: condition.type == ValidationConditionType.Max,
                                         Parent: radio);
                                 }
                                 case SurveyQuestionMultiSelectModel multiSelect:
@@ -495,7 +496,7 @@ public partial class DatabaseProcedureService(
                                     return new SurveyQuestionValidationConditionBoundMultiSelectModel(
                                         Operator: condition.op,
                                         CountBound: (int)condition.args[0]!,
-                                        IsMax: condition.type is ValidationConditionType.Max,
+                                        IsMax: condition.type == ValidationConditionType.Max,
                                         Parent: multiSelect);
                                 }
                                 case SurveyQuestionMultiSelectAndOtherModel multiSelect when condition.args.ContainsKey(2):
@@ -503,7 +504,7 @@ public partial class DatabaseProcedureService(
                                     return new SurveyQuestionValidationConditionBoundOtherOfMultiSelectAndOtherModel(
                                         Operator: condition.op,
                                         LengthBound: (int)condition.args[0]!,
-                                        IsMax: condition.type is ValidationConditionType.Max,
+                                        IsMax: condition.type == ValidationConditionType.Max,
                                         Parent: multiSelect);
                                 }
                                 case SurveyQuestionMultiSelectAndOtherModel multiSelect:
@@ -511,7 +512,7 @@ public partial class DatabaseProcedureService(
                                     return new SurveyQuestionValidationConditionBoundOptionOfMultiSelectAndOtherModel(
                                         Operator: condition.op,
                                         CountBound: (int)condition.args[0]!,
-                                        IsMax: condition.type is ValidationConditionType.Max,
+                                        IsMax: condition.type == ValidationConditionType.Max,
                                         Parent: multiSelect);
                                 }
                                 default:

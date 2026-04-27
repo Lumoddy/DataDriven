@@ -5,10 +5,6 @@
 @model ISurveyPageModel
 <script type="module">
 
-    document.addEventListener("input", updateQuestionConditions);
-
-    updateQuestionConditions();
-
     function updateQuestionConditions()
     {
         @foreach ((int questionId, ISurveyQuestionModel question) in Model.Questions)
@@ -29,14 +25,14 @@
 
                 if (conditionIndex != 0)
                 {
-                    if (condition.Operator is ConditionOperator.Or)
+                    if (condition.Operator == ConditionOperator.Or)
                     {
-                        @Html.Raw(")\n            || (")
+                        @Html.Raw(") || (")
                         lastWasOr = true;
                     }
                     else if (lastWasOr)
                     {
-                        @Html.Raw("\n                &&")
+                        @Html.Raw(" && ")
                         lastWasOr = false;
                     }
                 }
@@ -52,24 +48,34 @@
                     case SurveyQuestionShowConditionHasAnsweredSmallTextModel x:
                     {
                         if (x.Invert)
-                            @Html.Raw("!")
+                            @Html.Raw("!(")
 
-                        @Html.Raw("/")
+                        @Html.Raw("question")
+                        @Html.Raw(x.ReferencedQuestion.Id)
+                        @Html.Raw("Visible && /")
                         @Html.Raw(x.Match.ToString())
                         @Html.Raw("/.test(document.getElementById(\"question-")
                         @Html.Raw(x.ReferencedQuestion.Id)
                         @Html.Raw("-text\").value")
+
+                        if (x.Invert)
+                            @Html.Raw(")")
 
                         break;
                     }
                     case SurveyQuestionShowConditionHasAnsweredCheckboxModel x:
                     {
                         if (x.Invert)
-                            @Html.Raw("!")
+                            @Html.Raw("!(")
 
-                        @Html.Raw("document.getElementById(\"question-")
+                        @Html.Raw("question")
+                        @Html.Raw(x.ReferencedQuestion.Id)
+                        @Html.Raw("Visible && document.getElementById(\"question-")
                         @Html.Raw(x.ReferencedQuestion.Id)
                         @Html.Raw("-checkbox\").checked")
+
+                        if (x.Invert)
+                            @Html.Raw(")")
 
                         break;
                     }
@@ -84,9 +90,11 @@
                                 if (i != 0)
                                     @Html.Raw(" && ")
 
-                                @Html.Raw("!document.getElementById(\"question-")
+                                @Html.Raw("!(question")
                                 @Html.Raw(x.ReferencedQuestion.Id)
-                                @Html.Raw("-radio\").checked")
+                                @Html.Raw("Visible && document.getElementById(\"question-")
+                                @Html.Raw(x.ReferencedQuestion.Id)
+                                @Html.Raw("-radio\").checked)")
                             }
                         }
                         else
@@ -98,9 +106,11 @@
                                 if (i != 0)
                                     @Html.Raw(" || ")
 
-                                @Html.Raw("document.getElementById(\"question-")
+                                @Html.Raw("(question")
                                 @Html.Raw(x.ReferencedQuestion.Id)
-                                @Html.Raw("-radio\").checked")
+                                @Html.Raw("Visible && document.getElementById(\"question-")
+                                @Html.Raw(x.ReferencedQuestion.Id)
+                                @Html.Raw("-radio\").checked)")
                             }
 
                             @Html.Raw(")")
@@ -119,11 +129,13 @@
                                 if (i != 0)
                                     @Html.Raw(" && ")
 
-                                @Html.Raw("!document.getElementById(\"question-")
+                                @Html.Raw("!(question")
+                                @Html.Raw(x.ReferencedQuestion.Id)
+                                @Html.Raw("Visible && document.getElementById(\"question-")
                                 @Html.Raw(x.ReferencedQuestion.Id)
                                 @Html.Raw("-radio")
                                 @Html.Raw(i)
-                                @Html.Raw("\").checked")
+                                @Html.Raw("\").checked)")
                             }
                         }
                         else
@@ -135,11 +147,13 @@
                                 if (i != 0)
                                     @Html.Raw(" || ")
 
-                                @Html.Raw("document.getElementById(\"question-")
+                                @Html.Raw("(question")
+                                @Html.Raw(x.ReferencedQuestion.Id)
+                                @Html.Raw("Visible && document.getElementById(\"question-")
                                 @Html.Raw(x.ReferencedQuestion.Id)
                                 @Html.Raw("-radio")
                                 @Html.Raw(i)
-                                @Html.Raw("\").checked")
+                                @Html.Raw("\").checked)")
                             }
 
                             @Html.Raw(")")
@@ -152,7 +166,9 @@
                         if (x.Invert)
                             @Html.Raw("!(")
 
-                        @Html.Raw("/")
+                        @Html.Raw("question")
+                        @Html.Raw(x.ReferencedQuestion.Id)
+                        @Html.Raw("Visible && /")
                         @Html.Raw(x.Match.ToString())
                         @Html.Raw("/.test(document.getElementById(\"question-")
                         @Html.Raw(x.ReferencedQuestion.Id)
@@ -168,13 +184,18 @@
                         if (x.OptionIndex is int index)
                         {
                             if (x.Invert)
-                                @Html.Raw("!")
+                                @Html.Raw("!(")
 
-                            @Html.Raw("document.getElementById(\"question-")
+                            @Html.Raw("question")
+                            @Html.Raw(x.ReferencedQuestion.Id)
+                            @Html.Raw("Visible && document.getElementById(\"question-")
                             @Html.Raw(x.ReferencedQuestion.Id)
                             @Html.Raw("-multi-select-")
                             @Html.Raw(x.OptionIndex)
                             @Html.Raw("\").checked")
+
+                            if (x.Invert)
+                                @Html.Raw(")")
                         }
                         else
                         {
@@ -187,11 +208,13 @@
                                     if (i != 0)
                                         @Html.Raw(" && ")
 
-                                    @Html.Raw("!document.getElementById(\"question-")
+                                    @Html.Raw("!(question")
+                                    @Html.Raw(x.ReferencedQuestion.Id)
+                                    @Html.Raw("Visible && document.getElementById(\"question-")
                                     @Html.Raw(x.ReferencedQuestion.Id)
                                     @Html.Raw("-multi-select-")
                                     @Html.Raw(i)
-                                    @Html.Raw("\")")
+                                    @Html.Raw("\").checked)")
                                 }
                             }
                             else
@@ -203,11 +226,13 @@
                                     if (i != 0)
                                         @Html.Raw(" || ")
 
-                                    @Html.Raw("!document.getElementById(\"question-")
+                                    @Html.Raw("(question")
+                                    @Html.Raw(x.ReferencedQuestion.Id)
+                                    @Html.Raw("Visible && document.getElementById(\"question-")
                                     @Html.Raw(x.ReferencedQuestion.Id)
                                     @Html.Raw("-multi-select-")
                                     @Html.Raw(i)
-                                    @Html.Raw("\")")
+                                    @Html.Raw("\").checked)")
                                 }
 
                                 @Html.Raw(")")
@@ -221,13 +246,18 @@
                         if (x.OptionIndex is int index)
                         {
                             if (x.Invert)
-                                @Html.Raw("!")
+                                @Html.Raw("!(")
 
-                            @Html.Raw("document.getElementById(\"question-")
+                            @Html.Raw("question")
+                            @Html.Raw(x.ReferencedQuestion.Id)
+                            @Html.Raw("Visible && document.getElementById(\"question-")
                             @Html.Raw(x.ReferencedQuestion.Id)
                             @Html.Raw("-multi-select-")
                             @Html.Raw(x.OptionIndex)
                             @Html.Raw("\").checked")
+
+                            if (x.Invert)
+                                @Html.Raw(")")
                         }
                         else
                         {
@@ -240,11 +270,13 @@
                                     if (i != 0)
                                         @Html.Raw(" && ")
 
-                                    @Html.Raw("!document.getElementById(\"question-")
+                                    @Html.Raw("!(question")
+                                    @Html.Raw(x.ReferencedQuestion.Id)
+                                    @Html.Raw("Visible && document.getElementById(\"question-")
                                     @Html.Raw(x.ReferencedQuestion.Id)
                                     @Html.Raw("-multi-select-")
                                     @Html.Raw(i)
-                                    @Html.Raw("\")")
+                                    @Html.Raw("\").checked)")
                                 }
                             }
                             else
@@ -256,11 +288,13 @@
                                     if (i != 0)
                                         @Html.Raw(" || ")
 
-                                    @Html.Raw("!document.getElementById(\"question-")
+                                    @Html.Raw("(question")
+                                    @Html.Raw(x.ReferencedQuestion.Id)
+                                    @Html.Raw("Visible && document.getElementById(\"question-")
                                     @Html.Raw(x.ReferencedQuestion.Id)
                                     @Html.Raw("-multi-select-")
                                     @Html.Raw(i)
-                                    @Html.Raw("\")")
+                                    @Html.Raw("\").checked)")
                                 }
 
                                 @Html.Raw(")")
@@ -274,7 +308,9 @@
                         if (x.Invert)
                             @Html.Raw("!(")
 
-                        @Html.Raw("document.getElementById(\"question-")
+                        @Html.Raw("question")
+                        @Html.Raw(x.ReferencedQuestion.Id)
+                        @Html.Raw("Visible && document.getElementById(\"question-")
                         @Html.Raw(x.ReferencedQuestion.Id)
                         @Html.Raw("-multi-select-other\").checked && /")
                         @Html.Raw(x.Match.ToString())
@@ -310,20 +346,22 @@
             {
                 if (!foundAny)
                 {
-                    @Html.Raw("(")
+                    @Html.Raw("!question")
+                    @Html.Raw(questionId)
+                    @Html.Raw("Visible || (")
                     foundAny = true;
                 }
 
                 if (conditionIndex != 0)
                 {
-                    if (condition.Operator is ConditionOperator.Or)
+                    if (condition.Operator == ConditionOperator.Or)
                     {
-                        @Html.Raw(")\n            || (")
+                        @Html.Raw(") || (")
                         lastWasOr = true;
                     }
                     else if (lastWasOr)
                     {
-                        @Html.Raw("\n                &&")
+                        @Html.Raw(" && ")
                         lastWasOr = false;
                     }
                 }
@@ -544,6 +582,11 @@
             @Html.Raw(".setAttribute(\"condition-invalid\", \"\");\n\n")
         }
     }
+
+    document.addEventListener("input", updateQuestionConditions);
+
+    updateQuestionConditions();
+
 </script>
 <h1>@Model.Parent!.Title</h1>
 <h2>@Model.Title</h2>
@@ -690,8 +733,5 @@
             </li>
         }
     </ul>
-    <p id="submit-page-anyway" style="color: red;">
-        There are invalid answers, submit anyway for testing purposes?
-    </p>
     <button id="submit-page" type="submit">Submit</button>
 </form>

@@ -22,14 +22,26 @@ log("success", "Build Started.");
     {
         await Promise.all(
         [
-            new Promise<void>((resolve, reject) => exec("npx tsc", {}, (error) =>
+            (async () =>
             {
-                if (error !== null)
-                    return reject(error);
+                const dir = await fs.opendir("./wwwroot/ts");
 
-                log("success", "Transpiled TypeScript.");
-                resolve();
-            })),
+                try
+                {
+                    if (await dir.read() !== null)
+                        return;
+                }
+                finally { await dir.close() }
+
+                await new Promise<void>((resolve, reject) => exec("npx tsc", {}, (error) =>
+                {
+                    if (error !== null)
+                        return reject(error);
+
+                    log("success", "Transpiled TypeScript.");
+                    resolve();
+                }));
+            }),
 
             (async () =>
             {

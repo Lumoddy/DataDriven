@@ -24,16 +24,16 @@ replacements:
     - { type: BIT }
 
   - - type: NAME
-    - { type: VARCHAR, size: = (2**8)-1 }
+    - { type: NVARCHAR, size: = (2**8)-1 }
 
   - - type: HASH
     - { type: VARCHAR, size: = (2**8)-1 }
 
   - - type: TITLE
-    - { type: VARCHAR, size: = (2**10)-1 }
+    - { type: NVARCHAR, size: = (2**10)-1 }
 
   - - type: DESCRIPTION
-    - { type: VARCHAR, size: MAX }
+    - { type: NVARCHAR, size: MAX }
 
   - - type: DATE
     - { type: DATETIME }
@@ -231,7 +231,7 @@ tables:
       survey_question_index: { short_single: question_index, type: INDEX }
       submission_index: { short_single: submission_index, type: INDEX }
       submission_answer_index: { short_single: answer_index, type: INDEX }
-      submission_answer_text: { short_single: value, type: VARCHAR, size: MAX }
+      submission_answer_text: { short_single: value, type: NVARCHAR, size: MAX }
     constraints:
     - primary:
       - survey_id
@@ -434,7 +434,7 @@ tables:
       survey_question_index: { short_single: question_index, type: INDEX }
       survey_question_show_condition_index: { short_single: condition_index, type: INDEX }
       survey_question_show_condition_arg_index: { short_single: index, type: INDEX }
-      survey_question_show_condition_arg_text: { short_single: arg_value, type: VARCHAR, size: MAX }
+      survey_question_show_condition_arg_text: { short_single: arg_value, type: NVARCHAR, size: MAX }
     constraints:
     - primary:
       - survey_id
@@ -611,7 +611,7 @@ tables:
       survey_question_index: { short_single: question_index, type: INDEX }
       survey_question_validation_condition_index: { short_single: condition_index, type: INDEX }
       survey_question_validation_condition_arg_index: { short_single: index, type: INDEX }
-      survey_question_validation_condition_arg_text: { short_single: arg_value, type: VARCHAR, size: MAX }
+      survey_question_validation_condition_arg_text: { short_single: arg_value, type: NVARCHAR, size: MAX }
     constraints:
     - primary:
       - survey_id
@@ -740,7 +740,7 @@ tables:
       survey_question_index: { short_single: question_index, type: INDEX }
       survey_session_token: { short_single: session_token, type: TOKEN }
       survey_session_answer_index: { short_single: answer_index, type: INDEX }
-      survey_session_answer_text: { short_single: value, type: VARCHAR, size: MAX }
+      survey_session_answer_text: { short_single: value, type: NVARCHAR, size: MAX }
     constraints:
     - primary:
       - survey_id

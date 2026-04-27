@@ -277,9 +277,9 @@ public partial record SqlValidationConditionType(
 /// <code>
 /// TABLE [surveys] (
 ///     [survey_id] INT NOT NULL,
-///     [survey_title] VARCHAR(255) NOT NULL,
-///     [survey_author] VARCHAR(255) NOT NULL,
-///     [survey_description] VARCHAR(MAX) NOT NULL);
+///     [survey_title] NVARCHAR(255) NOT NULL,
+///     [survey_author] NVARCHAR(255) NOT NULL,
+///     [survey_description] NVARCHAR(MAX) NOT NULL);
 /// </code>
 /// </summary>
 /// <param name="Id">
@@ -291,19 +291,19 @@ public partial record SqlValidationConditionType(
 /// <param name="Title">
 /// Stored in the database as:
 /// <code>
-/// [survey_title] VARCHAR(255) NOT NULL
+/// [survey_title] NVARCHAR(255) NOT NULL
 /// </code>
 /// </param>
 /// <param name="Author">
 /// Stored in the database as:
 /// <code>
-/// [survey_author] VARCHAR(255) NOT NULL
+/// [survey_author] NVARCHAR(255) NOT NULL
 /// </code>
 /// </param>
 /// <param name="Description">
 /// Stored in the database as:
 /// <code>
-/// [survey_description] VARCHAR(MAX) NOT NULL
+/// [survey_description] NVARCHAR(MAX) NOT NULL
 /// </code>
 /// </param>
 public partial record SqlSurvey(
@@ -317,9 +317,9 @@ public partial record SqlSurvey(
     /// <code>
     /// TABLE [surveys] (
     ///     [survey_id] INT NOT NULL,
-    ///     [survey_title] VARCHAR(255) NOT NULL,
-    ///     [survey_author] VARCHAR(255) NOT NULL,
-    ///     [survey_description] VARCHAR(MAX) NOT NULL);
+    ///     [survey_title] NVARCHAR(255) NOT NULL,
+    ///     [survey_author] NVARCHAR(255) NOT NULL,
+    ///     [survey_description] NVARCHAR(MAX) NOT NULL);
     /// </code>
     /// </summary>
     public const string TABLE = "[surveys]";
@@ -335,7 +335,7 @@ public partial record SqlSurvey(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_title] VARCHAR(255) NOT NULL
+    /// [survey_title] NVARCHAR(255) NOT NULL
     /// </code>
     /// </summary>
     public const string TABLE_TITLE = "[surveys].[survey_title]";
@@ -343,7 +343,7 @@ public partial record SqlSurvey(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_author] VARCHAR(255) NOT NULL
+    /// [survey_author] NVARCHAR(255) NOT NULL
     /// </code>
     /// </summary>
     public const string TABLE_AUTHOR = "[surveys].[survey_author]";
@@ -351,7 +351,7 @@ public partial record SqlSurvey(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_description] VARCHAR(MAX) NOT NULL
+    /// [survey_description] NVARCHAR(MAX) NOT NULL
     /// </code>
     /// </summary>
     public const string TABLE_DESCRIPTION = "[surveys].[survey_description]";
@@ -367,7 +367,7 @@ public partial record SqlSurvey(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_title] VARCHAR(255) NOT NULL
+    /// [survey_title] NVARCHAR(255) NOT NULL
     /// </code>
     /// </summary>
     public const string TITLE = "[survey_title]";
@@ -375,7 +375,7 @@ public partial record SqlSurvey(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_author] VARCHAR(255) NOT NULL
+    /// [survey_author] NVARCHAR(255) NOT NULL
     /// </code>
     /// </summary>
     public const string AUTHOR = "[survey_author]";
@@ -383,7 +383,7 @@ public partial record SqlSurvey(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_description] VARCHAR(MAX) NOT NULL
+    /// [survey_description] NVARCHAR(MAX) NOT NULL
     /// </code>
     /// </summary>
     public const string DESCRIPTION = "[survey_description]";
@@ -395,8 +395,8 @@ public partial record SqlSurvey(
 /// TABLE [survey_pages] (
 ///     [survey_id] INT NOT NULL,
 ///     [survey_page_index] INT NOT NULL,
-///     [survey_page_title] VARCHAR(1023) NOT NULL,
-///     [survey_page_description] VARCHAR(MAX) NOT NULL);
+///     [survey_page_title] NVARCHAR(1023) NOT NULL,
+///     [survey_page_description] NVARCHAR(MAX) NOT NULL);
 /// </code>
 /// </summary>
 /// <param name="SurveyId">
@@ -414,13 +414,13 @@ public partial record SqlSurvey(
 /// <param name="Title">
 /// Stored in the database as:
 /// <code>
-/// [survey_page_title] VARCHAR(1023) NOT NULL
+/// [survey_page_title] NVARCHAR(1023) NOT NULL
 /// </code>
 /// </param>
 /// <param name="Description">
 /// Stored in the database as:
 /// <code>
-/// [survey_page_description] VARCHAR(MAX) NOT NULL
+/// [survey_page_description] NVARCHAR(MAX) NOT NULL
 /// </code>
 /// </param>
 public partial record SqlSurveyPage(
@@ -435,8 +435,8 @@ public partial record SqlSurveyPage(
     /// TABLE [survey_pages] (
     ///     [survey_id] INT NOT NULL,
     ///     [survey_page_index] INT NOT NULL,
-    ///     [survey_page_title] VARCHAR(1023) NOT NULL,
-    ///     [survey_page_description] VARCHAR(MAX) NOT NULL);
+    ///     [survey_page_title] NVARCHAR(1023) NOT NULL,
+    ///     [survey_page_description] NVARCHAR(MAX) NOT NULL);
     /// </code>
     /// </summary>
     public const string TABLE = "[survey_pages]";
@@ -460,7 +460,7 @@ public partial record SqlSurveyPage(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_page_title] VARCHAR(1023) NOT NULL
+    /// [survey_page_title] NVARCHAR(1023) NOT NULL
     /// </code>
     /// </summary>
     public const string TABLE_TITLE = "[survey_pages].[survey_page_title]";
@@ -468,7 +468,7 @@ public partial record SqlSurveyPage(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_page_description] VARCHAR(MAX) NOT NULL
+    /// [survey_page_description] NVARCHAR(MAX) NOT NULL
     /// </code>
     /// </summary>
     public const string TABLE_DESCRIPTION = "[survey_pages].[survey_page_description]";
@@ -492,7 +492,7 @@ public partial record SqlSurveyPage(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_page_title] VARCHAR(1023) NOT NULL
+    /// [survey_page_title] NVARCHAR(1023) NOT NULL
     /// </code>
     /// </summary>
     public const string TITLE = "[survey_page_title]";
@@ -500,7 +500,7 @@ public partial record SqlSurveyPage(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_page_description] VARCHAR(MAX) NOT NULL
+    /// [survey_page_description] NVARCHAR(MAX) NOT NULL
     /// </code>
     /// </summary>
     public const string DESCRIPTION = "[survey_page_description]";
@@ -513,7 +513,7 @@ public partial record SqlSurveyPage(
 ///     [survey_id] INT NOT NULL,
 ///     [survey_page_index] INT NOT NULL,
 ///     [survey_question_index] INT NOT NULL,
-///     [survey_question_prompt] VARCHAR(1023) NOT NULL,
+///     [survey_question_prompt] NVARCHAR(1023) NOT NULL,
 ///     [survey_question_answer_type] TINYINT NOT NULL);
 /// </code>
 /// </summary>
@@ -538,7 +538,7 @@ public partial record SqlSurveyPage(
 /// <param name="Title">
 /// Stored in the database as:
 /// <code>
-/// [survey_question_prompt] VARCHAR(1023) NOT NULL
+/// [survey_question_prompt] NVARCHAR(1023) NOT NULL
 /// </code>
 /// </param>
 /// <param name="Type">
@@ -561,7 +561,7 @@ public partial record SqlSurveyQuestion(
     ///     [survey_id] INT NOT NULL,
     ///     [survey_page_index] INT NOT NULL,
     ///     [survey_question_index] INT NOT NULL,
-    ///     [survey_question_prompt] VARCHAR(1023) NOT NULL,
+    ///     [survey_question_prompt] NVARCHAR(1023) NOT NULL,
     ///     [survey_question_answer_type] TINYINT NOT NULL);
     /// </code>
     /// </summary>
@@ -594,7 +594,7 @@ public partial record SqlSurveyQuestion(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_question_prompt] VARCHAR(1023) NOT NULL
+    /// [survey_question_prompt] NVARCHAR(1023) NOT NULL
     /// </code>
     /// </summary>
     public const string TABLE_TITLE = "[survey_questions].[survey_question_prompt]";
@@ -634,7 +634,7 @@ public partial record SqlSurveyQuestion(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_question_prompt] VARCHAR(1023) NOT NULL
+    /// [survey_question_prompt] NVARCHAR(1023) NOT NULL
     /// </code>
     /// </summary>
     public const string TITLE = "[survey_question_prompt]";
@@ -656,8 +656,8 @@ public partial record SqlSurveyQuestion(
 ///     [registered_member_password_hash] VARCHAR(255) NOT NULL,
 ///     [registered_member_phone_number] VARCHAR(13) NOT NULL,
 ///     [registered_member_birth_date] DATETIME NOT NULL,
-///     [registered_member_first_name] VARCHAR(255) NOT NULL,
-///     [registered_member_last_name] VARCHAR(255) NOT NULL);
+///     [registered_member_first_name] NVARCHAR(255) NOT NULL,
+///     [registered_member_last_name] NVARCHAR(255) NOT NULL);
 /// </code>
 /// </summary>
 /// <param name="Id">
@@ -687,13 +687,13 @@ public partial record SqlSurveyQuestion(
 /// <param name="FirstName">
 /// Stored in the database as:
 /// <code>
-/// [registered_member_first_name] VARCHAR(255) NOT NULL
+/// [registered_member_first_name] NVARCHAR(255) NOT NULL
 /// </code>
 /// </param>
 /// <param name="LastName">
 /// Stored in the database as:
 /// <code>
-/// [registered_member_last_name] VARCHAR(255) NOT NULL
+/// [registered_member_last_name] NVARCHAR(255) NOT NULL
 /// </code>
 /// </param>
 public partial record SqlRegisteredMember(
@@ -712,8 +712,8 @@ public partial record SqlRegisteredMember(
     ///     [registered_member_password_hash] VARCHAR(255) NOT NULL,
     ///     [registered_member_phone_number] VARCHAR(13) NOT NULL,
     ///     [registered_member_birth_date] DATETIME NOT NULL,
-    ///     [registered_member_first_name] VARCHAR(255) NOT NULL,
-    ///     [registered_member_last_name] VARCHAR(255) NOT NULL);
+    ///     [registered_member_first_name] NVARCHAR(255) NOT NULL,
+    ///     [registered_member_last_name] NVARCHAR(255) NOT NULL);
     /// </code>
     /// </summary>
     public const string TABLE = "[registered_members]";
@@ -753,7 +753,7 @@ public partial record SqlRegisteredMember(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [registered_member_first_name] VARCHAR(255) NOT NULL
+    /// [registered_member_first_name] NVARCHAR(255) NOT NULL
     /// </code>
     /// </summary>
     public const string TABLE_FIRST_NAME = "[registered_members].[registered_member_first_name]";
@@ -761,7 +761,7 @@ public partial record SqlRegisteredMember(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [registered_member_last_name] VARCHAR(255) NOT NULL
+    /// [registered_member_last_name] NVARCHAR(255) NOT NULL
     /// </code>
     /// </summary>
     public const string TABLE_LAST_NAME = "[registered_members].[registered_member_last_name]";
@@ -801,7 +801,7 @@ public partial record SqlRegisteredMember(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [registered_member_first_name] VARCHAR(255) NOT NULL
+    /// [registered_member_first_name] NVARCHAR(255) NOT NULL
     /// </code>
     /// </summary>
     public const string FIRST_NAME = "[registered_member_first_name]";
@@ -809,7 +809,7 @@ public partial record SqlRegisteredMember(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [registered_member_last_name] VARCHAR(255) NOT NULL
+    /// [registered_member_last_name] NVARCHAR(255) NOT NULL
     /// </code>
     /// </summary>
     public const string LAST_NAME = "[registered_member_last_name]";
@@ -1225,7 +1225,7 @@ public partial record SqlSubmissionIntegerAnswer(
 ///     [survey_question_index] INT NOT NULL,
 ///     [submission_index] INT NOT NULL,
 ///     [submission_answer_index] INT NOT NULL,
-///     [submission_answer_text] VARCHAR(MAX) NOT NULL);
+///     [submission_answer_text] NVARCHAR(MAX) NOT NULL);
 /// </code>
 /// </summary>
 /// <param name="SurveyId">
@@ -1261,7 +1261,7 @@ public partial record SqlSubmissionIntegerAnswer(
 /// <param name="Value">
 /// Stored in the database as:
 /// <code>
-/// [submission_answer_text] VARCHAR(MAX) NOT NULL
+/// [submission_answer_text] NVARCHAR(MAX) NOT NULL
 /// </code>
 /// </param>
 public partial record SqlSubmissionTextAnswer(
@@ -1281,7 +1281,7 @@ public partial record SqlSubmissionTextAnswer(
     ///     [survey_question_index] INT NOT NULL,
     ///     [submission_index] INT NOT NULL,
     ///     [submission_answer_index] INT NOT NULL,
-    ///     [submission_answer_text] VARCHAR(MAX) NOT NULL);
+    ///     [submission_answer_text] NVARCHAR(MAX) NOT NULL);
     /// </code>
     /// </summary>
     public const string TABLE = "[submission_text_answers]";
@@ -1329,7 +1329,7 @@ public partial record SqlSubmissionTextAnswer(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [submission_answer_text] VARCHAR(MAX) NOT NULL
+    /// [submission_answer_text] NVARCHAR(MAX) NOT NULL
     /// </code>
     /// </summary>
     public const string TABLE_VALUE = "[submission_text_answers].[submission_answer_text]";
@@ -1377,7 +1377,7 @@ public partial record SqlSubmissionTextAnswer(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [submission_answer_text] VARCHAR(MAX) NOT NULL
+    /// [submission_answer_text] NVARCHAR(MAX) NOT NULL
     /// </code>
     /// </summary>
     public const string VALUE = "[submission_answer_text]";
@@ -1391,7 +1391,7 @@ public partial record SqlSubmissionTextAnswer(
 ///     [survey_page_index] INT NOT NULL,
 ///     [survey_question_index] INT NOT NULL,
 ///     [survey_answer_option_index] INT NOT NULL,
-///     [survey_answer_option_text] VARCHAR(1023) NOT NULL);
+///     [survey_answer_option_text] NVARCHAR(1023) NOT NULL);
 /// </code>
 /// </summary>
 /// <param name="SurveyId">
@@ -1421,7 +1421,7 @@ public partial record SqlSubmissionTextAnswer(
 /// <param name="Text">
 /// Stored in the database as:
 /// <code>
-/// [survey_answer_option_text] VARCHAR(1023) NOT NULL
+/// [survey_answer_option_text] NVARCHAR(1023) NOT NULL
 /// </code>
 /// </param>
 public partial record SqlSurveyQuestionAnswerOption(
@@ -1439,7 +1439,7 @@ public partial record SqlSurveyQuestionAnswerOption(
     ///     [survey_page_index] INT NOT NULL,
     ///     [survey_question_index] INT NOT NULL,
     ///     [survey_answer_option_index] INT NOT NULL,
-    ///     [survey_answer_option_text] VARCHAR(1023) NOT NULL);
+    ///     [survey_answer_option_text] NVARCHAR(1023) NOT NULL);
     /// </code>
     /// </summary>
     public const string TABLE = "[survey_question_answer_options]";
@@ -1479,7 +1479,7 @@ public partial record SqlSurveyQuestionAnswerOption(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_answer_option_text] VARCHAR(1023) NOT NULL
+    /// [survey_answer_option_text] NVARCHAR(1023) NOT NULL
     /// </code>
     /// </summary>
     public const string TABLE_TEXT = "[survey_question_answer_options].[survey_answer_option_text]";
@@ -1519,7 +1519,7 @@ public partial record SqlSurveyQuestionAnswerOption(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_answer_option_text] VARCHAR(1023) NOT NULL
+    /// [survey_answer_option_text] NVARCHAR(1023) NOT NULL
     /// </code>
     /// </summary>
     public const string TEXT = "[survey_answer_option_text]";
@@ -2202,7 +2202,7 @@ public partial record SqlSurveyQuestionShowConditionIntegerArg(
 ///     [survey_question_index] INT NOT NULL,
 ///     [survey_question_show_condition_index] INT NOT NULL,
 ///     [survey_question_show_condition_arg_index] INT NOT NULL,
-///     [survey_question_show_condition_arg_text] VARCHAR(MAX) NOT NULL);
+///     [survey_question_show_condition_arg_text] NVARCHAR(MAX) NOT NULL);
 /// </code>
 /// </summary>
 /// <param name="SurveyId">
@@ -2238,7 +2238,7 @@ public partial record SqlSurveyQuestionShowConditionIntegerArg(
 /// <param name="ArgValue">
 /// Stored in the database as:
 /// <code>
-/// [survey_question_show_condition_arg_text] VARCHAR(MAX) NOT NULL
+/// [survey_question_show_condition_arg_text] NVARCHAR(MAX) NOT NULL
 /// </code>
 /// </param>
 public partial record SqlSurveyQuestionShowConditionTextArg(
@@ -2258,7 +2258,7 @@ public partial record SqlSurveyQuestionShowConditionTextArg(
     ///     [survey_question_index] INT NOT NULL,
     ///     [survey_question_show_condition_index] INT NOT NULL,
     ///     [survey_question_show_condition_arg_index] INT NOT NULL,
-    ///     [survey_question_show_condition_arg_text] VARCHAR(MAX) NOT NULL);
+    ///     [survey_question_show_condition_arg_text] NVARCHAR(MAX) NOT NULL);
     /// </code>
     /// </summary>
     public const string TABLE = "[survey_question_show_condition_text_args]";
@@ -2306,7 +2306,7 @@ public partial record SqlSurveyQuestionShowConditionTextArg(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_question_show_condition_arg_text] VARCHAR(MAX) NOT NULL
+    /// [survey_question_show_condition_arg_text] NVARCHAR(MAX) NOT NULL
     /// </code>
     /// </summary>
     public const string TABLE_ARG_VALUE = "[survey_question_show_condition_text_args].[survey_question_show_condition_arg_text]";
@@ -2354,7 +2354,7 @@ public partial record SqlSurveyQuestionShowConditionTextArg(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_question_show_condition_arg_text] VARCHAR(MAX) NOT NULL
+    /// [survey_question_show_condition_arg_text] NVARCHAR(MAX) NOT NULL
     /// </code>
     /// </summary>
     public const string ARG_VALUE = "[survey_question_show_condition_arg_text]";
@@ -3037,7 +3037,7 @@ public partial record SqlSurveyQuestionValidationConditionIntegerArg(
 ///     [survey_question_index] INT NOT NULL,
 ///     [survey_question_validation_condition_index] INT NOT NULL,
 ///     [survey_question_validation_condition_arg_index] INT NOT NULL,
-///     [survey_question_validation_condition_arg_text] VARCHAR(MAX) NOT NULL);
+///     [survey_question_validation_condition_arg_text] NVARCHAR(MAX) NOT NULL);
 /// </code>
 /// </summary>
 /// <param name="SurveyId">
@@ -3073,7 +3073,7 @@ public partial record SqlSurveyQuestionValidationConditionIntegerArg(
 /// <param name="ArgValue">
 /// Stored in the database as:
 /// <code>
-/// [survey_question_validation_condition_arg_text] VARCHAR(MAX) NOT NULL
+/// [survey_question_validation_condition_arg_text] NVARCHAR(MAX) NOT NULL
 /// </code>
 /// </param>
 public partial record SqlSurveyQuestionValidationConditionTextArg(
@@ -3093,7 +3093,7 @@ public partial record SqlSurveyQuestionValidationConditionTextArg(
     ///     [survey_question_index] INT NOT NULL,
     ///     [survey_question_validation_condition_index] INT NOT NULL,
     ///     [survey_question_validation_condition_arg_index] INT NOT NULL,
-    ///     [survey_question_validation_condition_arg_text] VARCHAR(MAX) NOT NULL);
+    ///     [survey_question_validation_condition_arg_text] NVARCHAR(MAX) NOT NULL);
     /// </code>
     /// </summary>
     public const string TABLE = "[survey_question_validation_condition_text_args]";
@@ -3141,7 +3141,7 @@ public partial record SqlSurveyQuestionValidationConditionTextArg(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_question_validation_condition_arg_text] VARCHAR(MAX) NOT NULL
+    /// [survey_question_validation_condition_arg_text] NVARCHAR(MAX) NOT NULL
     /// </code>
     /// </summary>
     public const string TABLE_ARG_VALUE = "[survey_question_validation_condition_text_args].[survey_question_validation_condition_arg_text]";
@@ -3189,7 +3189,7 @@ public partial record SqlSurveyQuestionValidationConditionTextArg(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_question_validation_condition_arg_text] VARCHAR(MAX) NOT NULL
+    /// [survey_question_validation_condition_arg_text] NVARCHAR(MAX) NOT NULL
     /// </code>
     /// </summary>
     public const string ARG_VALUE = "[survey_question_validation_condition_arg_text]";
@@ -3697,7 +3697,7 @@ public partial record SqlSurveySessionIntegerAnswer(
 ///     [survey_question_index] INT NOT NULL,
 ///     [survey_session_token] BINARY(32) NOT NULL,
 ///     [survey_session_answer_index] INT NOT NULL,
-///     [survey_session_answer_text] VARCHAR(MAX) NOT NULL);
+///     [survey_session_answer_text] NVARCHAR(MAX) NOT NULL);
 /// </code>
 /// </summary>
 /// <param name="SurveyId">
@@ -3733,7 +3733,7 @@ public partial record SqlSurveySessionIntegerAnswer(
 /// <param name="Value">
 /// Stored in the database as:
 /// <code>
-/// [survey_session_answer_text] VARCHAR(MAX) NOT NULL
+/// [survey_session_answer_text] NVARCHAR(MAX) NOT NULL
 /// </code>
 /// </param>
 public partial record SqlSurveySessionTextAnswer(
@@ -3753,7 +3753,7 @@ public partial record SqlSurveySessionTextAnswer(
     ///     [survey_question_index] INT NOT NULL,
     ///     [survey_session_token] BINARY(32) NOT NULL,
     ///     [survey_session_answer_index] INT NOT NULL,
-    ///     [survey_session_answer_text] VARCHAR(MAX) NOT NULL);
+    ///     [survey_session_answer_text] NVARCHAR(MAX) NOT NULL);
     /// </code>
     /// </summary>
     public const string TABLE = "[survey_session_text_answers]";
@@ -3801,7 +3801,7 @@ public partial record SqlSurveySessionTextAnswer(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_session_answer_text] VARCHAR(MAX) NOT NULL
+    /// [survey_session_answer_text] NVARCHAR(MAX) NOT NULL
     /// </code>
     /// </summary>
     public const string TABLE_VALUE = "[survey_session_text_answers].[survey_session_answer_text]";
@@ -3849,7 +3849,7 @@ public partial record SqlSurveySessionTextAnswer(
     /// <summary>
     /// Stored in the database as:
     /// <code>
-    /// [survey_session_answer_text] VARCHAR(MAX) NOT NULL
+    /// [survey_session_answer_text] NVARCHAR(MAX) NOT NULL
     /// </code>
     /// </summary>
     public const string VALUE = "[survey_session_answer_text]";

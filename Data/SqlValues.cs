@@ -163,4 +163,20 @@ public static class SqlValueExtensions
     public static string StrictValue(this SqlString value) => value.IsNull
         ? throw new InvalidOperationException("Sql value is null")
         : value.Value;
+
+    /// <summary>
+    /// Converts a Sql type to a nullable type, returning <c>null</c> if the Sql value is null.
+    /// </summary>
+    /// <returns><c>value.IsNull ? null : value.Value</c></returns>
+    public static byte[]? CheckedValue(this SqlBytes value)
+        => value.IsNull ? null : value.Value;
+
+    /// <summary>
+    /// Converts a Sql type to a non-nullable type, throwing an exception if the Sql value is null.
+    /// </summary>
+    /// <returns><c>value.IsNull ? throw : value.Value</c></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static byte[] StrictValue(this SqlBytes value) => value.IsNull
+        ? throw new InvalidOperationException("Sql value is null")
+        : value.Value;
 }

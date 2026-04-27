@@ -1,0 +1,9 @@
+@using DataDriven.Controllers
+@using DataDriven.Data
+@using System.Diagnostics
+@model ISurveyModel
+<h1>@Model.Title</h1>
+<p>
+    @Model.Description
+</p>
+<a href="~/survey/@Model.Id/0">Begin</a>
