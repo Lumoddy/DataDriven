@@ -12,9 +12,8 @@ public partial class DatabaseProcedureService : IDatabaseProcedureService
 {
     public async Task DeleteOldSurveySessions(SqlConnection connection)
     {
-        await using SqlCommand command = new(
-            "delete_old_survey_sessions",
-            connection) { CommandType = CommandType.StoredProcedure };
+        await using SqlCommand command = new("delete_old_survey_sessions", connection);
+        command.CommandType = CommandType.StoredProcedure;
 
         await command.ExecuteNonQueryAsync();
     }

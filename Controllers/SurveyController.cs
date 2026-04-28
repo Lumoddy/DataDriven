@@ -252,7 +252,7 @@ public class SurveyController(
         if (survey == null)
             return NotFound();
 
-        return View("StartPage", survey);
+        return View(survey);
     }
 
     [Route("{surveyId}/done")]
@@ -290,6 +290,6 @@ public class SurveyController(
             return BadRequest();
 
         ViewData["index"] = submissionIndex.Value;
-        return View("FinalPage", survey);
+        return View(survey);
     }
 }

@@ -71,6 +71,7 @@ public record SurveyModel : ISurveyModel
 
 public interface ISurveyPageModel
 {
+    public int Id { get; }
     public ISurveyModel? Parent { get; }
     public string Title { get; }
     public string Description { get; }
@@ -78,6 +79,7 @@ public interface ISurveyPageModel
 }
 
 public record SurveyPageModel(
+    int Id,
     string Title,
     string Description,
     IReadOnlyDictionary<int, ISurveyQuestionModel> Questions,
@@ -283,3 +285,51 @@ public record SurveyQuestionValidationConditionBoundOtherOfMultiSelectAndOtherMo
 {
     ISurveyQuestionModel ISurveyQuestionValidationConditionModel.Parent => Parent;
 }
+
+public interface ISurveyQuestionAnswer;
+
+public record SurveyQuestionSmallTextAnswer(
+    SurveyQuestionSmallTextModel Question,
+    string Text) : ISurveyQuestionAnswer;
+
+public record SurveyQuestionCheckboxAnswer(
+    SurveyQuestionCheckboxModel Question,
+    bool Checked) : ISurveyQuestionAnswer;
+
+public record SurveyQuestionRadioAnswer(
+    SurveyQuestionRadioModel Question,
+    int Index) : ISurveyQuestionAnswer;
+
+public record SurveyQuestionRadioOrOtherAnswer : ISurveyQuestionAnswer
+{
+    public SurveyQuestionRadioOrOtherModel Question { get; set; }
+    public int? Index { get => value as int?; set => this.value = value; }
+    public string? OtherValue { get => value as string; set => this.value = value; }
+
+    object? value;
+
+    public SurveyQuestionRadioOrOtherAnswer(
+        SurveyQuestionRadioOrOtherModel Question,
+        int Index)
+    {
+        this.Question = Question;
+        value = Index;
+    }
+
+    public SurveyQuestionRadioOrOtherAnswer(
+        SurveyQuestionRadioOrOtherModel Question,
+        string OtherValue)
+    {
+        this.Question = Question;
+        value = OtherValue;
+    }
+}
+
+public record SurveyQuestionMultiSelectAnswer(
+    SurveyQuestionMultiSelectModel Question,
+    IReadOnlyList<bool> Checked) : ISurveyQuestionAnswer;
+
+public record SurveyQuestionMultiSelectAndOtherAnswer(
+    SurveyQuestionMultiSelectAndOtherModel Question,
+    IReadOnlyList<bool> Checked,
+    string? OtherValue) : ISurveyQuestionAnswer;

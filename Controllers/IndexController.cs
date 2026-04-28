@@ -7,8 +7,7 @@ namespace DataDriven.Controllers;
 [Route("")]
 public class IndexController(
     IConfiguration configuration,
-    IDatabaseProcedureService procedureService,
-    ILogger<IndexController> logger) : Controller
+    IDatabaseProcedureService procedureService) : Controller
 {
     [Route("")]
     public async Task<IActionResult> Index()

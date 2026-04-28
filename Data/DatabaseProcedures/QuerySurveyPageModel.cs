@@ -50,6 +50,7 @@ public partial class DatabaseProcedureService(
         Dictionary<int, ISurveyQuestionModel> questions = [];
 
         SurveyPageModel page = new(
+            Id: surveyPageIndex,
             Title: reader.GetSqlString(4).StrictValue(),
             Description: reader.GetSqlString(5).StrictValue(),
             Questions: questions,
