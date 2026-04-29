@@ -699,7 +699,7 @@
                             {
                                 <li>
                                     <label for="question-@question.Id-multi-select-@i">@option</label>
-                                    <input id="question-@question.Id-multi-select-@i" type="checkbox" name="question-@question.Id" value="@i"/>
+                                    <input id="question-@question.Id-multi-select-@i" type="checkbox" name="question-@question.Id-@i"/>
                                 </li>
                             }
                         </ul>
@@ -713,12 +713,12 @@
                             {
                                 <li>
                                     <label for="question-@question.Id-multi-select-@i">@option</label>
-                                    <input id="question-@question.Id-multi-select-@i" type="checkbox" name="question-@question.Id" value="@i"/>
+                                    <input id="question-@question.Id-multi-select-@i" type="checkbox" name="question-@question.Id-@i"/>
                                 </li>
                             }
                             <li>
-                                <input id="question-@question.Id-multi-select-other-text" type="text" name="question-@question.Id-text" placeholder="Other..."/>
-                                <input id="question-@question.Id-multi-select-other" type="checkbox" name="question-@question.Id" value="other"/>
+                                <input id="question-@question.Id-multi-select-other-text" type="text" name="question-@question.Id-other-text" placeholder="Other..."/>
+                                <input id="question-@question.Id-multi-select-other" type="checkbox" name="question-@question.Id-other"/>
                             </li>
                         </ul>
 

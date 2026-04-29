@@ -615,4 +615,4 @@ INNER JOIN
     ON [validation_condition_type].[min]
         IS NOT NULL
     AND [validation_condition_type].[max]
-        IS NOT NULL
+        IS NOT NULL;

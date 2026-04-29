@@ -3,10 +3,12 @@
     @foreach (ISurveyModel survey in Model)
     {
         <li>
-            <a href="~/survey/@survey.Id">
-                <h2>@survey.Title</h2>
-                <p>@survey.Author</p>
-            </a>
+            <h2>@survey.Title</h2>
+            <p>By @survey.Author</p>
+            <ul>
+                <li><a href="~/survey/@survey.Id">Start Survey</a></li>
+                <li><a href="~/staff/search/@survey.Id">See Survey Results</a></li>
+            </ul>
         </li>
     }
 </ul>

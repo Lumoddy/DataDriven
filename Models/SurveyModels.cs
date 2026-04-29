@@ -1,5 +1,6 @@
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using DataDriven.Data;
 
@@ -298,29 +299,34 @@ public record SurveyQuestionCheckboxAnswer(
 
 public record SurveyQuestionRadioAnswer(
     SurveyQuestionRadioModel Question,
-    int Index) : ISurveyQuestionAnswer;
+    int? Index) : ISurveyQuestionAnswer;
 
 public record SurveyQuestionRadioOrOtherAnswer : ISurveyQuestionAnswer
 {
     public SurveyQuestionRadioOrOtherModel Question { get; set; }
     public int? Index { get => value as int?; set => this.value = value; }
     public string? OtherValue { get => value as string; set => this.value = value; }
+    public bool IsNull => value == null;
 
-    object? value;
+    object? value = null;
+
+    public SurveyQuestionRadioOrOtherAnswer(
+        SurveyQuestionRadioOrOtherModel Question)
+    {
+        this.Question = Question;
+    }
 
     public SurveyQuestionRadioOrOtherAnswer(
         SurveyQuestionRadioOrOtherModel Question,
-        int Index)
+        int? Index) : this(Question)
     {
-        this.Question = Question;
         value = Index;
     }
 
     public SurveyQuestionRadioOrOtherAnswer(
         SurveyQuestionRadioOrOtherModel Question,
-        string OtherValue)
+        string? OtherValue) : this(Question)
     {
-        this.Question = Question;
         value = OtherValue;
     }
 }

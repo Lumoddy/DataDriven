@@ -166,7 +166,7 @@ public class SurveyController(
                             .Select((_, i) => form.ContainsKey(
                                 $"question-{questionIndex}-{i}"));
 
-                        postedAnswers.Add([.. answer.Cast<object>()]);
+                        postedAnswers.Add([.. answer]);
 
                         break;
                     }
@@ -267,13 +267,6 @@ public class SurveyController(
 
         await connection.OpenAsync();
 
-        byte[] sessionTokenValue = new byte[32];
-
-        if (!Request.Cookies.TryGetValue("session", out string? sessionToken)
-            || !Convert.TryFromBase64String(sessionToken, sessionTokenValue, out int bytesWritten)
-            || bytesWritten != 32)
-            return NotFound();
-
         SurveyModel? survey = await procedureService.QuerySurvey(
             connection,
             surveyIdValue);
@@ -281,15 +274,20 @@ public class SurveyController(
         if (survey == null)
             return NotFound();
 
-        int? submissionIndex = await procedureService.SaveSurveySubmission(
-            connection,
-            surveyIdValue,
-            sessionTokenValue);
+        byte[] sessionTokenValue = new byte[32];
 
-        if (submissionIndex == null)
-            return BadRequest();
+        if (Request.Cookies.TryGetValue("session", out string? sessionToken)
+            && Convert.TryFromBase64String(sessionToken, sessionTokenValue, out int bytesWritten)
+            && bytesWritten == 32)
+        {
+            ViewData["index"] = await procedureService.SaveSurveySubmission(
+                connection,
+                surveyIdValue,
+                sessionTokenValue);
+        }
+        else
+            ViewData["index"] = null;
 
-        ViewData["index"] = submissionIndex.Value;
         return View(survey);
     }
 }

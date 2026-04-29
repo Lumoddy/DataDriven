@@ -481,4 +481,4 @@ INNER JOIN
     ON [show_condition_type].[has_answered]
         IS NOT NULL
     AND [show_condition_type].[has_not_answered]
-        IS NOT NULL
+        IS NOT NULL;

@@ -24,7 +24,9 @@ BEGIN
         [survey_pages]
     WHERE
         [survey_pages].[survey_id]
-            = @survey_id;
+            = @survey_id
+    ORDER BY
+        [survey_pages].[survey_page_index] ASC;
 
     SELECT
         [survey_questions].[survey_page_index],
@@ -37,6 +39,7 @@ BEGIN
         [survey_questions].[survey_id]
             = @survey_id
     ORDER BY
+        [survey_questions].[survey_page_index] ASC,
         [survey_questions].[survey_question_index] ASC;
 
     SELECT
@@ -50,6 +53,7 @@ BEGIN
         [survey_question_answer_options].[survey_id]
             = @survey_id
     ORDER BY
+        [survey_question_answer_options].[survey_page_index] ASC,
         [survey_question_answer_options].[survey_question_index] ASC,
         [survey_question_answer_options].[survey_answer_option_index] ASC;
 
@@ -65,6 +69,7 @@ BEGIN
         [survey_question_show_conditions].[survey_id]
             = @survey_id
     ORDER BY
+        [survey_question_show_conditions].[survey_page_index] ASC,
         [survey_question_show_conditions].[survey_question_index] ASC,
         [survey_question_show_conditions].[survey_question_show_condition_index] ASC;
 
@@ -83,6 +88,7 @@ BEGIN
         [survey_question_show_condition_args_view].[survey_id]
             = @survey_id
     ORDER BY
+        [survey_question_show_condition_args_view].[survey_page_index] ASC,
         [survey_question_show_condition_args_view].[survey_question_index] ASC,
         [survey_question_show_condition_args_view].[survey_question_show_condition_index] ASC,
         [survey_question_show_condition_args_view].[survey_question_show_condition_arg_index] ASC;
@@ -99,6 +105,7 @@ BEGIN
         [survey_question_validation_conditions].[survey_id]
             = @survey_id
     ORDER BY
+        [survey_question_validation_conditions].[survey_page_index] ASC,
         [survey_question_validation_conditions].[survey_question_index] ASC,
         [survey_question_validation_conditions].[survey_question_validation_condition_index] ASC;
 
@@ -117,6 +124,7 @@ BEGIN
         [survey_question_validation_condition_args_view].[survey_id]
             = @survey_id
     ORDER BY
+        [survey_question_validation_condition_args_view].[survey_page_index] ASC,
         [survey_question_validation_condition_args_view].[survey_question_index] ASC,
         [survey_question_validation_condition_args_view].[survey_question_validation_condition_index] ASC,
         [survey_question_validation_condition_args_view].[survey_question_validation_condition_arg_index] ASC;

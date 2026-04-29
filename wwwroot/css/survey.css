@@ -22,16 +22,11 @@ html
     }
 }
 
-.question
+li.question
 {
-    interpolate-size: allow-keywords;
-    height: fit-content;
-    transition: height 0.5s ease-out;
-    overflow: hidden;
-
     &[condition-hidden]
     {
-        height: 0;
+        display: none;
     }
 
     &[condition-invalid]
@@ -41,6 +36,22 @@ html
             color: red;
         }
     }
+}
+
+td.question
+{
+    font-weight: bold;
+}
+
+td.empty
+{
+    opacity: 0.5;
+}
+
+tr.page
+{
+    font-size: x-large;
+    font-weight: bold;
 }
 
 *:has([condition-invalid]:not([condition-hidden])) ~ #submit-page

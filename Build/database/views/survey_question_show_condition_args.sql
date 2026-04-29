@@ -55,4 +55,4 @@ LEFT JOIN
     AND [survey_question_show_condition_text_args].[survey_question_show_condition_index]
         = [survey_question_show_condition_args].[survey_question_show_condition_index]
     AND [survey_question_show_condition_text_args].[survey_question_show_condition_arg_index]
-        = [survey_question_show_condition_args].[survey_question_show_condition_arg_index]
+        = [survey_question_show_condition_args].[survey_question_show_condition_arg_index];

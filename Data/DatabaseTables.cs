@@ -821,7 +821,8 @@ public partial record SqlRegisteredMember(
 /// TABLE [submissions] (
 ///     [survey_id] INT NOT NULL,
 ///     [submission_index] INT NOT NULL,
-///     [registered_member_id] INT NULL);
+///     [registered_member_id] INT NULL,
+///     [submission_time] DATETIME NOT NULL CONSTRAINT [default_submissions_1] DEFAULT GETUTCDATE());
 /// </code>
 /// </summary>
 /// <param name="SurveyId">
@@ -842,10 +843,17 @@ public partial record SqlRegisteredMember(
 /// [registered_member_id] INT NULL
 /// </code>
 /// </param>
+/// <param name="SubmissionTime">
+/// Stored in the database as:
+/// <code>
+/// [submission_time] DATETIME NOT NULL CONSTRAINT [default_submissions_2] DEFAULT GETUTCDATE()
+/// </code>
+/// </param>
 public partial record SqlSubmission(
     SqlInt32 SurveyId,
     SqlInt32 Index,
-    SqlInt32 RegisteredMemberId)
+    SqlInt32 RegisteredMemberId,
+    SqlDateTime SubmissionTime)
 {
     /// <summary>
     /// Stored in the database as:
@@ -853,7 +861,8 @@ public partial record SqlSubmission(
     /// TABLE [submissions] (
     ///     [survey_id] INT NOT NULL,
     ///     [submission_index] INT NOT NULL,
-    ///     [registered_member_id] INT NULL);
+    ///     [registered_member_id] INT NULL,
+    ///     [submission_time] DATETIME NOT NULL CONSTRAINT [default_submissions_1] DEFAULT GETUTCDATE());
     /// </code>
     /// </summary>
     public const string TABLE = "[submissions]";
@@ -885,6 +894,14 @@ public partial record SqlSubmission(
     /// <summary>
     /// Stored in the database as:
     /// <code>
+    /// [submission_time] DATETIME NOT NULL CONSTRAINT [default_submissions_2] DEFAULT GETUTCDATE()
+    /// </code>
+    /// </summary>
+    public const string TABLE_SUBMISSION_TIME = "[submissions].[submission_time]";
+
+    /// <summary>
+    /// Stored in the database as:
+    /// <code>
     /// [survey_id] INT NOT NULL
     /// </code>
     /// </summary>
@@ -905,6 +922,14 @@ public partial record SqlSubmission(
     /// </code>
     /// </summary>
     public const string REGISTERED_MEMBER_ID = "[registered_member_id]";
+
+    /// <summary>
+    /// Stored in the database as:
+    /// <code>
+    /// [submission_time] DATETIME NOT NULL CONSTRAINT [default_submissions_3] DEFAULT GETUTCDATE()
+    /// </code>
+    /// </summary>
+    public const string SUBMISSION_TIME = "[submission_time]";
 }
 
 /// <summary>

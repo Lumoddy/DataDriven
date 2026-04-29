@@ -48,7 +48,8 @@ CREATE TABLE [registered_members] (
 CREATE TABLE [submissions] (
     [survey_id] INT NOT NULL,
     [submission_index] INT NOT NULL,
-    [registered_member_id] INT NULL);
+    [registered_member_id] INT NULL,
+    [submission_time] DATETIME NOT NULL CONSTRAINT [default_submissions_1] DEFAULT GETUTCDATE());
 
 CREATE TABLE [submission_answers] (
     [survey_id] INT NOT NULL,

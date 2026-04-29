@@ -29,4 +29,4 @@ LEFT JOIN
     AND [survey_session_text_answers].[survey_session_answer_index]
         = [survey_session_answers].[survey_session_answer_index]
     AND [survey_session_text_answers].[survey_session_token]
-        = [survey_session_answers].[survey_session_token]
+        = [survey_session_answers].[survey_session_token];

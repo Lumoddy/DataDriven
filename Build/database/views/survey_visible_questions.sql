@@ -87,4 +87,4 @@ INNER JOIN
 INNER JOIN
     [operator]
     ON [operator].[or] IS NOT NULL
-    AND [operator].[and] IS NOT NULL
+    AND [operator].[and] IS NOT NULL;

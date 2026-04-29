@@ -1,1 +1,195 @@
-It Worked!
+@model SurveyModel
+@{
+    IReadOnlyList<IReadOnlyList<IReadOnlyList<ISurveyQuestionAnswer>>> answers
+        = (IReadOnlyList<IReadOnlyList<IReadOnlyList<ISurveyQuestionAnswer>>>)ViewData["answers"]!;
+}
+<h1>@Model.Title</h1>
+<table>
+    <tbody>
+        <tr>
+            <th>Question</th>
+            @for (int i = 0; i < answers.Count; i += 1)
+            {
+                <th>@(i + 1)@((i % 10) switch { 0 => "st", 1 => "nd", _ => "th" })</th>
+            }
+        </tr>
+        @foreach ((int pageIndex, ISurveyPageModel page) in Model.Pages!.Index())
+        {
+            <tr class="page">
+                <td colspan="@(answers.Count + 1)">@(page.Title)</td>
+            </tr>
+
+            foreach ((int questionIndex, ISurveyQuestionModel question) in page.Questions.Values.Index())
+            {
+                switch (question)
+                {
+                    case SurveyQuestionSmallTextModel smallText:
+                    {
+                        <tr class="question-small-text">
+                            <td class="question">@smallText.Title</td>
+                            @for (int i = 0; i < answers.Count; i += 1)
+                            {
+                                SurveyQuestionSmallTextAnswer answer
+                                    = (SurveyQuestionSmallTextAnswer)answers[i][pageIndex][questionIndex]!;
+
+                                <td>@answer.Text</td>
+                            }
+                        </tr>
+
+                        break;
+                    }
+                    case SurveyQuestionCheckboxModel checkbox:
+                    {
+                        <tr class="question-checkbox">
+                            <td class="question">@checkbox.Title</td>
+                            @for (int i = 0; i < answers.Count; i += 1)
+                            {
+                                SurveyQuestionCheckboxAnswer answer
+                                    = (SurveyQuestionCheckboxAnswer)answers[i][pageIndex][questionIndex]!;
+
+                                <td>
+                                    <input
+                                        type="checkbox"
+                                        disabled
+                                        @if (answer.Checked) { @Html.Raw("checked") }/>
+                                </td>
+                            }
+                        </tr>
+
+                        break;
+                    }
+                    case SurveyQuestionRadioModel radio:
+                    {
+                        <tr class="question-radio">
+                            <td class="question">@radio.Title</td>
+                            @for (int i = 0; i < answers.Count; i += 1)
+                            {
+                                SurveyQuestionRadioAnswer answer
+                                    = (SurveyQuestionRadioAnswer)answers[i][pageIndex][questionIndex]!;
+
+                                if (answer.Index is int index)
+                                {
+                                    <td>
+                                        @answer.Question.Options[index]
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td class="empty">Empty</td>
+                                }
+                            }
+                        </tr>
+
+                        break;
+                    }
+                    case SurveyQuestionRadioOrOtherModel radio:
+                    {
+                        <tr class="question-radio question-other">
+                            <td class="question">@radio.Title</td>
+                            @for (int i = 0; i < answers.Count; i += 1)
+                            {
+                                SurveyQuestionRadioOrOtherAnswer answer
+                                    = (SurveyQuestionRadioOrOtherAnswer)answers[i][pageIndex][questionIndex]!;
+
+                                if (answer.OtherValue is string other)
+                                {
+                                    <td class="other">
+                                        @other
+                                    </td>
+                                }
+                                else if (answer.Index is int index)
+                                {
+                                    <td class="other">
+                                        @answer.Question.Options[index]
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td class="empty">Empty</td>
+                                }
+                            }
+                        </tr>
+
+                        break;
+                    }
+                    case SurveyQuestionMultiSelectModel multiSelect:
+                    {
+                        <tr class="question-multi-select">
+                            <td class="question">@multiSelect.Title</td>
+                            <td colspan="@answers.Count"></td>
+                        </tr>
+
+                        for (int optionIndex = 0; optionIndex < multiSelect.Options.Count; optionIndex += 1)
+                        {
+                            <tr class="question-multi-select-option">
+                                <td class="option">@multiSelect.Options[optionIndex]</td>
+                                @for (int i = 0; i < answers.Count; i += 1)
+                                {
+                                    SurveyQuestionMultiSelectAnswer answer
+                                        = (SurveyQuestionMultiSelectAnswer)answers[i][pageIndex][questionIndex]!;
+
+                                    <td>
+                                        <input
+                                            type="checkbox"
+                                            disabled
+                                            @if (answer.Checked[optionIndex]) { @Html.Raw("checked") }/>
+                                    </td>
+                                }
+                            </tr>
+                        }
+
+                        break;
+                    }
+                    case SurveyQuestionMultiSelectAndOtherModel multiSelect:
+                    {
+                        <tr class="question-multi-select question-other">
+                            <td class="question">@multiSelect.Title</td>
+                            <td colspan="@answers.Count"></td>
+                        </tr>
+
+                        for (int optionIndex = 0; optionIndex < multiSelect.Options.Count; optionIndex += 1)
+                        {
+                            <tr class="question-multi-select-option">
+                                <td class="option">@multiSelect.Options[optionIndex]</td>
+                                @for (int i = 0; i < answers.Count; i += 1)
+                                {
+                                    SurveyQuestionMultiSelectAndOtherAnswer answer
+                                        = (SurveyQuestionMultiSelectAndOtherAnswer)answers[i][pageIndex][questionIndex]!;
+
+                                    <td>
+                                        <input
+                                            type="checkbox"
+                                            disabled
+                                            @if (answer.Checked[optionIndex]) { @Html.Raw("checked") }/>
+                                    </td>
+                                }
+                            </tr>
+                        }
+
+                        <tr class="question-multi-select-option question-other">
+                            <td class="option">Other</td>
+                            @for (int i = 0; i < answers.Count; i += 1)
+                            {
+                                SurveyQuestionMultiSelectAndOtherAnswer answer
+                                    = (SurveyQuestionMultiSelectAndOtherAnswer)answers[i][pageIndex][questionIndex]!;
+
+                                if (answer.OtherValue is string other)
+                                {
+                                    <td class="other">
+                                        @other
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td class="other empty">Empty</td>
+                                }
+                            }
+                        </tr>
+
+                        break;
+                    }
+                }
+            }
+        }
+    </tbody>
+</table>

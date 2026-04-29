@@ -1,6 +1,8 @@
 using System.Data;
 using System.Diagnostics;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using DataDriven.Models;
 using Microsoft.Data.SqlClient;
@@ -20,7 +22,7 @@ public partial class DatabaseProcedureService : IDatabaseProcedureService
         SqlConnection connection,
         int surveyId)
     {
-        await using SqlCommand command = new("query_survey", connection);
+        await using SqlCommand command = new("query_survey_model", connection);
         command.CommandType = CommandType.StoredProcedure;
 
         command.Parameters.Add("@survey_id", SqlDbType.Int).Value
@@ -55,7 +57,7 @@ public partial class DatabaseProcedureService : IDatabaseProcedureService
             Title: reader.GetSqlString(0).StrictValue(),
             Author: reader.GetSqlString(1).StrictValue(),
             Description: reader.GetSqlString(2).StrictValue(),
-            Pages: []);
+            Pages: new List<ISurveyPageModel>());
 
         await reader.NextResultAsync();
 
@@ -258,6 +260,14 @@ public partial class DatabaseProcedureService : IDatabaseProcedureService
             in pageSetup
         )
         {
+            List<ISurveyPageModel> pages
+                = (List<ISurveyPageModel>)survey.Pages!;
+
+            pages.Add(page);
+
+            Dictionary<int, ISurveyQuestionModel> questions
+                = (Dictionary<int, ISurveyQuestionModel>)page.Questions;
+
             foreach (
                 (
                     int id,
@@ -325,6 +335,8 @@ public partial class DatabaseProcedureService : IDatabaseProcedureService
                     _ => throw new UnreachableException(
                         $"Unknown answer type '{answerType}'"),
                 };
+
+                questions.Add(id, question);
 
                 showConditions.AddRange(
                     setupShowConditions.Select<
@@ -552,8 +564,6 @@ public partial class DatabaseProcedureService : IDatabaseProcedureService
                             }
                         }
                     }));
-
-                ((Dictionary<int, ISurveyQuestionModel>)page.Questions).Add(id, question);
             }
         }
 
