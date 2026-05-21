@@ -822,6 +822,7 @@ public partial record SqlRegisteredMember(
 ///     [survey_id] INT NOT NULL,
 ///     [submission_index] INT NOT NULL,
 ///     [registered_member_id] INT NULL,
+///     [submission_ip] BIGINT NOT NULL,
 ///     [submission_time] DATETIME NOT NULL CONSTRAINT [default_submissions_1] DEFAULT GETUTCDATE());
 /// </code>
 /// </summary>
@@ -843,6 +844,12 @@ public partial record SqlRegisteredMember(
 /// [registered_member_id] INT NULL
 /// </code>
 /// </param>
+/// <param name="SubmissionIp">
+/// Stored in the database as:
+/// <code>
+/// [submission_ip] BIGINT NOT NULL
+/// </code>
+/// </param>
 /// <param name="SubmissionTime">
 /// Stored in the database as:
 /// <code>
@@ -853,6 +860,7 @@ public partial record SqlSubmission(
     SqlInt32 SurveyId,
     SqlInt32 Index,
     SqlInt32 RegisteredMemberId,
+    SqlInt64 SubmissionIp,
     SqlDateTime SubmissionTime)
 {
     /// <summary>
@@ -862,6 +870,7 @@ public partial record SqlSubmission(
     ///     [survey_id] INT NOT NULL,
     ///     [submission_index] INT NOT NULL,
     ///     [registered_member_id] INT NULL,
+    ///     [submission_ip] BIGINT NOT NULL,
     ///     [submission_time] DATETIME NOT NULL CONSTRAINT [default_submissions_1] DEFAULT GETUTCDATE());
     /// </code>
     /// </summary>
@@ -894,6 +903,14 @@ public partial record SqlSubmission(
     /// <summary>
     /// Stored in the database as:
     /// <code>
+    /// [submission_ip] BIGINT NOT NULL
+    /// </code>
+    /// </summary>
+    public const string TABLE_SUBMISSION_IP = "[submissions].[submission_ip]";
+
+    /// <summary>
+    /// Stored in the database as:
+    /// <code>
     /// [submission_time] DATETIME NOT NULL CONSTRAINT [default_submissions_2] DEFAULT GETUTCDATE()
     /// </code>
     /// </summary>
@@ -922,6 +939,14 @@ public partial record SqlSubmission(
     /// </code>
     /// </summary>
     public const string REGISTERED_MEMBER_ID = "[registered_member_id]";
+
+    /// <summary>
+    /// Stored in the database as:
+    /// <code>
+    /// [submission_ip] BIGINT NOT NULL
+    /// </code>
+    /// </summary>
+    public const string SUBMISSION_IP = "[submission_ip]";
 
     /// <summary>
     /// Stored in the database as:

@@ -1,7 +1,8 @@
 
 CREATE OR ALTER PROCEDURE [save_survey_submission] (
     @survey_id INT,
-    @survey_session_token BINARY(32)) AS
+    @survey_session_token BINARY(32),
+    @survey_session_ip BIGINT) AS
 BEGIN
 
     EXEC [delete_old_survey_sessions];
@@ -28,9 +29,10 @@ BEGIN
     INSERT INTO [submissions] (
         [submissions].[survey_id],
         [submissions].[submission_index],
-        [submissions].[registered_member_id])
+        [submissions].[registered_member_id],
+        [submissions].[submission_ip])
     VALUES
-        (@survey_id, @submission_index, NULL);
+        (@survey_id, @submission_index, NULL, @survey_session_ip);
 
     INSERT INTO [submission_answers] (
         [submission_answers].[survey_id],

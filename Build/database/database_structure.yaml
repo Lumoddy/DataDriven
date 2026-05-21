@@ -146,6 +146,7 @@ tables:
       survey_id: { short_single: survey_id, type: ID }
       submission_index: { short_single: index, type: INDEX }
       registered_member_id: { short_single: registered_member_id, type: ID, nullable: true }
+      submission_ip: { short_single: submission_ip, type: BIGINT }
       submission_time: { short_single: submission_time, type: DATETIME, default: GETUTCDATE() }
     constraints:
     - primary:

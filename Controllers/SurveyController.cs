@@ -1,4 +1,6 @@
 using System.Data;
+using System.Net;
+using System.Net.Sockets;
 using DataDriven.Data;
 using DataDriven.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -280,10 +282,22 @@ public class SurveyController(
             && Convert.TryFromBase64String(sessionToken, sessionTokenValue, out int bytesWritten)
             && bytesWritten == 32)
         {
+            IPAddress address = Request.HttpContext.Connection.RemoteIpAddress!.MapToIPv4();
+
+            byte[] buffer = [0, 0, 0, 0];
+            address.TryWriteBytes(buffer.AsSpan(), out _);
+
+            ulong intAddress
+                = ((ulong)buffer[0] << 24)
+                | ((ulong)buffer[1] << 16)
+                | ((ulong)buffer[2] << 8)
+                | ((ulong)buffer[3] << 0);
+
             ViewData["index"] = await procedureService.SaveSurveySubmission(
                 connection,
                 surveyIdValue,
-                sessionTokenValue);
+                sessionTokenValue,
+                intAddress);
         }
         else
             ViewData["index"] = null;
