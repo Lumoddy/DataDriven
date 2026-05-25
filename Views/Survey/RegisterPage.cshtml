@@ -1,0 +1,28 @@
+@using DataDriven.Controllers
+@using DataDriven.Data
+@model ISurveyModel
+
+<h1>Submitted Survey</h1>
+
+@if (ViewData["index"] is int submissionIndex)
+{
+    <p>
+        Your answers have been submitted as the @{
+            int index = submissionIndex;
+            @(index + 1)
+            @((index % 10) switch { 0 => "st", 1 => "nd", _ => "th" })
+        } submission.
+    </p>
+}
+
+<p>
+    You can optionally register or login to link this submission to a member account.
+</p>
+
+<div class="submission-success">
+    @await Html.PartialAsync("~/Views/Account/_LoginRegisterModal.cshtml")
+</div>
+
+<div class="mt-4">
+    <a asp-action="ReceiptPage" asp-route-surveyId="@Model.Id" asp-route-submissionIndex="@ViewData["index"]" class="btn btn-secondary">Skip and view receipt</a>
+</div>

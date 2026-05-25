@@ -10,7 +10,8 @@ public partial interface IDatabaseProcedureService
         SqlConnection connection,
         int surveyId,
         byte[] surveySessionToken,
-        ulong surveySessionIp);
+        ulong surveySessionIp,
+        int? registeredMemberId = null);
 }
 
 public partial class DatabaseProcedureService : IDatabaseProcedureService
@@ -19,7 +20,8 @@ public partial class DatabaseProcedureService : IDatabaseProcedureService
         SqlConnection connection,
         int surveyId,
         byte[] surveySessionToken,
-        ulong surveySessionIp)
+        ulong surveySessionIp,
+        int? registeredMemberId = null)
     {
         await using SqlCommand command = new("save_survey_submission", connection);
         command.CommandType = CommandType.StoredProcedure;
@@ -30,6 +32,8 @@ public partial class DatabaseProcedureService : IDatabaseProcedureService
             = surveySessionToken;
         command.Parameters.Add("@survey_session_ip", SqlDbType.BigInt).Value
             = surveySessionIp;
+        command.Parameters.Add("@registered_member_id", SqlDbType.Int).Value
+            = registeredMemberId ?? (object)DBNull.Value;
 
         return await command.ExecuteScalarAsync() as int?;
     }

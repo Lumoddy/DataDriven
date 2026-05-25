@@ -219,7 +219,7 @@ public class SurveyController(
             if (surveyPageIndexValue == page.Parent!.PageCount)
             {
                 return RedirectToAction(
-                    nameof(FinalPage),
+                    nameof(RegisterPage),
                     new { surveyId = surveyIdValue });
             }
 
@@ -257,16 +257,17 @@ public class SurveyController(
         return View(survey);
     }
 
+    [HttpGet]
     [Route("{surveyId}/done")]
-    public async Task<IActionResult> FinalPage(
-        [FromRoute] string surveyId)
+    public async Task<IActionResult> RegisterPage(
+        [FromRoute] string surveyId,
+        [FromQuery] int? submissionIndex = null)
     {
         if (!int.TryParse(surveyId, out int surveyIdValue)
             || surveyIdValue < 0)
             return NotFound();
 
         await using SqlConnection connection = new(configuration.GetConnectionString("Default"));
-
         await connection.OpenAsync();
 
         SurveyModel? survey = await procedureService.QuerySurvey(
@@ -276,32 +277,211 @@ public class SurveyController(
         if (survey == null)
             return NotFound();
 
-        byte[] sessionTokenValue = new byte[32];
-
-        if (Request.Cookies.TryGetValue("session", out string? sessionToken)
-            && Convert.TryFromBase64String(sessionToken, sessionTokenValue, out int bytesWritten)
-            && bytesWritten == 32)
+        if (!submissionIndex.HasValue)
         {
-            IPAddress address = Request.HttpContext.Connection.RemoteIpAddress!.MapToIPv4();
+            byte[] sessionTokenValue = new byte[32];
 
-            byte[] buffer = [0, 0, 0, 0];
-            address.TryWriteBytes(buffer.AsSpan(), out _);
+            if (Request.Cookies.TryGetValue("session", out string? sessionToken)
+                && Convert.TryFromBase64String(sessionToken, sessionTokenValue, out int bytesWritten)
+                && bytesWritten == 32)
+            {
+                IPAddress address = Request.HttpContext.Connection.RemoteIpAddress!.MapToIPv4();
+                byte[] buffer = [0, 0, 0, 0];
+                address.TryWriteBytes(buffer.AsSpan(), out _);
 
-            ulong intAddress
-                = ((ulong)buffer[0] << 24)
-                | ((ulong)buffer[1] << 16)
-                | ((ulong)buffer[2] << 8)
-                | ((ulong)buffer[3] << 0);
+                ulong intAddress
+                    = ((ulong)buffer[0] << 24)
+                    | ((ulong)buffer[1] << 16)
+                    | ((ulong)buffer[2] << 8)
+                    | ((ulong)buffer[3] << 0);
 
-            ViewData["index"] = await procedureService.SaveSurveySubmission(
+                submissionIndex = await procedureService.SaveSurveySubmission(
+                    connection,
+                    surveyIdValue,
+                    sessionTokenValue,
+                    intAddress);
+            }
+        }
+
+        if (!submissionIndex.HasValue)
+        {
+            ViewData["index"] = null;
+            return View("ReceiptPage", survey);
+        }
+
+        ViewData["index"] = submissionIndex.Value;
+        return View("RegisterPage", survey);
+    }
+
+    [HttpPost]
+    [Route("{surveyId}/done")]
+    public async Task<IActionResult> RegisterPage(
+        [FromRoute] string surveyId)
+    {
+        if (!int.TryParse(surveyId, out int surveyIdValue)
+            || surveyIdValue < 0)
+            return NotFound();
+
+        await using SqlConnection connection = new(configuration.GetConnectionString("Default"));
+        await connection.OpenAsync();
+
+        SurveyModel? survey = await procedureService.QuerySurvey(
+            connection,
+            surveyIdValue);
+
+        if (survey == null)
+            return NotFound();
+
+        IFormCollection form = await Request.ReadFormAsync();
+        if (!int.TryParse(form["submission_index"], out int submissionIndex))
+            return NotFound();
+
+        string? actionType = form.TryGetValue("action", out StringValues actionValue)
+            ? actionValue.FirstOrDefault()
+            : null;
+
+        int? registeredMemberId = null;
+
+        if (actionType == "register")
+        {
+            string? firstName = form.TryGetValue("first_name", out StringValues firstNameValue)
+                ? firstNameValue.FirstOrDefault()
+                : null;
+            string? lastName = form.TryGetValue("last_name", out StringValues lastNameValue)
+                ? lastNameValue.FirstOrDefault()
+                : null;
+            string? phoneNumber = form.TryGetValue("phone_number", out StringValues phoneValue)
+                ? phoneValue.FirstOrDefault()
+                : null;
+            string? birthDateStr = form.TryGetValue("birth_date", out StringValues birthDateValue)
+                ? birthDateValue.FirstOrDefault()
+                : null;
+            string? password = form.TryGetValue("password", out StringValues passwordValue)
+                ? passwordValue.FirstOrDefault()
+                : null;
+            string? confirmPassword = form.TryGetValue("password_confirm", out StringValues confirmPasswordValue)
+                ? confirmPasswordValue.FirstOrDefault()
+                : null;
+
+            if (string.IsNullOrWhiteSpace(firstName)
+                || string.IsNullOrWhiteSpace(lastName)
+                || string.IsNullOrWhiteSpace(phoneNumber)
+                || string.IsNullOrWhiteSpace(password)
+                || string.IsNullOrWhiteSpace(confirmPassword)
+                || !DateTime.TryParse(birthDateStr, out DateTime birthDate))
+            {
+                ViewData["memberError"] = "Please fill in all required fields.";
+                ViewData["index"] = submissionIndex;
+                return View("RegisterPage", survey);
+            }
+
+            if (password != confirmPassword)
+            {
+                ViewData["memberError"] = "Passwords do not match.";
+                ViewData["index"] = submissionIndex;
+                return View("RegisterPage", survey);
+            }
+
+            string passwordHash = Data.PasswordHasher.HashPassword(password);
+            registeredMemberId = await procedureService.RegisterMember(
                 connection,
-                surveyIdValue,
-                sessionTokenValue,
-                intAddress);
+                firstName,
+                lastName,
+                phoneNumber,
+                birthDate,
+                passwordHash);
+
+            if (registeredMemberId == null)
+            {
+                ViewData["memberError"] = "Phone number is already registered. Please login instead.";
+                ViewData["index"] = submissionIndex;
+                return View("RegisterPage", survey);
+            }
+        }
+        else if (actionType == "login")
+        {
+            string? phoneNumber = form.TryGetValue("phone_number", out StringValues phoneValue)
+                ? phoneValue.FirstOrDefault()
+                : null;
+            string? password = form.TryGetValue("password", out StringValues passwordValue)
+                ? passwordValue.FirstOrDefault()
+                : null;
+
+            if (string.IsNullOrWhiteSpace(phoneNumber) || string.IsNullOrWhiteSpace(password))
+            {
+                ViewData["memberError"] = "Please enter phone number and password.";
+                ViewData["index"] = submissionIndex;
+                return View("RegisterPage", survey);
+            }
+
+            var authResult = await procedureService.AuthenticateMember(
+                connection,
+                phoneNumber);
+
+            if (authResult != null
+                && !string.IsNullOrEmpty(authResult.PasswordHash)
+                && Data.PasswordHasher.VerifyPassword(password, authResult.PasswordHash))
+            {
+                registeredMemberId = authResult.MemberId;
+            }
+            else
+            {
+                ViewData["memberError"] = "Invalid phone number or password.";
+                ViewData["index"] = submissionIndex;
+                return View("RegisterPage", survey);
+            }
         }
         else
-            ViewData["index"] = null;
+        {
+            ViewData["memberError"] = "Unknown action.";
+            ViewData["index"] = submissionIndex;
+            return View("RegisterPage", survey);
+        }
 
-        return View(survey);
+        if (registeredMemberId.HasValue)
+        {
+            bool linked = await procedureService.LinkSubmissionToMember(
+                connection,
+                surveyIdValue,
+                submissionIndex,
+                registeredMemberId.Value);
+
+            if (!linked)
+            {
+                ViewData["memberError"] = "Unable to link the member account to the submission.";
+                ViewData["index"] = submissionIndex;
+                return View("RegisterPage", survey);
+            }
+        }
+
+        return RedirectToAction(
+            nameof(ReceiptPage),
+            new { surveyId = surveyIdValue, submissionIndex });
+    }
+
+    [Route("{surveyId}/receipt")]
+    public async Task<IActionResult> ReceiptPage(
+        [FromRoute] string surveyId,
+        [FromQuery] int? submissionIndex)
+    {
+        if (!int.TryParse(surveyId, out int surveyIdValue)
+            || surveyIdValue < 0)
+            return NotFound();
+
+        if (!submissionIndex.HasValue)
+            return NotFound();
+
+        await using SqlConnection connection = new(configuration.GetConnectionString("Default"));
+        await connection.OpenAsync();
+
+        SurveyModel? survey = await procedureService.QuerySurvey(
+            connection,
+            surveyIdValue);
+
+        if (survey == null)
+            return NotFound();
+
+        ViewData["index"] = submissionIndex.Value;
+        return View("ReceiptPage", survey);
     }
 }

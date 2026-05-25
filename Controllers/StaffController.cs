@@ -112,7 +112,10 @@ public class StaffController(
                 });
         }
 
-        ViewData["answers"] = submissions.Keys.Select((submissionToken) =>
+        List<int> submissionIndices = submissions.Keys.ToList();
+
+        ViewData["submissionIndices"] = submissionIndices;
+        ViewData["answers"] = submissionIndices.Select((submissionToken) =>
         {
             var pages = submissions[submissionToken];
 
@@ -183,6 +186,28 @@ public class StaffController(
                 .ToArray();
         })
             .ToArray();
+
+        await reader.CloseAsync();
+
+        SqlCommand metadataCommand = new(
+            "SELECT [submission_index], [submission_time], [registered_members].[registered_member_first_name] FROM [submissions] LEFT JOIN [registered_members] ON [submissions].[registered_member_id] = [registered_members].[registered_member_id] WHERE [submissions].[survey_id] = @survey_id ORDER BY [submission_index] ASC;",
+            connection);
+
+        metadataCommand.Parameters.Add("@survey_id", SqlDbType.Int).Value = surveyId;
+
+        await using SqlDataReader metadataReader = await metadataCommand.ExecuteReaderAsync();
+
+        var metadata = new Dictionary<int, (DateTime SubmissionTime, string? MemberFirstName)>();
+
+        while (await metadataReader.ReadAsync())
+        {
+            int submissionIndex = metadataReader.GetSqlInt32(0).StrictValue();
+            DateTime submissionTime = metadataReader.GetSqlDateTime(1).StrictValue();
+            string? memberFirstName = metadataReader.GetSqlString(2).CheckedValue();
+            metadata.Add(submissionIndex, (submissionTime, memberFirstName));
+        }
+
+        ViewData["submissionMetadata"] = metadata;
 
         return View(survey);
     }

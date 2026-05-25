@@ -2,6 +2,9 @@
 @{
     IReadOnlyList<IReadOnlyList<IReadOnlyList<ISurveyQuestionAnswer>>> answers
         = (IReadOnlyList<IReadOnlyList<IReadOnlyList<ISurveyQuestionAnswer>>>)ViewData["answers"]!;
+    IReadOnlyList<int> submissionIndices
+        = (IReadOnlyList<int>)ViewData["submissionIndices"]!;
+    var submissionMetadata = (Dictionary<int, (DateTime SubmissionTime, string? MemberFirstName)>)ViewData["submissionMetadata"]!;
 }
 <h1>@Model.Title</h1>
 <table>
@@ -11,6 +14,22 @@
             @for (int i = 0; i < answers.Count; i += 1)
             {
                 <th>@(i + 1)@((i % 10) switch { 0 => "st", 1 => "nd", _ => "th" })</th>
+            }
+        </tr>
+        <tr class="submission-time-row">
+            <td>Submission time</td>
+            @for (int i = 0; i < submissionIndices.Count; i += 1)
+            {
+                var metadata = submissionMetadata[submissionIndices[i]];
+                <td>@metadata.SubmissionTime.ToString("yyyy-MM-dd HH:mm:ss") UTC</td>
+            }
+        </tr>
+        <tr class="member-name-row">
+            <td>Member</td>
+            @for (int i = 0; i < submissionIndices.Count; i += 1)
+            {
+                var metadata = submissionMetadata[submissionIndices[i]];
+                <td>@(metadata.MemberFirstName ?? "Anonymous")</td>
             }
         </tr>
         @foreach ((int pageIndex, ISurveyPageModel page) in Model.Pages!.Index())
